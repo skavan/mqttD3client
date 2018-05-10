@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700');
+@import "compass/css3";
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+  }
+
+.wrapper {
+    height: 100%;
+  }
+
+.header{
+height: 120px;
+background:#eee;
+}
+
+.footer {
+height: 120px;
+background:#eee;
+}
+
+.content {
+height: calc(100% - 240px);
+overflow: auto;
+}
+
