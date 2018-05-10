@@ -1,105 +1,243 @@
 <html>
-    <head>
-            <link rel="stylesheet" href="css/style.css">
-            <link rel="stylesheet" href="css/formStyle.css">
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    </head>
+
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/formStyle.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
 <body>
     <div class="wrapper">
         <div id="header" class="header">
-            <form action="#" method="post" enctype="multipart/form-data" onsubmit="return false">
-                <table class="horiz" style="width: 100%;">
-                <tr>
-                    <td>
-                    <label for="url">
-                        host name:
-                    </label>
-                    <br />
-                    <input type="text" class="input-xxlarge" id="url" name="url" value="192.168.1.80" placeholder="192.168.1.92 or www.mqtthost.com" autofocus="autofocus" />
-                    </td>
-                    <td width=100>
-                    <label for="number">
-                        port:
-                    </label>
-                    <br />
-                    <input type="number" class="input-small" id="number" value=1884 placeholder="1884" name="number" min="0" step="1" />
-                    </td>
-                    <td>
-                    <label for="subscription">
-                        subscription topic:
-                    </label>
-                    <br />
-                    <input type="search" class="input-xxlarge" id="subscription" value="dragonfly/Basement/Receiver/#" name="subscription" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <span id=status>&nbsp;status: disconnected</span>
-                    </td>
-                    <td>
-<!--                         <div id=viewportStats>WTF!</div>
-                        <div id=naturalStats>WTF!</div> -->
-                    </td>
-                    <td>
-                        <button class="button-std" style="float:right" id="file" name="My-button" onClick="clic();">Submit & Subscribe</button>
-                    </td>
-                </tr>
+            <form action="#" method="post" enctype="multipart/form-data" style="margin-bottom: 0.2em" onsubmit="return false">
+                <table id="headerTable" class="" style="width: 100%;">
+                    <tr>
+                        <td style="width:40%">
+                            <label for="url">
+                                host name:
+                            </label>
+                            <br />
+                            <input type="text" id="url" name="url" value="192.168.1.80" placeholder="192.168.1.92 or www.mqtthost.com" autofocus="autofocus"
+                            />
+                        </td>
+                        <td style="width: 75px">
+                            <label for="number">
+                                port:
+                            </label>
+                            <br />
+                            <input type="number" id="number" value=1884 placeholder="1884" name="number" min="0" step="1" />
+                        </td>
+                        <td style="width:60%">
+                            <label for="subscription">
+                                subscription topic:
+                            </label>
+                            <br />
+                            <input type="search" id="subscription" value="dragonfly/Basement/Receiver/#" name="subscription" />
+                        </td>
+                        <td style="width:100px">
+                            <label for="subscription">
+                                &nbsp;
+                            </label>
+                            <br />
+                            <button class="button-std button-grey" id="file" name="unsubscribe" onClick="clic();">Disconnect</button>
+                        </td>
+                        <td style="width:100px">
+                            <label for="subscription">
+                                &nbsp;
+                            </label>
+                            <br />
+                            <button class="button-std button-blue" id="file" name="subsribe" onClick="clic();">Subscribe</button>
+                        </td>
+
+                        <td style="width:36px">
+                            <label for="subscription">
+                                &nbsp;
+                            </label>
+                            <br />
+                            <button class="button-std" id="expandHeader" name="expandHeader">
+                                <i id="pubsubExpand" class="material-icons" style="font-size: 18px;">expand_more</i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="pubRow">
+                        <td style="width:40%">
+                            <label for="url">
+                                topic:
+                            </label>
+                            <br />
+                            <input type="text" id="pubTopic" name="url" value="192.168.1.80" placeholder="192.168.1.92 or www.mqtthost.com" autofocus="autofocus"
+                            />
+                        </td>
+                        <td style="width: 75px">
+                            <label for="checkbox">
+                                retain:
+                            </label>
+                            <br />
+                            <input type="checkbox" id="retain" value=1884 placeholder="1884" name="number" min="0" step="1" />
+                        </td>
+                        <td style="width:60%" colspan="2">
+                            <label for="pubPayload">
+                                payload:
+                            </label>
+                            <br />
+                            <input type="search" id="pubPayload" value='{"command":"definition","value":"UPDATE"}' />
+                        </td>
+                        <td style="width:100px">
+                            <label for="publish">
+                                &nbsp;
+                            </label>
+                            <br />
+                            <button class="button-std button-blue" id="file" name="publish" onClick="clic();">Publish</button>
+                        </td>
+                        <td style="width:36px;">
+                            <label for="subscription">
+                                &nbsp;
+                            </label>
+                            <br />
+                            <button class="button-std" id="contractHeader" name="contractHeader">
+                                <i id="pubsubExpand" class="material-icons" style="font-size: 18px;">expand_less</i>
+                            </button>
+                        </td>
+                    </tr>
                 </table>
-            </form> 
+            </form>
         </div>
-        <div id="content" class="content">
-            body
+        <div id="main-content" class="main-content">
+            <div class="full-width full-height">
+                <div class="paper paper--elevation--2 full-height">
+                    <!--                 <div class="block-title">
+                        <div>dragonfly</div>
+                    </div> -->
+                    <div class="content">
+                        <div class="field-body" style="font-weight: bold; padding-top: 1em; padding-bottom: 0.2em;">
+                            Current State
+                        </div>
+                        <div class="field-body" style="padding-bottom:0; margin-bottom:0">
+                            <table style="width:100%; padding-bottom:0; margin-bottom:-10px">
+                                <tbody>
+                                    <tr>
+                                        <td width=50%>Connection Status:</td>
+                                        <td align="right">DOWN</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Down Since:</td>
+                                        <td align="right">2018-05-07 19:25:16</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Down Time:</td>
+                                        <td align="right">
+                                            <b>3,000 seconds</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Last Update:</td>
+                                        <td align="right">2018-05-07 19:25:16</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="more-link">
+                        <a href="#">
+                            <i class="fa fa-calendar"></i>
+                            More Data</a>
+                    </div>
+                </div>
+            </div>
         </div>
+
         <div id="footer" class="footer">
-            <table style="vertical-align: middle; height: 100%; width: 100%; padding-left: 0.5em; padding-right: 0.5em">
-                <tr>
-                    <td width=140>Viewport [w,h]:&nbsp;</td>
-                    <td>
-                        <span id=contentWidth>100</span>
-                        <span>,</span>
-                        <span id=contentHeight>100</span>
-                    </td>
-                    <td width=50>&nbsp;</td>
-                    <td width=140>Optimal [w,h]:&nbsp;</td>
-                    <td>
-                        <span id=optimalWidth>100</span>
-                        <span>,</span>
-                        <span id=optimalHeight>100</span>
-                    </td>
-                    <td style="text-align: right;">more stuff</td>
-                    
-                </tr>
-            </table>
+            <div style="vertical-align: middle; height: 100%; width: 100%; padding-left: 0.5em; padding-right: 0.5em">
+                <table style="vertical-align: middle; height: 100%; width: 100%; padding-left: 0.5em; padding-right: 0.5em">
+                    <tr>
+                        <td width=140>Viewport [w,h]:&nbsp;</td>
+                        <td>
+                            <span id=contentWidth>100</span>
+                            <span>,</span>
+                            <span id=contentHeight>100</span>
+                        </td>
+                        <td width=50>&nbsp;</td>
+                        <td width=140>Optimal [w,h]:&nbsp;</td>
+                        <td>
+                            <span id=optimalWidth>100</span>
+                            <span>,</span>
+                            <span id=optimalHeight>100</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <span id=status>&nbsp;status: disconnected</span>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
     <script type="text/javascript">
-        var headerHeight = 106;
+        var headerHeight = 68;
         var footerHeight = 40;
         var contentWidth;
         var contentHeight;
+        $('.pubRow').hide();
 
-        $(document).ready(function(){
+        $(document).ready(function () {
+            $(window).resize(processResize)
+                .trigger('resize');
             setHeaderFooter();
             getContentViewportDims();
             updateScreenStats();
         });
-        
+        $('#headerTable').on('click', '#contractHeader, #expandHeader', function () {
+            if (this.id == "expandHeader"){
+                expandContractHeader(true);
+            } else if (this.id == "contractHeader"){
+                expandContractHeader(false);
+            }
+        });
+
         // set the sizes of the header, footer and content areas
-        function setHeaderFooter(){
-            $("#header").css({"height": headerHeight});
-            $("#footer").css({"height": footerHeight});
-            $("#content").css({"height": 'calc(100% - ' + (headerHeight+footerHeight) + 'px'});
+        function setHeaderFooter() {
+            //$("#header").css({"height": headerHeight});
+            headerHeight = $("#header").outerHeight(true);
+            $("#footer").css({
+                "height": footerHeight
+            });
+            $("#main-content").css({
+                "height": 'calc(100% - ' + (headerHeight + footerHeight) + 'px'
+            });
         }
 
-        function getContentViewportDims(){
+        function getContentViewportDims() {
             let $window = $(window);
             contentWidth = $window.width();
             contentHeight = $window.height() - headerHeight - footerHeight;
         }
 
-        function updateScreenStats(){
+        function updateScreenStats() {
             $('#contentWidth').text(contentWidth);
             $('#contentHeight').text(contentHeight);
+        }
+
+        function processResize() {
+            getContentViewportDims();
+            updateScreenStats();
+        }
+
+        function expandContractHeader(isExpand){
+            if (isExpand){
+                $('#expandHeader').hide();              // Hide the expand button
+                $('.pubRow').show();                    // Hide the publish row
+            } else {
+                $('#expandHeader').show();              // show the expand button
+                $('.pubRow').hide();                    // Hide the publish row
+            }
+            setHeaderFooter();
+
         }
     </script>
 </body>
