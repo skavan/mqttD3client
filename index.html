@@ -51,20 +51,55 @@
             body
         </div>
         <div id="footer" class="footer">
-            footer
+            <table style="vertical-align: middle; height: 100%; width: 100%; padding-left: 0.5em; padding-right: 0.5em">
+                <tr>
+                    <td width=140>Viewport [w,h]:&nbsp;</td>
+                    <td>
+                        <span id=contentWidth>100</span>
+                        <span>,</span>
+                        <span id=contentHeight>100</span>
+                    </td>
+                    <td width=50>&nbsp;</td>
+                    <td width=140>Optimal [w,h]:&nbsp;</td>
+                    <td>
+                        <span id=optimalWidth>100</span>
+                        <span>,</span>
+                        <span id=optimalHeight>100</span>
+                    </td>
+                    <td style="text-align: right;">more stuff</td>
+                    
+                </tr>
+            </table>
         </div>
     </div>
     <script type="text/javascript">
         var headerHeight = 106;
         var footerHeight = 40;
+        var contentWidth;
+        var contentHeight;
+
         $(document).ready(function(){
             setHeaderFooter();
+            getContentViewportDims();
+            updateScreenStats();
         });
-
+        
+        // set the sizes of the header, footer and content areas
         function setHeaderFooter(){
             $("#header").css({"height": headerHeight});
             $("#footer").css({"height": footerHeight});
             $("#content").css({"height": 'calc(100% - ' + (headerHeight+footerHeight) + 'px'});
+        }
+
+        function getContentViewportDims(){
+            let $window = $(window);
+            contentWidth = $window.width();
+            contentHeight = $window.height() - headerHeight - footerHeight;
+        }
+
+        function updateScreenStats(){
+            $('#contentWidth').text(contentWidth);
+            $('#contentHeight').text(contentHeight);
         }
     </script>
 </body>
