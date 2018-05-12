@@ -1,5 +1,24 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700');
 @import "compass/css3";
+input,select {
+    margin: 0;
+	font-family: inherit;
+    font-size: 1em;
+      padding: 2px;
+  padding: 0.2rem;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  outline: 0;
+  
+  -o-background-clip: padding-box;
+  -webkit-background-clip: padding;
+  background-clip: padding-box; 
+  background-color: #F5F5F5;
+  border: 1px solid #CCC;
+
+  color: #212121;
+}
 
 html, body {
     height: 100%;
@@ -7,6 +26,11 @@ html, body {
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
   }
+
+#header,
+#wrapper {
+padding: 0.2em 0.5em 0.2em 0.5em;
+}
 
 .wrapper {
     height: 100%;

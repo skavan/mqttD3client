@@ -36,7 +36,7 @@
       overflow:hidden;
       background:#fff;
       margin: 0em 0;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto','Open Sans', sans-serif;
   }
   
   .paper .block-title {
@@ -71,6 +71,13 @@
    
   .content .field-body{
     padding:0 1em 1em;
+    
+  }
+
+  .content{
+    flex-grow: 1;
+    height: 100%;
+    background-color: pink;
   }
   
   .title {

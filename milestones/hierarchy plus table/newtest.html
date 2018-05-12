@@ -1,0 +1,93 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel="stylesheet" href="css/newtest.css">
+       
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css">
+
+        <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+        
+        <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+        <!-- <script type="text/javascript" language="javascript" src="datatables/pageResize.js"></script> -->
+        <script type="text/javascript" language="javascript" src="datatables/scrollingResize.js"></script>
+
+
+
+
+    </head>
+    <body>
+        <div id="toplevel" class="container">
+            <div class="box main-header">main header</div>
+            <div id="clickme" class="box main-content">main content - click me
+                <div class="box report-title">report title</div>
+                <div id='innerContent' class="box report-body">
+                    <table id="example" class="display compact nowrap" cellspacing="0" width="100%">                   
+                    </table>    
+                </div>
+                <div class="box report-footer">report footer</div>
+            </div>
+            <div class="box main-footer">main footer</div>
+        </div>
+
+        <script type="text/javascript" charset="utf-8">
+			$(document).ready( function () {
+                var jsonData=[];
+                setupData();
+				// DataTables initialisation
+				/* var table = $('#example').DataTable( {
+                    data: jsonData,
+                    columns: [
+                        { data: "date","title": "timestamp" },
+                        { data: "topic", "title": "topic" },
+                        { data: "payload", "title": "payload" }
+                    ],
+                    pageResize: true,
+					columnDefs: [
+						{ visible: false, targets: 1 }
+					]     
+                } ); */
+                var table = $('#example').DataTable( {
+                    data: jsonData,
+                    columns: [
+                        { data: "date","title": "timestamp" },
+                        { data: "topic", "title": "topic" },
+                        { data: "payload", "title": "payload" }
+                    ],
+                    
+					scrollX: true,
+					scrollY: 100,
+                    scrollCollapse: false,
+                    scrollResize: true,
+                    paging: false,
+                    lengthChange: true,
+                    
+					columnDefs: [
+						{ visible: false, targets: 1 }
+					]
+                } );
+
+                // DataTables initialisation
+				
+                console.log("HELLO");
+                
+                $('#toplevel').on('click', '#clickme', function () {
+                    console.log("innerContent:" + $("#innerContent").outerHeight(true));
+                });
+
+
+                function setupData(){
+                    for (i = 0; i < 30; i++) { 
+                        jElement = {date: new Date(), topic: "/dragonfly/Basement/" + i, payload: i};
+                        jsonData.push(jElement);
+                    }
+                }
+
+                function processResize(){
+
+                };
+			} );
+		</script>
+    </body>
+</html>

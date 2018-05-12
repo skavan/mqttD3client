@@ -9,18 +9,14 @@
     
   }
   
-  table {
+  form table {
     table-layout: fixed;
     width: 100%;
     border-collapse: collapse;
     white-space: nowrap;
   }
 
-  #header,
-  #wrapper {
-    padding: 0.2em 0.5em 0.2em 0.5em;
-  }
-  
+ 
   /* REMs */
   .input-tiny {
     width: 50px;
@@ -63,6 +59,7 @@
     background-color:darkgreen;
     color: white;
   }
+
   .button-red {
     background-color: darkred;
     color: white;
@@ -82,39 +79,38 @@
     font-size: 1rem;
     font-weight: 300;
   }
-  
-  input[type="search"]::-webkit-search-decoration {
+    
+  .headerfooter input[type="search"]::-webkit-search-decoration {
     display: none;
   }
   
-  input:invalid,
-  select:invalid,
-  textarea:invalid {
+  .headerfooter input:invalid,
+  .headerfooter select:invalid,
+  .headerfooter textarea:invalid {
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
   }
-  input:focus,
-  select:focus,
-  textarea:focus {
+  .headerfooter input:focus,
+  .headerfooter select:focus,
+  .headerfooter textarea:focus {
     -moz-box-shadow: #06f 0 0 3px 0;
     -webkit-box-shadow: #06f 0 0 3px 0;
     box-shadow: #06f 0 0 3px 0;
     z-index: 1;
   }
   
-  input[type="file"]:focus, input[type="file"]:active,
-  input[type="radio"]:focus,
-  input[type="radio"]:active,
-  input[type="checkbox"]:focus,
-  input[type="checkbox"]:active {
+  .headerfooter input[type="file"]:focus, input[type="file"]:active,
+  .headerfooter input[type="radio"]:focus,
+  .headerfooter input[type="radio"]:active,
+  .headerfooter input[type="checkbox"]:focus,
+  .headerfooter input[type="checkbox"]:active {
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
   }
   
-  input[type="checkbox"] { -moz-background-clip: padding;
-
+  .headerfooter input[type="checkbox"] { -moz-background-clip: padding;
   -o-background-clip: padding-box;
   -webkit-background-clip: padding;
   background-clip: padding-box; 
@@ -136,21 +132,21 @@
 
 
 
-  textarea,
-  select,
-  input[type="date"],
-  input[type="datetime"],
-  input[type="datetime-local"],
-  input[type="email"],
-  input[type="month"],
-  input[type="number"],
-  input[type="password"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="text"],
-  input[type="time"],
-  input[type="url"],
-  input[type="week"] {
+.headerfooter textarea,
+.headerfooter select,
+.headerfooter input[type="date"],
+.headerfooter input[type="datetime"],
+.headerfooter input[type="datetime-local"],
+.headerfooter input[type="email"],
+.headerfooter input[type="month"],
+.headerfooter input[type="number"],
+.headerfooter input[type="password"],
+.headerfooter input[type="search"],
+.headerfooter input[type="tel"],
+.headerfooter input[type="text"],
+.headerfooter input[type="time"],
+.headerfooter input[type="url"],
+.headerfooter input[type="week"] {
     
     -moz-background-clip: padding;
     -o-background-clip: padding-box;
@@ -177,29 +173,29 @@
     outline: 0;
     vertical-align: top;
   }
-  textarea[disabled],
-  select[disabled],
-  input[type="date"][disabled],
-  input[type="datetime"][disabled],
-  input[type="datetime-local"][disabled],
-  input[type="email"][disabled],
-  input[type="month"][disabled],
-  input[type="number"][disabled],
-  input[type="password"][disabled],
-  input[type="search"][disabled],
-  input[type="tel"][disabled],
-  input[type="text"][disabled],
-  input[type="time"][disabled],
-  input[type="url"][disabled],
-  input[type="week"][disabled] {
+  .headerfooter textarea[disabled],
+  .headerfooter select[disabled],
+  .headerfooter input[type="date"][disabled],
+  .headerfooter input[type="datetime"][disabled],
+  .headerfooter input[type="datetime-local"][disabled],
+  .headerfooter input[type="email"][disabled],
+  .headerfooter input[type="month"][disabled],
+  .headerfooter input[type="number"][disabled],
+  .headerfooter input[type="password"][disabled],
+  .headerfooter input[type="search"][disabled],
+  .headerfooter input[type="tel"][disabled],
+  .headerfooter input[type="text"][disabled],
+  .headerfooter input[type="time"][disabled],
+  .headerfooter input[type="url"][disabled],
+  .headerfooter input[type="week"][disabled] {
     background-color: #eee;
   }
   
-  input[disabled],
-  select[disabled],
-  select[disabled] option,
-  select[disabled] optgroup,
-  textarea[disabled] {
+  .headerfooter input[disabled],
+  .headerfooter select[disabled],
+  .headerfooter select[disabled] option,
+  .headerfooter select[disabled] optgroup,
+  .headerfooter textarea[disabled] {
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -208,29 +204,29 @@
     cursor: default;
   }
   
-  textarea,
-  select[size],
-  select[multiple] {
+  .headerfooter textarea,
+  .headerfooter select[size],
+  .headerfooter select[multiple] {
     height: auto;
   }
   
-  select[size="0"],
-  select[size="1"] {
+  .headerfooter select[size="0"],
+  .headerfooter select[size="1"] {
     height: 38px;
   }
   
   @media (-webkit-min-device-pixel-ratio: 0) {
-    select[size],
-    select[multiple],
-    select[multiple][size] {
+    .headerfooter select[size],
+    .headerfooter select[multiple],
+    .headerfooter select[multiple][size] {
       background-image: none;
       padding: 5px;
       padding: 0.5rem;
     }
   
-    select,
-    select[size="0"],
-    select[size="1"] {
+    .headerfooter select,
+    .headerfooter select[size="0"],
+    .headerfooter select[size="1"] {
       background-image: url(data:image/png;base64,R0lGODlhDQAEAIAAAAAAAP8A/yH5BAEHAAEALAAAAAANAAQAAAILhA+hG5jMDpxvhgIAOw==);
       background-repeat: no-repeat;
       background-position: right center;
@@ -261,20 +257,20 @@
       border-color: #666;
     }
   }
-  textarea {
+  .headerfooter textarea {
     min-height: 40px;
     overflow: auto;
     resize: vertical;
     width: 100%;
   }
   
-  optgroup {
+  .headerfooter optgroup {
     color: black;
     font-style: normal;
     font-weight: 200;
     font-family: "Roboto", "Open Sans", Tahoma, Geneva, Helvetica, sans-serif;
   }
-  optgroup::-moz-focus-inner {
+  .headerfooter optgroup::-moz-focus-inner {
     border: 0;
     padding: 0;
   }
@@ -299,7 +295,7 @@
     font-weight: 100;
   }
   
-  label {
+  .headerfooter label {
     line-height: 0.6em;
     font-size: 1rem;
     font-weight: 400;
@@ -307,7 +303,7 @@
     margin-bottom: 0.6rem;
     display: inline-block;
   }
-  label .optional {
+  .headerfooter label .optional {
     color: #969696;
     font-size: 11px;
     font-size: 1.1rem;

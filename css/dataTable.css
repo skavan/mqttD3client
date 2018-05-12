@@ -1,0 +1,43 @@
+/*
+ * Table styles
+ */
+ .dataTables_wrapper {
+    font-family: Roboto !important;
+    font-size: 1em !important;
+    position: relative;
+    clear: both;
+    *zoom: 1;
+    zoom: 1;
+}
+.dataTables_wrapper label{
+    font-size: 0.8em !important;
+    
+}
+table.datatable, table.dataTable thead th, table.dataTable thead td {
+    border-bottom: 0.6px solid #999!important;
+}
+thead td{
+    border-color: #999;
+    
+    
+}
+.dataTables_wrapper select{
+    font-family: Roboto !important;
+    font-size: 1em!important;
+    
+    width: 75px!important;
+}
+
+.dataTables_wrapper th{
+    font-weight: 500!important;
+    text-align: left;
+}
+
+.dataTables_wrapper .dataTables_info, .dataTables_wrapper .paginate_button{
+    font-size: 0.8em!important;
+    line-height: 0.8em;
+}
+
+div.dataTables_length {
+    display: none;
+}

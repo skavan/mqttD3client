@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700');
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+}
+
+.container {
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.container .box {
+  text-align: center;
+  font-family: Roboto;
+  font-size: 1em;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+}
+.container .main-header {
+  background-color: green;
+  height: 60px;
+}
+.container .main-content {
+  background-color: blue;
+  flex: 1;
+}
+.container .main-footer {
+  background-color: red;
+  height: 60px;
+}
+.container .report-title {
+  background-color: yellow;
+  height: 30px;
+}
+.container .report-body {
+  background-color:white;
+  flex: 1;
+  align-items: top;
+}
+.container .report-footer {
+  background-color: orange;
+  height: 30px;
+}
+
+div.dataTables_length {
+    display: none;
+}

@@ -18,6 +18,27 @@
             "request": "launch",
             "sourceMaps": true,
             "file": "${workspaceFolder}/index.html"
+        },
+        {
+            "name": "Launch newtest",
+            "type": "chrome",
+            "request": "launch",
+            "sourceMaps": true,
+            "file": "${workspaceFolder}/newtest.html"
+        },
+        {
+            "name": "Launch pageResize",
+            "type": "chrome",
+            "request": "launch",
+            "sourceMaps": true,
+            "file": "${workspaceFolder}/pageResize.html"
+        },
+        {
+            "name": "Launch semantic",
+            "type": "chrome",
+            "request": "launch",
+            "sourceMaps": true,
+            "file": "${workspaceFolder}/semantic.html"
         }
     ]
 }

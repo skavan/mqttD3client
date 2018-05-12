@@ -1,0 +1,80 @@
+/* flex layout */
+
+.container {
+    height: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .container .box {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+  }
+  .container .main-header {
+    background-color: green;
+    height: 60px;
+  }
+  .container .main-content {
+    background-color: blue;
+    flex: 1;
+  }
+  .container .main-footer {
+    background-color: red;
+    height: 60px;
+  }
+  .container .report-title {
+    background-color: yellow;
+    height: 30px;
+  }
+  .container .report-body {
+    background-color:white;
+    flex: 1;
+    align-items: top;
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+  
+  .container .report-footer {
+    background-color: white;
+    text-align: right;
+    height: 30px;
+  }
+
+  .dataTables_filter input {
+    position: relative;
+    font-weight: normal;
+    font-style: normal;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    color: rgba(0, 0, 0, 0.87);
+    margin: 0em;
+    max-width: 100%;
+    -webkit-box-flex: 1;
+        -ms-flex: 1 0 auto;
+            flex: 1 0 auto;
+    outline: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    text-align: left;
+    line-height: 1.21428571em;
+    font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    padding: 0.67857143em 1em;
+    background: #FFFFFF;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    color: rgba(0, 0, 0, 0.87);
+    border-radius: 0.28571429rem;
+    -webkit-transition: border-color 0.1s ease, -webkit-box-shadow 0.1s ease;
+    transition: border-color 0.1s ease, -webkit-box-shadow 0.1s ease;
+    transition: box-shadow 0.1s ease, border-color 0.1s ease;
+    transition: box-shadow 0.1s ease, border-color 0.1s ease, -webkit-box-shadow 0.1s ease;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+}
+.dataTables_wrapper .dataTables_filter input {
+    margin-left: 0.5em; 
+ }
+
+ .dataTables_scrollBody{
+     height: auto!important;
+ }
