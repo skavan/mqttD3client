@@ -12,8 +12,8 @@
     /* justify-content: center; */
   }
   .container .main-header {
-    background-color: green;
-    height: 60px;
+    background:#eee;
+    padding: 0.5em;
   }
   .container .main-content {
     background-color: blue;
@@ -31,8 +31,7 @@
     background-color:white;
     flex: 1;
     align-items: top;
-    padding-left: 1em;
-    padding-right: 1em;
+    padding: 1em 1em;
   }
   
   .container .report-footer {
@@ -40,6 +39,11 @@
     text-align: right;
     height: 30px;
   }
+
+  .segment.hidden, tr.hidden{
+    display: none;
+    }
+    
 
   .dataTables_filter input {
     position: relative;
