@@ -44,13 +44,8 @@
     display: none;
     }
     
-    .inputBoxRight {
-      position: absolute;
-      right: 0;
-      bottom: 1em;
-    }
 
-/*   .dataTables_filter input {
+  .dataTables_filter input {
     position: relative;
     font-weight: normal;
     font-style: normal;
@@ -79,11 +74,11 @@
     transition: box-shadow 0.1s ease, border-color 0.1s ease, -webkit-box-shadow 0.1s ease;
     -webkit-box-shadow: none;
             box-shadow: none;
-} */
-/* .dataTables_wrapper .dataTables_filter input {
+}
+.dataTables_wrapper .dataTables_filter input {
     margin-left: 0.5em; 
  }
-*/
+
  .dataTables_scrollBody{
      height: auto!important;
- } 
+ }

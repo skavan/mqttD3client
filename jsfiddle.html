@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
+    <style type="text/css">
+        .inputBoxRight {
+            position: absolute;
+            right: 0px;
+            bottom: 1em;
+        }
+    </style>
+
+    <title> by skavan</title>
+    <script type="text/javascript">
+        window.onload = function () {
+
+            /* $('.ui.dropdown').dropdown();
+
+            $('#DropDownListCategoryClone').dropdown('set selected', 'Female'); */
+
+            $("#dd, #pickServer").click(function () {
+                //alert( "Handler for .click() called." );
+                $("#mm").dropdown('toggle');
+                console.log('toggle');
+            });
+
+            $('#mm').dropdown({
+                    onChange: function (value, text, $choice) {
+                        console.log($choice.data('value'));
+                    }
+                })
+        }
+    </script>
+
+
+</head>
+
+<body>
+    <table class="ui fixed table compact small">
+        <tbody>
+            <tr>
+                <td>
+    <div style="padding: 1em 1em;">
+
+
+        <div class='ui right action left labeled small input'>
+            <div class="ui label ">
+                server
+            </div>
+
+            <input id="pickServer" name='DropDownListCategoryClone' type='text' value="dragonfly rpi" readonly style="cursor: pointer!important">
+            <div id="mm" class="ui dropdown floating">
+                <div id="serverpick" class="menu">
+                    <div class="item">
+                        <i class="edit icon" data-value="server 1"></i> Edit Post</div>
+                    <div class="item">
+                        <i class="delete icon" data-value="server 2"></i> Remove Post</div>
+                    <div class="item">
+                        <i class="hide icon" data-value="server 3"></i> Hide Post</div>
+                </div>
+            </div>
+            <div style="position:relative">
+                <i id="dd" class='dropdown icon inputBoxRight'></i>
+
+            </div>
+
+
+            <button class="ui primary icon button">
+                <i class="icon world"></i>
+            </button>
+
+        </div>
+
+    </div>
+</td>
+</tr>
+</tbody>
+</table>
+
+
+</body>
+
+</html>

@@ -3,7 +3,7 @@
 <head>
     <!-- external css -->
     <link rel="stylesheet" href="css/semantic.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.uni-kl.de/js/datatables/latest/media/css/dataTables.semanticui.css">
     <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css"> -->
     <link rel="stylesheet" type="text/css" href="https://cdn.uni-kl.de/js/datatables/latest/extensions/Buttons/css/buttons.semanticui.css">
@@ -11,6 +11,7 @@
 
     <!-- external javascript -->
     <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" language="javascript" src="datatables/scrollingResize.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.semanticui.min.js"></script>
@@ -23,116 +24,136 @@
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js"></script>
 
+    <script type="text/javascript">
+        window.onload = function () {
+
+            /* $('.ui.dropdown').dropdown();
+
+            $('#DropDownListCategoryClone').dropdown('set selected', 'Female'); */
+
+            $("#dd, #pickServer").click(function () {
+                //alert( "Handler for .click() called." );
+                $("#mm").dropdown('toggle');
+                console.log('toggle');
+            });
+
+            $('#mm').dropdown({
+                onChange: function (value, text, $choice) {
+                    console.log($choice.data('value'));
+                }
+            })
+        }
+    </script>
+
 </head>
 
 <body>
     <div class="container">
         <div class="box main-header">
-
-<!--             <div class="ui top segment">
-                <div class="ui small labeled input">
-                    <div class="ui label">
-                        http://
-                    </div>
-                    <input type="text" style="width:150px" placeholder="192.168.1.99" value="192.168.1.80">
-                </div>
-                <span>&nbsp;</span>
-                <div class="ui small labeled input">
-                    <div class="ui label">
-                        port
-                    </div>
-                    <input type="text" style="width:60px" placeholder="1884" value="1884">
-                </div>
-                <span style="width:50px">&nbsp;</span>
-                <div class="ui small labeled input">
-                    <div class="ui label">
-                        topic
-                    </div>
-                    <input type="text" style="width:350px" placeholder="/dragonfly/Basement/Receiver/Status" value="/dragonfly/Basement/Receiver/Status">
-                </div>
-            </div> -->
-<!--             <div class="ui bottom attached segment hidden">
-                <p>Middle</p>
-            </div> -->
             <table class="ui fixed table compact small">
-
                 <tbody>
                     <tr>
-                        <td class="four wide">
-                            <div class="ui fluid labeled input">
+                        <td class="" style="width:12em;">
+                            <div class="ui right action fluid left labeled input">
                                 <div class="ui label">
-                                    http://
+                                    server
                                 </div>
-                                <input type="text" placeholder="192.168.1.99" value="192.168.1.80">
+                                
+                                        
+                        
+                                
+                                <input id="pickServer" name='DropDownListCategoryClone' type='text' value="dragonfly rpi" readonly style="cursor: pointer!important">
+                                
+                                
+                                <div id="mm" class="ui dropdown floating">
+                                    <div id="serverpick" class="menu">
+                                        <div class="item">
+                                            <i class="edit icon" data-value="server 1"></i> Edit Post</div>
+                                        <div class="item">
+                                            <i class="delete icon" data-value="server 2"></i> Remove Post</div>
+                                        <div class="item">
+                                            <i class="hide icon" data-value="server 3"></i> Hide Post</div>
+                                    </div>
+                                </div>
+                                <div style="position:relative">
+                                        <i id="dd" class='dropdown icon inputBoxRight'></i>
+                        
+                                    </div>
+                                    
+                                
+                                <!-- <div class="ui basic floating dropdown compact small button" style="width:24px!important; padding:9px; text-align: center">
+                                            <div class="menu">
+                                                <div class="item">This Organization</div>
+                                                <div class="item">Entire Site</div>
+                                            </div>
+                                        </div> -->
+                                <button class="ui primary icon button">
+                                    <i class="icon world"></i>
+                                </button>
                             </div>
                         </td>
-                        <td style="width:9em;">
-                            <div class="ui fluid labeled input">
-                                <div class="ui label">
-                                    port
-                                </div>
-                                <input type="text" placeholder="1884" value="1884">
-                            </div>
-                        </td>
-                        <td class="five wide">
-                            <div class="ui fluid labeled input">
-                                <div class="ui label">
-                                    topic
-                                </div>
-                                <input type="text" placeholder="/dragonfly/Basement/Receiver/Status" value="/dragonfly/Basement/Receiver/Status">
-                            </div>
-                        </td>
-                        <td class="" style="width:8em">
-                            <button class="ui fluid primary  small button">
-                                Subscribe
+                        <td class="" style="width:60px">
+                            <button class="ui icon button">
+                                <i class="icon settings"></i>
                             </button>
                         </td>
-                        <td class="" style="width:24px; padding:1px;text-align: right">
-                                <a class="item">
-                                        <i class="caret down icon large"></i>
-                                      </a>
-                        </td>
-                        
-
-                    </tr>
-                    <tr class="hidden">
-                        <td>Jamie</td>
-                        <td>Approved</td>
-                        <td>32</td>
-                        <td>Male</td>
-                        <td>Male</td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
         </div>
-        
-<!--             <div class="ui four column grid stackable celled segment">
-                    <div class="four wide column" >X</div>
-                    <div class="two wide column" style="flex: 0 0 150px;">1884</div>
-                    <div class="six wide column" >X</div>
-                    <div class="four wide column" >X</div>
-            </div> -->
-        
-        <div class="box main-content">
-            <!-- main content -->
-            <!-- <div class="box report-title">report title</div> -->
-            <div class="box report-body">
-                <!-- <table id="example" class="ui celled table compact" cellspacing="0" width="100%"> -->
-                <table id="example" class="ui celled compact structured striped table nowrap" cellspacing="0" width="100%">
-                    <tfoot>
-                        <tr>
+        <!-- -webkit-box-shadow: -1px 0 0 0 rgba(34,36,38,.15);
+                        box-shadow: -1px 0 0 0 rgba(34,36,38,.15); -->
 
-                        </tr>
-                    </tfoot>
-                </table>
+        <td class="five wide">
+            <div class="ui fluid labeled input">
+                <div class="ui label">
+                    topic
+                </div>
+                <input type="text" placeholder="/dragonfly/Basement/Receiver/Status" value="/dragonfly/Basement/Receiver/Status">
             </div>
-            <div class="box report-footer">report footer</div>
+        </td>
+        <td class="" style="width:100px">
+            <button class="ui fluid disabled small button">
+                Subscribe
+            </button>
+        </td>
+        <td class="" style="width:24px; padding:1px;text-align: right">
+            <a class="item">
+                <i class="caret down icon large"></i>
+            </a>
+        </td>
+
+
+        </tr>
+        <tr class="hidden">
+            <td>Jamie</td>
+            <td>Approved</td>
+            <td>32</td>
+            <td>Male</td>
+            <td>Male</td>
+
+        </tr>
+
+        </tbody>
+
+        </table>
+
+    </div>
+
+
+    <div class="box main-content">
+        <!-- main content -->
+        <!-- <div class="box report-title">report title</div> -->
+        <div class="box report-body">
+            <!-- <table id="example" class="ui celled table compact" cellspacing="0" width="100%"> -->
+            <table id="example" class="ui celled compact structured striped table nowrap" cellspacing="0" width="100%">
+                <tfoot>
+                    <tr>
+
+                    </tr>
+                </tfoot>
+            </table>
         </div>
-        <div class="box main-footer">main footer</div>
+        <div class="box report-footer">report footer</div>
+    </div>
+    <div class="box main-footer">main footer</div>
     </div>
 
     <script type="text/javascript" charset="utf-8">
@@ -143,58 +164,102 @@
             $(window).resize(processResize)
                 .trigger('resize');
 
-            var table = $('#example').DataTable({
-                data: jsonData,
-                columns: [{
-                        data: "date",
-                        "title": "timestamp"
-                    },
-                    {
-                        data: "topic",
-                        "title": "topic"
-                    },
-                    {
-                        data: "payload",
-                        "title": "payload"
-                    }
-                ],
-                lengthChange: true,
-                scrollResize: true,
-                scrollCollapse: true,
-                scrollX: true,
-                scrollY: true,
-                paging: false,
-                buttons: ['copy', 'excel', 'pdf', 'colvis'],
-                fnFooterCallback: function (row, data, start, end, display) {
-                    console.log("footer");
-                    row.innerHTML = '<th rowspan="1" colspan="1" style="width: 100%;">' + data.length +
-                        ' records.</th>';
-                },
-                "initComplete": function () {
-                    //var api = this.api();
-                    //api.$('td').click( function () {
-                    //api.search( this.innerHTML ).draw();
-                    console.log("inited");
-                },
-                "preDrawCallback": function (settings) {
-                    console.log("predraw");
-                }
-            });
+            var table = setupDataTable();
 
+            table.buttons().container().addClass('small')
             table.buttons().container()
                 .appendTo($('div.eight.column:eq(0)', table.table().container()));
 
+
+
+            function setupDataTable() {
+                return $('#example').DataTable({
+                    data: jsonData,
+                    columns: [{
+                            data: "date",
+                            "title": "timestamp",
+                            "render": function (data) {
+                                var d = new Date(data);
+                                return d.toLocaleString();
+                            }
+                        },
+                        {
+                            data: "qos",
+                            "title": "qos"
+                        },
+                        {
+                            data: "retain",
+                            "title": "retain"
+                        },
+                        {
+                            data: "topic",
+                            "title": "topic"
+                        },
+                        {
+                            data: "payload",
+                            "title": "payload"
+                        }
+                    ],
+                    lengthChange: true,
+                    scrollResize: true,
+                    scrollCollapse: true,
+                    scrollX: true,
+                    scrollY: true,
+                    paging: false,
+                    "info": false,
+                    buttons: ['copy', 'excel', 'pdf', 'colvis'],
+                    fnFooterCallback: function (row, data, start, end, display) {
+                        console.log("footer");
+                        row.innerHTML = '<th rowspan="1" colspan="1" style="width: 100%;">' + data.length +
+                            ' records.</th>';
+                    },
+                    "initComplete": function () {
+                        //var api = this.api();
+                        //api.$('td').click( function () {
+                        //api.search( this.innerHTML ).draw();
+                        cleanupTable();
+                        console.log("inited");
+                        processResize();
+                    },
+                    "preDrawCallback": function (settings) {
+                        console.log("predraw");
+                    }
+                });
+            }
+
             function processResize() {
+                var hw = $('#example>thead>tr:eq(0)>th').eq(0).width(); // get width of first header element
+                var dw = $('#example>tbody>tr:eq(0)>td').eq(0).width();
+                if (hw) {
+                    console.log(hw, dw);
+                    if (hw != dw) {
+                        $('#example>thead>tr:eq(0)>th:eq(0)').width(dw);
+                    }
+                }
+
                 /*                     console.log("resize");
                                     $("dataTables_scrollBody").css({"height": ""}); */
+            }
+
+            function cleanupTable() {
+                $('div.dataTables_filter label').replaceWith(
+                    `<div id='searchBox1' class="ui labeled input small">
+                                <div class="ui label">
+                                    search
+                                </div>
+                                <input type="text" style="margin-left:0" aria-controls="example" placeholder="enter search term...">
+                            </div>`
+                );
             }
 
             function setupData() {
                 var date1 = new Date(2018, 01, 01);
                 var date2 = new Date(2018, 05, 11);
-                for (i = 0; i < 10; i++) {
+                for (i = 0; i < 30; i++) {
                     jElement = {
                         date: randomDate(date1, date2),
+                        qos: Math.floor(Math.random() * 3) + 1,
+                        retain: Math.random() >= 0.5,
                         topic: "/dragonfly/Basement/" + i,
                         payload: i
                     };
@@ -206,11 +271,21 @@
                 var date = new Date(+start + Math.random() * (end - start));
                 return date;
             }
-
         });
-
-        // $('tfoot').remove();
     </script>
+    <div class="ui active modal">
+        <div class="header">Header</div>
+        <div class="content">
+            <p></p>
+            <p></p>
+            <p></p>
+        </div>
+        <div class="actions">
+            <div class="ui approve button">Approve</div>
+            <div class="ui button">Neutral</div>
+            <div class="ui cancel button">Cancel</div>
+        </div>
+    </div>
 </body>
 
 </html>
