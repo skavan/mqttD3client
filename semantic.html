@@ -37,7 +37,7 @@
                         <!-- Server Picker -->
                         <td class="nopad right" style="width: 220px!important;">
                             <div class="ui right action fluid left labeled input">
-                                <div class="ui label">
+                                <div class="ui label" style="width:66px">
                                     server
                                 </div>
 
@@ -45,6 +45,11 @@
                                 <!-- drop down server picker menu -->
                                 <div id="mm" class="ui dropdown ">
                                     <div id="serverpick" class="menu">
+                                        <div class="item">
+                                            <div class="ui red empty circular label"></div>
+                                            Important
+                                        </div>
+                                        <div class="divider"></div>
                                         <div class="item" data-server="server 1">
                                             <i class="edit icon"></i> Edit Post</div>
                                         <div class="item" data-server="server 2">
@@ -64,21 +69,20 @@
                             </div>
                         </td>
 
-                        <!-- Topic Setter -->
-                        <td class="nopad right" style="min-width: 250px!important;">
-                            <div class="ui fluid labeled input">
+                        <!-- Topic Picker -->
+                        <td class="nopad right" style="min-width: 300px!important;">
+                            <div class="ui right action fluid left labeled input">
                                 <div class="ui label">
                                     topic
                                 </div>
-                                <input type="text" placeholder="/dragonfly/Basement/Receiver/Status" value="/dragonfly/Basement/Receiver/Status">
-                            </div>
-                        </td>
 
-                        <!-- Subscribe Button -->
-                        <td class="pad2 right" style="width: 110px!important;">
-                            <button class="ui fluid compact primary button">
-                                Subscribe
-                            </button>
+                                <input id="iSubTopic" type='text' placeholder="/dragonfly/Basement/Receiver/Status" value="/dragonfly/Basement/Receiver/Status">
+
+                                <!-- create "subscribe to topic button" -->
+                                <button id="bSubscribe" class="ui primary icon small button">
+                                    Subscribe
+                                </button>
+                            </div>
                         </td>
 
                         <!-- Divider -->
@@ -86,26 +90,23 @@
 
                         <td class="nopad right" style="width:130px">
                             <div class="ui icon small compact buttons">
-                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" 
-                                class="ui icon button box-shadow">
+                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
                                     <div class="ui text small">dataset</div>
                                 </button>
-                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" 
-                                class="ui icon primary button box-shadow">
+                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon primary button box-shadow">
                                     <i class="icon rss"></i>
                                 </button>
-                                <button data-tooltip="retained message snapshot" data-position="bottom right" 
-                                class="ui basic icon button box-shadow">
+                                <button data-tooltip="retained message snapshot" data-position="bottom right" class="ui basic icon button box-shadow">
                                     <i class="icon camera"></i>
                                 </button>
                             </div>
                         </td>
                         <td class="nopad right" style="width:130px;">
                             <div class="ui icon small compact buttons">
-                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow" >
+                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
                                     <div class="ui text small">display</div>
                                 </button>
-                                <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box=shadow">
+                                <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
                                     <i class="icon sitemap"></i>
                                 </button>
                                 <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
@@ -121,6 +122,86 @@
                                 <i class="caret down large icon compact nomargin"></i>
                             </a>
                         </td>
+
+                    </tr>
+                </tbody>
+            </table>
+            <table class="ui fixed compact small table nomargin attach top">
+                <tbody>
+                    <tr>
+                        
+                        <!-- Topic Picker -->
+                        <td class="nopad right" style="min-width: 300px!important;">
+                            <div class="ui fluid left labeled input">
+                                <div class="ui label">
+                                    topic
+                                </div>
+
+                                <input id="iPubTopic" type='text' placeholder="/dragonfly/Basement/Receiver/command" value="/dragonfly/Basement/Receiver/Command">
+
+                            </div>
+                        </td>
+                        <td class="td-divider"></td>
+                        <td class="nopad right" style="width: 90px!important;">
+                            <div class="ui icon small compact buttons">
+                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
+                                    <div class="ui text small">retain</div>
+                                </button>
+                                <button data-tooltip="tree view" data-position="bottom right" class="ui icon basic button box-shadow">
+                                        <input type="checkbox">
+                                        <label></label>
+                                </button>
+                                
+                            </div>
+                        </td>
+                        <td class="nopad right" style="width: 116px!important;">
+                                <div class="ui icon small compact buttons">
+                                    <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
+                                        <div class="ui text small">qos</div>
+                                    </button>
+                                    <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                            <span class="">0</span>
+                                    </button>
+                                    <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                            <span class="">1</span>
+                                    </button>
+                                    <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                            <span class="">2</span>
+                                    </button>
+                                    
+                                </div>
+                            </td>
+                        <td class="td-divider"></td>
+                        <!-- Payload -->
+                        <td class="nopad right" style="min-width: 280px!important;">
+                                <div class="ui right action fluid left labeled input">
+                                    <div class="ui label" style="width:66px">
+                                        payload
+                                    </div>
+    
+                                    <input id="iPubPayload" class="cursor pointer" type='text' value='{"command":"test command", "value":"234"}' readonly>
+    
+                                    <!-- create drop down icon and force it into the input box
+                                        <div class="input-icon">
+                                            <i id="iPubPayloadEdit" class='dropdown icon'></i>
+                                        </div>-->
+                                    <!-- create "connect to server button" -->
+                                    <button class="ui icon button">
+                                        <i class="icon ellipsis horizontal"></i>
+                                    </button>
+                                    <button id="bPublish" class="ui primary icon small button">
+                                            Publish
+                                        </button>
+                                </div>
+                            </td>
+                            <td class="td-divider"></td>
+
+                            <td class="nopad left right" style="width:28px; text-align: center">
+                                <a class="ui compact">
+                                    <i class="caret down large icon compact nomargin"></i>
+                                </a>
+                            </td>
+
                     </tr>
                 </tbody>
             </table>
