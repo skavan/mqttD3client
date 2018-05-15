@@ -24,130 +24,125 @@
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js"></script>
 
-    <script type="text/javascript">
-        window.onload = function () {
-
-            /* $('.ui.dropdown').dropdown();
-
-            $('#DropDownListCategoryClone').dropdown('set selected', 'Female'); */
-
-            $("#dd, #pickServer").click(function () {
-                //alert( "Handler for .click() called." );
-                $("#mm").dropdown('toggle');
-                var offset = $("#pickServer").offset();
-                $( "#mm" ).offset({ top: offset.top + $("#pickServer").outerHeight(), left: offset.left });
-                console.log('toggle');
-            });
-
-            $('#mm').dropdown({
-                onChange: function (value, text, $choice) {
-                    
-                    console.log($choice.data('server'));
-                    $('#pickServer').val($choice.data('server'))
-                }
-            })
-        }
-    </script>
-
 </head>
 
 <body>
     <div class="container">
         <div class="box main-header">
-            <table class="ui fixed table compact small">
+            <!-- header section -->
+            <table class="ui fixed compact small table nomargin">
                 <tbody>
+                    <!-- Row 1: Connect and Subscribe -->
                     <tr>
-                        <td class="" style="width:12em;">
+                        <!-- Server Picker -->
+                        <td class="nopad right" style="width: 220px!important;">
                             <div class="ui right action fluid left labeled input">
                                 <div class="ui label">
                                     server
                                 </div>
-                                
-                                <input id="pickServer" name='DropDownListCategoryClone' type='text' value="dragonfly rpi" readonly style="cursor: pointer!important">
-                                
 
-                                <div style="position:relative">
-                                        <i id="dd" class='dropdown icon inputBoxRight'></i>
-                        
+                                <input id="pickServer" class="cursor pointer" type='text' value="dragonfly rpi" readonly>
+                                <!-- drop down server picker menu -->
+                                <div id="mm" class="ui dropdown ">
+                                    <div id="serverpick" class="menu">
+                                        <div class="item" data-server="server 1">
+                                            <i class="edit icon"></i> Edit Post</div>
+                                        <div class="item" data-server="server 2">
+                                            <i class="delete icon"></i> Remove Post</div>
+                                        <div class="item" data-server="server 3">
+                                            <i class="hide icon"></i> Hide Post</div>
                                     </div>
-                        
+                                </div>
+                                <!-- create drop down icon and force it into the input box-->
+                                <div class="input-icon">
+                                    <i id="dd" class='dropdown icon'></i>
+                                </div>
+                                <!-- create "connect to server button" -->
                                 <button class="ui primary icon button">
                                     <i class="icon world"></i>
                                 </button>
                             </div>
                         </td>
-                        <td class="" style="width:60px">
-                            <button class="ui icon button">
-                                <i class="icon settings"></i>
+
+                        <!-- Topic Setter -->
+                        <td class="nopad right" style="min-width: 250px!important;">
+                            <div class="ui fluid labeled input">
+                                <div class="ui label">
+                                    topic
+                                </div>
+                                <input type="text" placeholder="/dragonfly/Basement/Receiver/Status" value="/dragonfly/Basement/Receiver/Status">
+                            </div>
+                        </td>
+
+                        <!-- Subscribe Button -->
+                        <td class="pad2 right" style="width: 110px!important;">
+                            <button class="ui fluid compact primary button">
+                                Subscribe
                             </button>
                         </td>
-        </div>
-        <div id="mm" class="ui dropdown floating " >
-            <div id="serverpick" class="menu">
-                <div class="item" data-server="server 1">
-                    <i class="edit icon"></i> Edit Post</div>
-                <div class="item" data-server="server 2">
-                    <i class="delete icon"></i> Remove Post</div>
-                <div class="item" data-server="server 3">
-                    <i class="hide icon"></i> Hide Post</div>
-            </div>
-        </div>
-        <!-- -webkit-box-shadow: -1px 0 0 0 rgba(34,36,38,.15);
-                        box-shadow: -1px 0 0 0 rgba(34,36,38,.15); -->
 
-        <td class="five wide">
-            <div class="ui fluid labeled input">
-                <div class="ui label">
-                    topic
-                </div>
-                <input type="text" placeholder="/dragonfly/Basement/Receiver/Status" value="/dragonfly/Basement/Receiver/Status">
-            </div>
-        </td>
-        <td class="" style="width:100px">
-            <button class="ui fluid disabled small button">
-                Subscribe
-            </button>
-        </td>
-        <td class="" style="width:24px; padding:1px;text-align: right">
-            <a class="item">
-                <i class="caret down icon large"></i>
-            </a>
-        </td>
+                        <!-- Divider -->
+                        <td class="td-divider"></td>
 
+                        <td class="nopad right" style="width:130px">
+                            <div class="ui icon small compact buttons">
+                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" 
+                                class="ui icon button box-shadow">
+                                    <div class="ui text small">dataset</div>
+                                </button>
+                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" 
+                                class="ui icon primary button box-shadow">
+                                    <i class="icon rss"></i>
+                                </button>
+                                <button data-tooltip="retained message snapshot" data-position="bottom right" 
+                                class="ui basic icon button box-shadow">
+                                    <i class="icon camera"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="nopad right" style="width:130px;">
+                            <div class="ui icon small compact buttons">
+                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow" >
+                                    <div class="ui text small">display</div>
+                                </button>
+                                <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box=shadow">
+                                    <i class="icon sitemap"></i>
+                                </button>
+                                <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                    <i class="icon th"></i>
+                                </button>
+                            </div>
+                        </td>
 
-        </tr>
-        <tr class="hidden">
-            <td>Jamie</td>
-            <td>Approved</td>
-            <td>32</td>
-            <td>Male</td>
-            <td>Male</td>
+                        <td class="td-divider"></td>
 
-        </tr>
-
-        </tbody>
-
-        </table>
-
-    </div>
-
-
-    <div class="box main-content">
-        <!-- main content -->
-        <!-- <div class="box report-title">report title</div> -->
-        <div class="box report-body">
-            <!-- <table id="example" class="ui celled table compact" cellspacing="0" width="100%"> -->
-            <table id="example" class="ui celled compact structured striped table nowrap" cellspacing="0" width="100%">
-                <tfoot>
-                    <tr>
-
+                        <td class="nopad left right" style="width:28px; text-align: center">
+                            <a class="ui compact">
+                                <i class="caret down large icon compact nomargin"></i>
+                            </a>
+                        </td>
                     </tr>
-                </tfoot>
+                </tbody>
             </table>
         </div>
-        <div class="box report-footer">report footer</div>
-    </div>
-    <div class="box main-footer">main footer</div>
+
+
+        <div class="box main-content">
+            <!-- main content -->
+            <!-- <div class="box report-title">report title</div> -->
+            <div class="box report-body">
+                <!-- <table id="example" class="ui celled table compact" cellspacing="0" width="100%"> -->
+                <table id="example" class="ui celled compact structured striped table nowrap" cellspacing="0" width="100%">
+                    <tfoot>
+                        <tr>
+
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="box report-footer">report footer</div>
+        </div>
+        <div class="box main-footer">main footer</div>
     </div>
 
     <script type="text/javascript" charset="utf-8">
@@ -164,7 +159,24 @@
             table.buttons().container()
                 .appendTo($('div.eight.column:eq(0)', table.table().container()));
 
+            $("#dd, #pickServer").click(function () {
+                //alert( "Handler for .click() called." );
+                $("#mm").dropdown('toggle');
+                var offset = $("#pickServer").offset();
+                $("#mm").offset({
+                    top: offset.top, // + $("#pickServer").outerHeight()
+                    left: offset.left
+                });
+                console.log('toggle');
+            });
 
+            $('#mm').dropdown({
+                onChange: function (value, text, $choice) {
+
+                    console.log($choice.data('server'));
+                    $('#pickServer').val($choice.data('server'))
+                }
+            })
 
             function setupDataTable() {
                 return $('#example').DataTable({
@@ -267,19 +279,6 @@
             }
         });
     </script>
-    <div class="ui active modal">
-        <div class="header">Header</div>
-        <div class="content">
-            <p></p>
-            <p></p>
-            <p></p>
-        </div>
-        <div class="actions">
-            <div class="ui approve button">Approve</div>
-            <div class="ui button">Neutral</div>
-            <div class="ui cancel button">Cancel</div>
-        </div>
-    </div>
 </body>
 
 </html>
