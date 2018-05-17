@@ -38,7 +38,7 @@
             "type": "chrome",
             "request": "launch",
             "sourceMaps": true,
-            "runtimeArgs": ["--allow-file-access-from-files"],
+            "runtimeArgs": ["--allow-file-access-from-files"], // handles CORS
             "file": "${workspaceFolder}/semantic.html"
         }
     ]
