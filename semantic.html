@@ -28,8 +28,8 @@
 
 <body>
     <div class="container">
+        <!-- header section :: select a server, select a subscribe branch and connect -->
         <div class="box main-header">
-            <!-- header section -->
             <table class="ui fixed compact small table nomargin">
                 <tbody>
                     <!-- Row 1: Connect and Subscribe -->
@@ -45,17 +45,21 @@
                                 <!-- drop down server picker menu -->
                                 <div id="mm" class="ui dropdown ">
                                     <div id="serverpick" class="menu">
-                                        <div class="item">
-                                            <div class="ui red empty circular label"></div>
-                                            Important
+                                        <div class="item" data-server="server 1">
+                                            <i class="red globe icon"></i> 
+                                            Server #1
+                                        </div>
+                                        <div class="item" data-server="server 2">
+                                                <i class="green globe icon"></i> 
+                                                Server #2
                                         </div>
                                         <div class="divider"></div>
-                                        <div class="item" data-server="server 1">
-                                            <i class="edit icon"></i> Edit Post</div>
-                                        <div class="item" data-server="server 2">
-                                            <i class="delete icon"></i> Remove Post</div>
-                                        <div class="item" data-server="server 3">
-                                            <i class="hide icon"></i> Hide Post</div>
+                                        <div class="item">
+                                            <i class="edit icon"></i> Edit Server</div>
+                                        <div class="item" >
+                                            <i class="trash icon"></i> Delete Server</div>
+                                        <div class="item">
+                                            <i class="file alternate icon"></i> Add Server</div>
                                     </div>
                                 </div>
                                 <!-- create drop down icon and force it into the input box-->
@@ -126,10 +130,30 @@
                     </tr>
                 </tbody>
             </table>
-            <table class="ui fixed compact small table nomargin attach top">
+        </div>
+
+        <!-- main content area :: for displaying table or d3 hierarchy chart-->
+        <div class="box main-content">
+            <!-- <div class="box report-header">not used right now - but potentially a location for our chart toolbar?</div> -->
+            
+            <div class="box report-body">
+                <table id="example" class="ui celled compact structured striped table nowrap" cellspacing="0" width="100%">
+                    <tfoot>
+                        <tr>
+                            <!--data table is inserted here-->
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="box report-footer">unused footer area - perhaps remove for addition height? or ditch the table footer and use this area..</div>
+        </div>
+
+        <!--main footer area for publish to mqtt functionality-->
+        <div class="box main-footer">
+            <table class="ui fixed compact small table nomargin">
                 <tbody>
                     <tr>
-                        
                         <!-- Topic Picker -->
                         <td class="nopad right" style="min-width: 300px!important;">
                             <div class="ui fluid left labeled input">
@@ -148,59 +172,54 @@
                                     <div class="ui text small">retain</div>
                                 </button>
                                 <button data-tooltip="tree view" data-position="bottom right" class="ui icon basic button box-shadow">
-                                        <input type="checkbox">
-                                        <label></label>
+                                    <input type="checkbox">
+                                    <label></label>
                                 </button>
-                                
+
                             </div>
                         </td>
                         <td class="nopad right" style="width: 116px!important;">
-                                <div class="ui icon small compact buttons">
-                                    <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
-                                        <div class="ui text small">qos</div>
-                                    </button>
-                                    <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
-                                            <span class="">0</span>
-                                    </button>
-                                    <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
-                                            <span class="">1</span>
-                                    </button>
-                                    <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
-                                            <span class="">2</span>
-                                    </button>
-                                    
-                                </div>
-                            </td>
+                            <div class="ui icon small compact buttons">
+                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
+                                    <div class="ui text small">qos</div>
+                                </button>
+                                <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                    <span class="">0</span>
+                                </button>
+                                <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                    <span class="">1</span>
+                                </button>
+                                <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                    <span class="">2</span>
+                                </button>
+
+                            </div>
+                        </td>
                         <td class="td-divider"></td>
                         <!-- Payload -->
                         <td class="nopad right" style="min-width: 280px!important;">
-                                <div class="ui right action fluid left labeled input">
-                                    <div class="ui label" style="width:66px">
-                                        payload
-                                    </div>
-    
-                                    <input id="iPubPayload" class="cursor pointer" type='text' value='{"command":"test command", "value":"234"}' readonly>
-    
-                                    <!-- create drop down icon and force it into the input box
-                                        <div class="input-icon">
-                                            <i id="iPubPayloadEdit" class='dropdown icon'></i>
-                                        </div>-->
-                                    <!-- create "connect to server button" -->
-                                    <button class="ui icon button">
-                                        <i class="icon ellipsis horizontal"></i>
-                                    </button>
-                                    <button id="bPublish" class="ui primary icon small button">
-                                            Publish
-                                        </button>
+                            <div class="ui right action fluid left labeled input">
+                                <div class="ui label" style="width:66px">
+                                    payload
                                 </div>
-                            </td>
-                            <td class="td-divider"></td>
 
-                            <td class="nopad left right" style="width:28px; text-align: center">
-                                <a class="ui compact">
-                                    <i class="caret down large icon compact nomargin"></i>
-                                </a>
-                            </td>
+                                <input id="iPubPayload" class="cursor pointer" type='text' value='{"command":"test command", "value":"234"}' readonly>
+
+                                <button class="ui icon button">
+                                    <i class="icon ellipsis horizontal"></i>
+                                </button>
+                                <button id="bPublish" class="ui primary icon small button">
+                                    Publish
+                                </button>
+                            </div>
+                        </td>
+                        <td class="td-divider"></td>
+
+                        <td class="nopad left right" style="width:28px; text-align: center">
+                            <a class="ui compact">
+                                <i class="caret up large icon compact nomargin"></i>
+                            </a>
+                        </td>
 
                     </tr>
                 </tbody>
@@ -208,24 +227,92 @@
         </div>
 
 
-        <div class="box main-content">
-            <!-- main content -->
-            <!-- <div class="box report-title">report title</div> -->
-            <div class="box report-body">
-                <!-- <table id="example" class="ui celled table compact" cellspacing="0" width="100%"> -->
-                <table id="example" class="ui celled compact structured striped table nowrap" cellspacing="0" width="100%">
-                    <tfoot>
-                        <tr>
+        <!-- work in progress :: a content body for displaying in a modal popup to enter a new server configuration -->
+        <!-- toggle the display none attribute and give it somewhere to be-->
+        <div style="display:none; width:480px!important; padding:1em;">
+            <div class="ui compact small grid">
+                <div class="row">
+                    <div class="column sixteen wide">
+                        <div class="ui fluid left labeled small input">
+                            <div class="ui label fixed70">name</div>
+                            <input id="iSubTopic" type='text' placeholder="unique name" value="unique name">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column sixteen wide">
+                        <div class="ui fluid left labeled small input">
+                            <div class="ui label fixed70">client id</div>
+                            <input id="iSubTopic" type='text' placeholder="unique client id" value="AGDGDGSK-2162626262">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column nine wide">
+                        <div class="ui fluid left labeled small input">
+                            <div class="ui label fixed70">host</div>
+                            <input id="iSubTopic" type='text' placeholder="ip address or url" value="www.myserver.com">
+                        </div>
+                    </div>
+                    <div class="column seven wide">
+                        <div class="ui fluid left labeled small input">
+                            <div class="ui label fixed50">port</div>
+                            <input id="iSubTopic" type='text' placeholder="port #" value="1884">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column nine wide">
+                        <div class="ui fluid left labeled small input">
+                            <div class="ui label fixed70">user id</div>
+                            <input id="iSubTopic" type='text' placeholder="ip address or url" value="www.myserver.com">
+                        </div>
+                    </div>
+                    <div class="column seven wide">
+                        <div class="ui fluid left labeled small input">
+                            <div class="ui label fixed50">pwd</div>
+                            <input id="iSubTopic" type='text' placeholder="port #" value="1884">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column nine wide">
+                        <div class="ui icon buttons small fluid">
+                            <button data-tooltip="realtime feed (1,000 records)" data-position="bottom left" class="ui icon button box-shadow fixed70">
+                                <div class="ui text">protocol</div>
+                            </button>
+                            <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                <span class="">mqtt/tcp</span>
+                            </button>
+                            <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                <span class="">mqtts/tls</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="column seven wide">
+                        <div class="ui icon buttons small fluid">
+                            <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow fixed50">
+                                <div class="ui text small">qos</div>
+                            </button>
+                            <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                <span class="">0</span>
+                            </button>
+                            <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                <span class="">1</span>
+                            </button>
+                            <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                <span class="">2</span>
+                            </button>
 
-                        </tr>
-                    </tfoot>
-                </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div class="box report-footer">report footer</div>
         </div>
-        <div class="box main-footer">main footer</div>
     </div>
 
+    <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function () {
             var jsonData = [];

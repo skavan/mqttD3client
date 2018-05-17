@@ -1,108 +1,135 @@
 /* flex layout */
-
 .container {
-    height: 100%;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  .container .box {
-    display: flex;
-    flex-direction: column;
-    /* justify-content: center; */
-  }
-  .container .main-header {
-    background:#eee;
-    padding: 0.5em;
-  }
-  .container .main-content {
-    background-color: blue;
-    flex: 1;
-  }
-  .container .main-footer {
-    background-color: red;
-    height: 60px;
-  }
-  .container .report-title {
-    background-color: yellow;
-    height: 30px;
-  }
-  .container .report-body {
-    background-color:white;
-    flex: 1;
-    align-items: top;
-    padding: 1em 1em;
-  }
-  
-  .container .report-footer {
-    background-color: white;
-    text-align: right;
-    height: 30px;
-  }
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
-  .segment.hidden, tr.hidden{
-    display: none;
-    }
+.container .box {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+}
 
-  /* put icon on right side of input box */
-  .inputBoxRight {
-    position: absolute;
-    right: 0;
-    bottom: 1em;
-  }
+.container .main-header {
+  background: #eee;
+  padding: 0.5em;
+}
 
-  /* allow menus and tooltips to display outside th/td container */
-  .ui.fixed.table th, .ui.fixed.table td {
-      overflow: visible!important;
-      text-overflow: ellipsis;
-  }
+.container .main-content {
+  /* background-color: blue; */
+  flex: 1;
+}
 
-  .nopad.right{
-    padding-right: 0px!important;
-  }
-  .nopad.left{
-    padding-left: 0px!important;
-  }
+.container .main-footer {
+  background: #eee;
+  padding: 0.5em;
+}
 
-  .pad2.right{
-    padding-right: 2px!important;
-  }
+.container .report-title {
+  background-color: yellow;
+  height: 30px;
+}
 
-  .nomargin {
-    margin: 0!important;
-  }
+.container .report-body {
+  background-color: white;
+  flex: 1;
+  align-items: top;
+  padding: 1em 1em;
+}
 
-  /* put icon on right side of input box */
-  .input-icon {
-    position: relative;
-  }
-  .input-icon i{
-    position: absolute;
-    right: 0;
-    bottom: 1em;
-  }
+.container .report-footer {
+  background-color: white;
+  text-align: right;
+  padding-left: 1em;
+  padding-right: 1em;
+  height: 30px;
+}
 
-  /* make the cursor a hand */
-  .cursor.pointer{
-    cursor: pointer!important;
-  }
+/* maybe redundant -- need to check */
+.segment.hidden,
+tr.hidden {
+  display: none;
+}
 
-  /* a one pixel wide vertical divider*/
-  .td-divider{
-    
-    padding-left: 4px!important;
-    padding-right: 4px!important;
-    width:1px; 
-    border-right-width: 1px!important; 
-    border-right-style: solid; 
-    border-right-color:rgba(34, 36, 38, 0.15) 
-  }
+/* cheat to put drop down or other icon on the right side of input box */
+.inputBoxRight {
+  position: absolute;
+  right: 0;
+  bottom: 1em;
+}
 
-  .button.box-shadow{
-    box-shadow: 0px 0px 0px 0.5px rgba(34, 36, 38, 0.15) !important;
-  }
+/* allow menus and tooltips to overflow, display outside th/td container */
+.ui.fixed.table th,
+.ui.fixed.table td {
+  overflow: visible !important;
+  text-overflow: ellipsis;
+}
 
-  /*fix main table footer height-so it always appears below table body*/
- .dataTables_scrollBody{
-     height: auto!important;
-  } 
+/* special styles to force nopadding/small padding/nomargin */
+.nopad.right {
+  padding-right: 0px !important;
+}
+
+.nopad.left {
+  padding-left: 0px !important;
+}
+
+.pad2.right {
+  padding-right: 2px !important;
+}
+
+.nomargin {
+  margin: 0 !important;
+}
+
+/* put icon on right side of input box -- is this used? */
+.input-icon {
+  position: relative;
+}
+
+/* put icon on right side of input box -- is this used? */
+.input-icon i {
+  position: absolute;
+  right: 0;
+  bottom: 1em;
+}
+
+/* make the cursor a hand */
+.cursor.pointer {
+  cursor: pointer !important;
+}
+
+/* a one pixel wide vertical divider for a table cell */
+.td-divider {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+  width: 1px;
+  border-right-width: 1px !important;
+  border-right-style: solid;
+  border-right-color: rgba(34, 36, 38, 0.15)
+}
+
+/* force a box-shadow on semantic button styles that don't have one */
+.button.box-shadow {
+  box-shadow: 0px 0px 0px 0.5px rgba(34, 36, 38, 0.15) !important;
+}
+
+/* fixed label widths - for left attached labels*/
+.label.fixed70,
+.button.fixed70 {
+  width: 70px !important;
+  max-width: 70px !important;
+}
+
+.label.fixed50,
+.button.fixed50 {
+  width: 50px !important;
+  max-width: 50px !important;
+}
+
+/*fix main table footer height-so it always appears below table body :: this is important. some bug in datatables requires this. */
+.dataTables_scrollBody {
+  height: auto !important;
+}
