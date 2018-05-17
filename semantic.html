@@ -46,17 +46,17 @@
                                 <div id="mm" class="ui dropdown ">
                                     <div id="serverpick" class="menu">
                                         <div class="item" data-server="server 1">
-                                            <i class="red globe icon"></i> 
+                                            <i class="red globe icon"></i>
                                             Server #1
                                         </div>
                                         <div class="item" data-server="server 2">
-                                                <i class="green globe icon"></i> 
-                                                Server #2
+                                            <i class="green globe icon"></i>
+                                            Server #2
                                         </div>
                                         <div class="divider"></div>
                                         <div class="item">
                                             <i class="edit icon"></i> Edit Server</div>
-                                        <div class="item" >
+                                        <div class="item">
                                             <i class="trash icon"></i> Delete Server</div>
                                         <div class="item">
                                             <i class="file alternate icon"></i> Add Server</div>
@@ -135,7 +135,7 @@
         <!-- main content area :: for displaying table or d3 hierarchy chart-->
         <div class="box main-content">
             <!-- <div class="box report-header">not used right now - but potentially a location for our chart toolbar?</div> -->
-            
+
             <div class="box report-body">
                 <table id="example" class="ui celled compact structured striped table nowrap" cellspacing="0" width="100%">
                     <tfoot>
@@ -225,226 +225,29 @@
                 </tbody>
             </table>
         </div>
-
-
-        <!-- work in progress :: a content body for displaying in a modal popup to enter a new server configuration -->
-        <!-- toggle the display none attribute and give it somewhere to be-->
-        <div style="display:none; width:480px!important; padding:1em;">
-            <div class="ui compact small grid">
-                <div class="row">
-                    <div class="column sixteen wide">
-                        <div class="ui fluid left labeled small input">
-                            <div class="ui label fixed70">name</div>
-                            <input id="iSubTopic" type='text' placeholder="unique name" value="unique name">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="column sixteen wide">
-                        <div class="ui fluid left labeled small input">
-                            <div class="ui label fixed70">client id</div>
-                            <input id="iSubTopic" type='text' placeholder="unique client id" value="AGDGDGSK-2162626262">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="column nine wide">
-                        <div class="ui fluid left labeled small input">
-                            <div class="ui label fixed70">host</div>
-                            <input id="iSubTopic" type='text' placeholder="ip address or url" value="www.myserver.com">
-                        </div>
-                    </div>
-                    <div class="column seven wide">
-                        <div class="ui fluid left labeled small input">
-                            <div class="ui label fixed50">port</div>
-                            <input id="iSubTopic" type='text' placeholder="port #" value="1884">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="column nine wide">
-                        <div class="ui fluid left labeled small input">
-                            <div class="ui label fixed70">user id</div>
-                            <input id="iSubTopic" type='text' placeholder="ip address or url" value="www.myserver.com">
-                        </div>
-                    </div>
-                    <div class="column seven wide">
-                        <div class="ui fluid left labeled small input">
-                            <div class="ui label fixed50">pwd</div>
-                            <input id="iSubTopic" type='text' placeholder="port #" value="1884">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="column nine wide">
-                        <div class="ui icon buttons small fluid">
-                            <button data-tooltip="realtime feed (1,000 records)" data-position="bottom left" class="ui icon button box-shadow fixed70">
-                                <div class="ui text">protocol</div>
-                            </button>
-                            <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
-                                <span class="">mqtt/tcp</span>
-                            </button>
-                            <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
-                                <span class="">mqtts/tls</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="column seven wide">
-                        <div class="ui icon buttons small fluid">
-                            <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow fixed50">
-                                <div class="ui text small">qos</div>
-                            </button>
-                            <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
-                                <span class="">0</span>
-                            </button>
-                            <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
-                                <span class="">1</span>
-                            </button>
-                            <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
-                                <span class="">2</span>
-                            </button>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
     </div>
 
     <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
+    <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function () {
-            var jsonData = [];
-            setupData();
-
-            $(window).resize(processResize)
-                .trigger('resize');
-
-            var table = setupDataTable();
-
-            table.buttons().container().addClass('small')
-            table.buttons().container()
-                .appendTo($('div.eight.column:eq(0)', table.table().container()));
-
+            // pick a mqtt server drop down - need to cleanup names
             $("#dd, #pickServer").click(function () {
-                //alert( "Handler for .click() called." );
                 $("#mm").dropdown('toggle');
                 var offset = $("#pickServer").offset();
                 $("#mm").offset({
                     top: offset.top, // + $("#pickServer").outerHeight()
                     left: offset.left
                 });
-                console.log('toggle');
             });
 
+            // process dropdown pick!
             $('#mm').dropdown({
                 onChange: function (value, text, $choice) {
-
-                    console.log($choice.data('server'));
+                    //console.log($choice.data('server'));
                     $('#pickServer').val($choice.data('server'))
                 }
             })
-
-            function setupDataTable() {
-                return $('#example').DataTable({
-                    data: jsonData,
-                    columns: [{
-                            data: "date",
-                            "title": "timestamp",
-                            "render": function (data) {
-                                var d = new Date(data);
-                                return d.toLocaleString();
-                            }
-                        },
-                        {
-                            data: "qos",
-                            "title": "qos"
-                        },
-                        {
-                            data: "retain",
-                            "title": "retain"
-                        },
-                        {
-                            data: "topic",
-                            "title": "topic"
-                        },
-                        {
-                            data: "payload",
-                            "title": "payload"
-                        }
-                    ],
-                    lengthChange: true,
-                    scrollResize: true,
-                    scrollCollapse: true,
-                    scrollX: true,
-                    scrollY: true,
-                    paging: false,
-                    "info": false,
-                    buttons: ['copy', 'excel', 'pdf', 'colvis'],
-                    fnFooterCallback: function (row, data, start, end, display) {
-                        console.log("footer");
-                        row.innerHTML = '<th rowspan="1" colspan="1" style="width: 100%;">' + data.length +
-                            ' records.</th>';
-                    },
-                    "initComplete": function () {
-                        //var api = this.api();
-                        //api.$('td').click( function () {
-                        //api.search( this.innerHTML ).draw();
-                        cleanupTable();
-                        console.log("inited");
-                        processResize();
-                    },
-                    "preDrawCallback": function (settings) {
-                        console.log("predraw");
-                    }
-                });
-            }
-
-            function processResize() {
-                var hw = $('#example>thead>tr:eq(0)>th').eq(0).width(); // get width of first header element
-                var dw = $('#example>tbody>tr:eq(0)>td').eq(0).width();
-                if (hw) {
-                    console.log(hw, dw);
-                    if (hw != dw) {
-                        $('#example>thead>tr:eq(0)>th:eq(0)').width(dw);
-                    }
-                }
-
-                /*                     console.log("resize");
-                                    $("dataTables_scrollBody").css({"height": ""}); */
-            }
-
-            function cleanupTable() {
-                $('div.dataTables_filter label').replaceWith(
-                    `<div id='searchBox1' class="ui labeled input small">
-                                <div class="ui label">
-                                    search
-                                </div>
-                                <input type="text" style="margin-left:0" aria-controls="example" placeholder="enter search term...">
-                            </div>`
-                );
-            }
-
-            function setupData() {
-                var date1 = new Date(2018, 01, 01);
-                var date2 = new Date(2018, 05, 11);
-                for (i = 0; i < 30; i++) {
-                    jElement = {
-                        date: randomDate(date1, date2),
-                        qos: Math.floor(Math.random() * 3) + 1,
-                        retain: Math.random() >= 0.5,
-                        topic: "/dragonfly/Basement/" + i,
-                        payload: i
-                    };
-                    jsonData.push(jElement);
-                }
-            }
-
-            function randomDate(start, end) {
-                var date = new Date(+start + Math.random() * (end - start));
-                return date;
-            }
         });
     </script>
 </body>
