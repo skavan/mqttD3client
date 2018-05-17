@@ -1,0 +1,149 @@
+<html>
+<header>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
+    <link rel="stylesheet" href="css/semantic.css">
+    <title>Modal Form Entry</title>
+</header>
+
+<body>
+    <div class="container">
+        <div class="box main-header">
+            <div>
+                <button id="showModal" class="ui primary icon large button">
+                    <i class="icon world"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="ui modal tiny">
+            <i class="close icon"></i>
+            <!--Top Menu Bar-->
+            <div class="ui active top attached menu fluid" style="margin:0;background-color: #E8E8E8;">
+                <div class="left item borderless fluid" style="width:350px; display:inline-block; overflow:hidden; white-space: nowrap!important; text-overflow:ellipsis!important;">
+                    Add/Edit a Server Connection
+                </div>
+                <div class="right menu">
+                    <div id="iBeautifyJson" class="ui icon item">
+                        <i class="indent icon"></i>
+                    </div>
+                    <div id="iMinifyJson" class="ui icon item">
+                        <i class="compress icon"></i>
+                    </div>
+                    <div class="ui icon item">
+                        <i class="wrench icon"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!--EDITOR and Content-->
+            <div class="content" style="width:100%; height:360px; padding:1em;">
+                <!-- work in progress :: a content body for displaying in a modal popup to enter a new server configuration -->
+                <!-- toggle the display none attribute and give it somewhere to be-->
+                <div style="width:100%; padding:1em;">
+                    <div class="ui compact small grid">
+                        <div class="row">
+                            <div class="column sixteen wide">
+                                <div class="ui fluid left labeled small input">
+                                    <div class="ui label fixed70">name</div>
+                                    <input id="iSubTopic" type='text' placeholder="unique name" value="unique name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="column sixteen wide">
+                                <div class="ui fluid left labeled small input">
+                                    <div class="ui label fixed70">client id</div>
+                                    <input id="iSubTopic" type='text' placeholder="unique client id" value="AGDGDGSK-2162626262">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="column nine wide">
+                                <div class="ui fluid left labeled small input">
+                                    <div class="ui label fixed70">host</div>
+                                    <input id="iSubTopic" type='text' placeholder="ip address or url" value="www.myserver.com">
+                                </div>
+                            </div>
+                            <div class="column seven wide">
+                                <div class="ui fluid left labeled small input">
+                                    <div class="ui label fixed50">port</div>
+                                    <input id="iSubTopic" type='text' placeholder="port #" value="1884">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="column nine wide">
+                                <div class="ui fluid left labeled small input">
+                                    <div class="ui label fixed70">user id</div>
+                                    <input id="iSubTopic" type='text' placeholder="donald@duck.com" value="donald@duck.com">
+                                </div>
+                            </div>
+                            <div class="column seven wide">
+                                <div class="ui fluid left labeled small input">
+                                    <div class="ui label fixed50">pwd</div>
+                                    <input id="iSubTopic" type='password' placeholder="*******" value="my password">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="column nine wide">
+                                <div class="ui icon buttons small fluid">
+                                    <button data-tooltip="realtime feed (1,000 records)" data-position="bottom left" class="ui icon button box-shadow fixed70">
+                                        <div class="ui text">protocol</div>
+                                    </button>
+                                    <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                        <span class="">mqtt/tcp</span>
+                                    </button>
+                                    <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                        <span class="">mqtts/tls</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="column seven wide">
+                                <div class="ui icon buttons small fluid">
+                                    <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow fixed50">
+                                        <div class="ui text small">qos</div>
+                                    </button>
+                                    <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                        <span class="">0</span>
+                                    </button>
+                                    <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                        <span class="">1</span>
+                                    </button>
+                                    <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                        <span class="">2</span>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- Action Footer -->
+            <div class="actions compact" style="padding: 0.5em">
+                <div class="ui small button">Cancel</div>
+                <div class="ui small button">OK</div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+            
+    
+            $("#iBeautifyJson, #iMinifyJson").click(function () {
+                // alert("handler for " + this.id + " clicked");
+            
+    
+            });
+            $("#showModal").click(function () {
+                //var editor = new JSONEditor(container, options, json);
+                $('.ui.modal').modal('show');
+            });
+        </script>
+</body>
+
+</html>
