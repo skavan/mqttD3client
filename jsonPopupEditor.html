@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
+    <title>ACE in Action</title>
+</head>
+
+<body>
+    <div>
+        <button id="showModal" class="ui primary icon button">
+            <i class="icon world"></i>
+        </button>
+    </div>
+
+    <div class="ui modal tiny">
+        <i class="close icon"></i>
+        <!--Top Menu Bar-->
+        <div class="ui active top attached menu fluid" style="margin:0;background-color: #E8E8E8;">
+            <div class="left item borderless fluid" style="width:350px; display:inline-block; overflow:hidden; white-space: nowrap!important; text-overflow:ellipsis!important;">
+                payload - dragonfly/main/status/receiver/power/command/lalala
+            </div>
+            <div class="right menu">
+                <div id="iBeautifyJson" class="ui icon item" >
+                    <i class="indent icon"></i>
+                </div>
+                <div id="iMinifyJson" class="ui icon item">
+                    <i class="compress icon"></i>
+                </div>
+                <div class="ui icon item">
+                    <i class="wrench icon"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!--EDITOR and Content-->
+        <div class="content" style="width:100%; height:500px; padding:0.5em;">
+            <div id="editor" style="height:100%; box-shadow: 1px 1px 8px rgba(0,0,0,0.35);">
+                [ { "payload": { "command": "power", "value": "status" } }, { "payload": { "command": "input","value": "status"} }, { "payload":
+                { "command": "audio signal", "value": "status" } }, { "payload": { "command": "video signal", "value": "status"
+                } }, { "payload": { "command": "volume", "value": "status" } }, { "payload": { "command": "surround", "value":
+                "status" } } ]
+            </div>
+        </div>
+        <!-- Action Footer -->
+        <div class="actions compact" style="padding: 0.5em">
+            <div class="ui small button">Cancel</div>
+            <div class="ui small button">OK</div>
+        </div>
+    </div>
+
+
+ 
+    <style>
+        div.ace_gutter {
+            background: none !important;
+            border-right: 1px solid rgba(34, 36, 38, 0.15)
+        }
+
+        .ace_editor {
+            border-radius: 4px !important;
+        }
+
+        /* .ace_active-line{
+            background: } */
+    </style>
+    <script src="./build/src/ace.js"></script>
+    <script src="./build/src/theme-tomorrow.js"></script>
+    <script src="./build/src/mode-json.js"></script>
+    <script src="./build/src/snippets/json.js"></script>
+    <script>
+        var editor = ace.edit("editor", {
+            highlightGutterLine: true,
+            highlightActiveLine: false
+        });
+        //editor.setWrapBehavioursEnabled(true);
+        editor.setTheme("ace/theme/tomorrow");
+        editor.session.setMode("ace/mode/json");
+        editor.session.setUseWrapMode(true);
+
+        $("#iBeautifyJson, #iMinifyJson").click(function () {
+            // alert("handler for " + this.id + " clicked");
+            var t = editor.getValue();
+            var p = JSON.parse(t);
+            if (p) {
+                if (this.id == 'iBeautifyJson'){
+                    editor.setValue(editor.setValue(JSON.stringify(p, null, '\t')), 1);
+                } else {
+                    editor.setValue(editor.setValue(JSON.stringify(p)), 1);
+                }
+            }
+            editor.clearSelection(); // This will remove the highlight over the text
+            /*             editor.setOptions({
+                        selectionStyle: "text"
+                        }) */
+
+        });
+        $("#showModal").click(function () {
+            //var editor = new JSONEditor(container, options, json);
+            $('.ui.modal').modal('show');
+        });
+    </script>
+</body>
+
+</html>
