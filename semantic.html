@@ -58,7 +58,7 @@
                                             <i class="edit icon"></i> Edit Server</div>
                                         <div class="item">
                                             <i class="trash icon"></i> Delete Server</div>
-                                        <div class="item">
+                                        <div id="addServer" class="item">
                                             <i class="file alternate icon"></i> Add Server</div>
                                     </div>
                                 </div>
@@ -133,7 +133,7 @@
         </div>
 
         <!-- main content area :: for displaying table or d3 hierarchy chart-->
-        <div class="box main-content">
+        <div id="mainContent" class="box main-content">
             <!-- <div class="box report-header">not used right now - but potentially a location for our chart toolbar?</div> -->
 
             <div class="box report-body">
@@ -229,6 +229,7 @@
 
     <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
     <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
+    
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function () {
             // pick a mqtt server drop down - need to cleanup names
@@ -248,6 +249,17 @@
                     $('#pickServer').val($choice.data('server'))
                 }
             })
+
+            //$( "#mainContent" ).load( "newServerModal.html #newServerModal" );
+
+            $("<div>").load("newServerModal.html #newServerModal", function() {
+               $("#mainContent").append($(this).html());
+            });
+
+            $("#addServer").click(function () {
+                $('#newServerModal').modal('show');
+            });
+
         });
     </script>
 </body>

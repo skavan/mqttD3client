@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        <div class="ui modal tiny">
+        <div id="newServerModal" class="ui modal tiny">
             <i class="close icon"></i>
             <!--Top Menu Bar-->
             <div class="ui active top attached menu fluid" style="margin:0;background-color: #E8E8E8;">
@@ -141,7 +141,7 @@
             });
             $("#showModal").click(function () {
                 //var editor = new JSONEditor(container, options, json);
-                $('.ui.modal').modal('show');
+                $('#newServerModal').modal('show');
             });
         </script>
 </body>
