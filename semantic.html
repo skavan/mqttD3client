@@ -45,18 +45,18 @@
                                 <!-- drop down server picker menu -->
                                 <div id="mm" class="ui dropdown ">
                                     <div id="serverpick" class="menu">
-                                        <div class="item" data-server="server 1">
+                                        <div class="item" itemType="choice" data-server="server 1">
                                             <i class="red globe icon"></i>
                                             Server #1
                                         </div>
-                                        <div class="item" data-server="server 2">
+                                        <div class="item" itemType="choice" data-server="server 2">
                                             <i class="green globe icon"></i>
                                             Server #2
                                         </div>
                                         <div class="divider"></div>
-                                        <div class="item">
+                                        <div id="editServer" class="item">
                                             <i class="edit icon"></i> Edit Server</div>
-                                        <div class="item">
+                                        <div id="deleteServer" class="item">
                                             <i class="trash icon"></i> Delete Server</div>
                                         <div id="addServer" class="item">
                                             <i class="file alternate icon"></i> Add Server</div>
@@ -229,9 +229,16 @@
 
     <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
     <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
-    
+    <script type="text/javascript" language="javascript" src="js/mqtt.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function () {
+            console.log("ready");
+            serverList = getServerList();
+            selectedServer = getSelectedServer(serverList);
+            fillServerUI(selectedServer);
+
+
+
             // pick a mqtt server drop down - need to cleanup names
             $("#dd, #pickServer").click(function () {
                 $("#mm").dropdown('toggle');
@@ -257,10 +264,38 @@
             });
 
             $("#addServer").click(function () {
+                
                 $('#newServerModal').modal('show');
             });
 
         });
+        function fillServerUI(selectedServer){
+            $("#pickServer").val(selectedServer.name) 
+            // delete existing list
+            $("#serverPick > div").each(function(){
+                if($(this).attr('itemType')=="choice"){
+                    $(this).remove();
+                }
+            });
+            // create new list
+            for (let item of serverList.servers){
+                let template=`<div class="item" itemType="choice" data-server="$(item.name)">
+                                            <i class="red globe icon"></i>
+                                            $(item.name)
+                                        </div>`
+                $("#serverPick").prepend(template)
+            }
+            // if no items, then hide edit/delete server buttons, else show them
+            if (serverList.servers.length==0){
+                $("#editServer").hide();
+                $("#deleteServer").hide();
+            } else {
+                $("#editServer").show();
+                $("#deleteServer").show();
+            }
+            // show last topic
+            $("#iSubTopic").val(selectedServer.topics[selectedServer.lastTopic]||null);
+        }
     </script>
 </body>
 
