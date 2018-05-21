@@ -25,8 +25,8 @@ var defaultServer = {
     "port": 1884,
     "userId": "",
     "password": "",
-    "protocol": "tcp",
-    "qos": 0,
+    "protocol": "tls",
+    "qos": 1,
     "timeout": 30,
     "keepAliveInternal": 60,
     "cleanSession": true,
@@ -47,10 +47,24 @@ function getServerList(){
     return getConnectionsFromLocalStorage() || serverList;
 }
 
+function updateServerList(serverList){
+    setConnectionsToLocalStorage(serverList);
+}
+
 function getSelectedServer(serverList){
     return serverList.servers.length > 0 ? serverList.servers[serverList.lastServer] : defaultServer;
 }
 
 function getConnectionsFromLocalStorage() {
-    return localStorage.getItem('connections');
+    let result =  localStorage.getItem('connections');
+    if (result){return JSON.parse(result);}
+    return undefined;
+}
+
+function setConnectionsToLocalStorage(serverList) {
+    localStorage.setItem('connections', JSON.stringify(serverList));
+}
+
+function clearLocalStorage(){
+    localStorage.clear();
 }

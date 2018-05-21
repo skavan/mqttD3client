@@ -21,7 +21,7 @@
             <i class="close icon"></i>
             <!--Top Menu Bar-->
             <div class="ui active top attached menu fluid" style="margin:0;background-color: #E8E8E8;">
-                <div class="left item borderless fluid" style="width:350px; display:inline-block; overflow:hidden; white-space: nowrap!important; text-overflow:ellipsis!important;">
+                <div id="formTitle" class="left item borderless fluid" style="width:350px; display:inline-block; overflow:hidden; white-space: nowrap!important; text-overflow:ellipsis!important;">
                     Add/Edit a Server Connection
                 </div>
                 <div class="right menu">
@@ -38,97 +38,228 @@
             </div>
 
             <!--EDITOR and Content-->
-            <div class="content" style="width:100%; height:360px; padding:1em;">
+            <form id="newServerForm" class="content ui form" style="width:100%; height:360px; padding:1em;">
                 <!-- work in progress :: a content body for displaying in a modal popup to enter a new server configuration -->
                 <!-- toggle the display none attribute and give it somewhere to be-->
                 <div style="width:100%; padding:1em;">
                     <div class="ui compact small grid">
                         <div class="row">
                             <div class="column sixteen wide">
-                                <div class="ui fluid left labeled small input">
+                                <div class="ui fluid left labeled small input field">
                                     <div class="ui label fixed70">name</div>
-                                    <input id="iSubTopic" type='text' placeholder="unique name" value="unique name">
+                                    <input id="name" type='text' placeholder="unique name" value="unique name">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column sixteen wide">
-                                <div class="ui fluid left labeled small input">
+                                <div class="ui fluid left labeled small input field">
                                     <div class="ui label fixed70">client id</div>
-                                    <input id="iSubTopic" type='text' placeholder="unique client id" value="AGDGDGSK-2162626262">
+                                    <input id="clientId" type='text' placeholder="unique client id" value="AGDGDGSK-2162626262">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column nine wide">
-                                <div class="ui fluid left labeled small input">
+                                <div class="ui fluid left labeled small input field">
                                     <div class="ui label fixed70">host</div>
-                                    <input id="iSubTopic" type='text' placeholder="ip address or url" value="www.myserver.com">
+                                    <input id="host" type='text' placeholder="ip address or url" value="www.myserver.com">
                                 </div>
                             </div>
                             <div class="column seven wide">
-                                <div class="ui fluid left labeled small input">
+                                <div class="ui fluid left labeled small input field">
                                     <div class="ui label fixed50">port</div>
-                                    <input id="iSubTopic" type='text' placeholder="port #" value="1884">
+                                    <input id="port" type='text' placeholder="port #" value="1884">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column nine wide">
-                                <div class="ui fluid left labeled small input">
+                                <div class="ui fluid left labeled small input field ">
                                     <div class="ui label fixed70">user id</div>
-                                    <input id="iSubTopic" type='text' placeholder="donald@duck.com" value="donald@duck.com">
+                                    <input id="userId" type='text' placeholder="donald@duck.com" value="donald@duck.com">
                                 </div>
                             </div>
                             <div class="column seven wide">
-                                <div class="ui fluid left labeled small input">
+                                <div class="ui fluid left labeled small input field">
                                     <div class="ui label fixed50">pwd</div>
-                                    <input id="iSubTopic" type='password' placeholder="*******" value="my password">
+                                    <input id="pwd" type='password' placeholder="*******">
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column nine wide">
-                                <div class="ui icon buttons small fluid">
-                                    <button data-tooltip="realtime feed (1,000 records)" data-position="bottom left" class="ui icon button box-shadow fixed70">
+                                <div id="protocol" class="ui icon buttons small fluid">
+                                    <button data-tooltip="" data-position="bottom left" class="ui icon button box-shadow fixed70">
                                         <div class="ui text">protocol</div>
                                     </button>
-                                    <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                    <button id="protocol_tcp" data-tooltip="tree view" data-position="bottom right" class="ui primary button box-shadow">
                                         <span class="">mqtt/tcp</span>
                                     </button>
-                                    <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                    <button id="protocol_tls" data-tooltip="grid view" data-position="bottom right" class="ui basic button box-shadow">
                                         <span class="">mqtts/tls</span>
                                     </button>
                                 </div>
                             </div>
                             <div class="column seven wide">
-                                <div class="ui icon buttons small fluid">
+                                <div id="qos" class="ui icon buttons small fluid">
                                     <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow fixed50">
                                         <div class="ui text small">qos</div>
                                     </button>
-                                    <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                    <button id="qos0" data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
                                         <span class="">0</span>
                                     </button>
-                                    <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                    <button id="qos1" data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
                                         <span class="">1</span>
                                     </button>
-                                    <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                    <button id="qos2" data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
                                         <span class="">2</span>
                                     </button>
 
                                 </div>
+
                             </div>
                         </div>
 
                     </div>
                 </div>
-            </div>
+                <!-- <div class="ui primary submit button">Submit</div> -->
+                <!-- <div class="ui error message"></div> -->
+            </form>
             <!-- Action Footer -->
             <div class="actions compact" style="padding: 0.5em">
-                <div class="ui small button">Cancel</div>
-                <div class="ui small button">OK</div>
+                <div class="ui small button cancel">Cancel</div>
+                <div class="ui small button ok">OK</div>
             </div>
+            <script>
+                // handle button clicks
+                $("#qos0,#qos1,#qos2").click(function () {
+                    $("#newServerModal #qos0, #newServerModal #qos1, #newServerModal #qos2").removeClass(
+                        "primary").addClass("basic");
+                    $("#newServerModal #qos" + this.innerText).addClass("primary").removeClass("basic");
+                    //alert("handler for " + this.text + " clicked");                        
+                });
+                $("#protocol_tcp, #protocol_tls").click(function () {
+                    $("#newServerModal #protocol_tcp, #newServerModal #protocol_tls").removeClass("primary").addClass(
+                        "basic");
+                    $(this).addClass("primary").removeClass("basic");
+                });
 
+                // set form validation rules
+                $('.ui.form').form({
+                    on: blur,
+                    fields: {
+                        name: 'empty',
+                        clientId: 'empty',
+                        host: 'empty',
+                        port: 'integer'
+                    },
+                    onSuccess: function(){
+                        return false;
+                    }
+                })
+
+
+    /*             $('#newServerModal')
+                    .modal({
+                        closable: false,
+                        selector: {
+                            close: '.close.icon'
+                        },
+                        onDeny: myDeny,
+                        onApprove: function () {
+                            if ($('.ui.form').form('is valid')) {
+                                // form is valid (both email and name)
+                                window.alert('Approved!');
+                                readEditServerModal(selectedServer);
+
+                            } else {
+                                $('.ui.form').form('validate form');
+                                window.alert('nope!');
+                                return false;
+                            }
+
+                        }
+                    }) */
+
+                function showModal(targetServer, mode, callback) {
+                    if (mode == "add") {
+                        fillEditServerModal(targetServer, mode, "Add new server");
+                    } else {
+                        fillEditServerModal(targetServer, mode, "Edit server");
+                    }
+                    $('#newServerModal')
+                        .modal({
+                            closable: false,
+                            selector: {
+                                close: '.close.icon'
+                            },
+                            onHide: function(){
+                                window.alert("hide:" + this.id);
+                            },
+                            onDeny: myDeny,
+                            onApprove: function () {
+                                if ($('.ui.form').form('is valid')) {
+                                    window.alert('Approved!');
+                                    callback(readEditServerModal(selectedServer));
+                                } else {
+                                    $('.ui.form').form('validate form');
+                                    window.alert('nope!');
+                                    return false;
+                                }
+                            }
+                        })
+                        .modal('show');
+
+                }
+
+                // copy data from form into a server object
+                function readEditServerModal(targetServer) {
+                    targetServer.name = $("#newServerModal #name").val();
+                    targetServer.clientId = $("#newServerModal #clientId").val();
+                    targetServer.host = $("#newServerModal #host").val();
+                    targetServer.port = $("#newServerModal #port").val();
+                    targetServer.userId = $("#newServerModal #userId").val();
+                    targetServer.password = $("#newServerModal #pwd").val();
+                    if ($("#newServerModal #protocol_tls").hasClass('primary')) {
+                        targetServer.protocol = "tls"
+                    } else {
+                        targetServer.protocol = "tcp"
+                    }
+                    $('#qos').find(".primary").each(function () {
+                        targetServer.qos = parseInt($(this).text().trim());
+                    });
+                    return targetServer;
+                }
+
+                // write data from a server Object to the form
+                function fillEditServerModal(targetServer, mode, title) {
+                    $("#newServerModal #formTitle").text(title || "");
+                    $("#newServerModal #formTitle").attr("mode", mode || "");
+                    $("#newServerModal #name").val(targetServer.name || null);
+                    $("#newServerModal #clientId").val(targetServer.clientId || null);
+                    $("#newServerModal #host").val(targetServer.host || null);
+                    $("#newServerModal #port").val(targetServer.port || null);
+                    $("#newServerModal #userId").val(targetServer.userId || null);
+                    $("#newServerModal #pwd").val(targetServer.password || null);
+                    if (targetServer.protocol == "tls") {
+                        $("#newServerModal #protocol_tls").addClass("primary").removeClass("basic");
+                        $("#newServerModal #protocol_tcp").removeClass("primary").addClass("basic");
+                    } else {
+                        $("#newServerModal #protocol_tls").removeClass("primary").addClass("basic");
+                        $("#newServerModal #protocol_tcp").addClass("primary").removeClass("basic");
+                    }
+                    $("#newServerModal #qos0, #newServerModal #qos1, #newServerModal #qos2").removeClass("primary").addClass(
+                        "basic");
+                    //$("#newServerModal #qos1").removeClass("primary").addClass("basic");
+                    //$("#newServerModal #qos2").removeClass("primary").addClass("basic");
+                    $("#newServerModal #qos" + targetServer.qos.toString()).addClass("primary").removeClass("basic");
+                }
+
+
+
+                //# sourceURL=newServerModal.html
+            </script>
         </div>
         <script>
             $("#iBeautifyJson, #iMinifyJson").click(function () {
