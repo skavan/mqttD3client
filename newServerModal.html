@@ -201,7 +201,7 @@
                             onApprove: function () {
                                 if ($('.ui.form').form('is valid')) {
                                     window.alert('Approved!');
-                                    callback(readEditServerModal(selectedServer));
+                                    callback(readEditServerModal(targetServer), $("#newServerModal #formTitle").attr("mode"));
                                 } else {
                                     $('.ui.form').form('validate form');
                                     window.alert('nope!');

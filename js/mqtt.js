@@ -32,16 +32,16 @@ var defaultServer = {
     "cleanSession": true,
     "useSSL": false,
     "reconnect": true,
-    "topics": [
-    ],
-    "lastTopic": 0
+    "topics": [],
+    "lastTopic": 0,
+    "connected" : false
 };
 var serverList = {
-    "lastServer": 0,
-    "servers": []
+    "lastServer": "",
+    "servers": {}
 };
 
-var selectedServer = {};
+
 
 function getServerList(){
     return getConnectionsFromLocalStorage() || serverList;
@@ -52,7 +52,7 @@ function updateServerList(serverList){
 }
 
 function getSelectedServer(serverList){
-    return serverList.servers.length > 0 ? serverList.servers[serverList.lastServer] : defaultServer;
+    return $.isEmptyObject(serverList.servers) ? defaultServer : serverList.servers[serverList.lastServer] || defaultServer;
 }
 
 function getConnectionsFromLocalStorage() {
