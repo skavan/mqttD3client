@@ -34,8 +34,8 @@
                                         <div class="divider"></div>
                                         <div id="editServer" class="item">
                                             <i class="edit icon"></i> Edit Server</div>
-                                        <div id="deleteServer" class="item">
-                                            <i class="trash icon"></i> Delete Server</div>
+<!--                                         <div id="deleteServer" class="item">
+                                            <i class="trash icon"></i> Delete Server</div> -->
                                         <div id="addServer" class="item">
                                             <i class="file alternate icon"></i> Add Server</div>
                                     </div>
@@ -60,27 +60,24 @@
 
                                 <input id="inpSelectedTopic" type='text' placeholder="e.g. /dragonfly/Basement/Receiver/Status" value="/dragonfly/Basement/Receiver/Status">
                                 <div id="cmbTopicDropdown" class="ui dropdown ">
-                                        <div id="mnuTopicPicker" class="menu">
-                                            <div class="item" itemType="choice" data-server="server 1">
-                                                <i class="red globe icon"></i>
-                                                /dragonfly/hello/subscribe topic
-                                            </div>
-                                            <div class="item" itemType="choice" data-server="server 2">
-                                                <i class="green globe icon"></i>
-                                                /dragonfly/goodbye/subscribe topic
-                                            </div>
-                                            <div class="divider"></div>
-                                            
-                                            <div id="deleteTopic" class="item">
-                                                <i class="trash icon"></i> Delete Topic</div>
+                                    <div id="mnuTopicPicker" class="menu">
+                                        <!-- <div class="item" itemType="choice" data-server="server 1">
+                                            <i class="red globe icon right floated"></i>
+                                            /dragonfly/hello/subscribe topic
                                         </div>
+                                        <div class="item" itemType="choice" data-server="server 2">
+                                            <i class="green globe icon right floated"></i>
+                                            /dragonfly/goodbye/subscribe topic
+                                        </div> -->
+
                                     </div>
+                                </div>
 
                                 <div class="input-icon">
                                     <i id="icoTopicDropdown" class='dropdown icon'></i>
                                 </div>
                                 <!-- create "subscribe to topic button" -->
-                                <button id="bSubscribe" class="ui primary icon small button">
+                                <button id="btnSubscribe" class="ui primary icon small button">
                                     Subscribe
                                 </button>
                             </div>
@@ -231,8 +228,7 @@
     <script type="text/javascript" charset="utf-8">
         var selectedServer = {};
         $(document).ready(function () {
-            
-            
+
             serverList = getServerList();
             selectedServer = getSelectedServer(serverList);
             fillServerUIBar(serverList, selectedServer);
@@ -242,83 +238,122 @@
                 clearLocalStorage();
             });
 
-            // pick a mqtt server drop down - need to cleanup names
-            $("#icoServerDropdown, #inpSelectedServer").click(function () {
-                comboPlacement($("#cmbServerDropdown"), $("#inpSelectedServer"))
-                /* $("#cmbServerDropdown").dropdown('toggle');
-                var offset = $("#inpSelectedServer").offset();
-                $("#cmbServerDropdown").offset({
-                    top: offset.top, // + $("#inpSelectedServer").outerHeight()
-                    left: offset.left
-                }); */
-            });
-
-            $("#icoTopicDropdown, #inpSelectedTopic").click(function () {
-                comboPlacement($("#cmbTopicDropdown"), $("#inpSelectedTopic"))
-            });
-
-            function comboPlacement(combo, parent){
-                combo.dropdown('toggle');
-                var offset = parent.offset();
-                combo.offset({
-                    top: offset.top, // + $("#inpSelectedServer").outerHeight()
-                    left: offset.left
-                });
-            }
-
-            // process dropdown pick!
-            $('#cmbServerDropdown').dropdown({
-                onChange: function (value, text, $choice) {
-                    //console.log($choice.data('server'));
-                    if ($choice.data('server')) {
-                        switchServer(serverList.servers[$choice.data('server')]);
-                        /* $('#inpSelectedServer').val($choice.data('server'));
-                        selectedServer = serverList.servers[$choice.data('server')];
-                        serverList.lastServer = $choice.data('server');
-                        updateServerList(serverList); */
-                    }
-
-                }
-            })
-
-            //$( "#mainContent" ).load( "newServerModal.html #newServerModal" );
-
+            // load the add/edit server modal component
             $("<div>").load("newServerModal.html", function () {
                 let mdal = $("#newServerModal", this)
-                //$("#mainContent").append($(this).html());
                 $("#mainContent").append(mdal.prop('outerHTML'));
             });
 
+            // position and format server dropdown
+            $("#icoServerDropdown, #inpSelectedServer").click(function () {
+                comboPlacement($("#cmbServerDropdown"), $("#inpSelectedServer"))
+            });
+
+            // process Server dropdown pick!
+            $('#cmbServerDropdown').dropdown({
+                onChange: function (value, text, $choice) {
+                    console.log($choice.data('server'));
+                    if ($choice.attr("itemType") == "choice") {
+                        switchServer(serverList.servers[$choice.data('server')]);
+                    }
+                }
+            })
+
+            // handle the add/edit server buttons
             $("#addServer, #editServer").click(function () {
                 if (this.innerText.trim().startsWith("Add")) {
-                    showModal(jQuery.extend(true, {}, defaultServer), "add", addEditServer)
-                    // when we add a server, we send a default server object to pre-fill the form.
-                    //fillEditServerModal(jQuery.extend(true, {}, defaultServer), "add", "Add new server"); // create a deep copy and send it
+                    showModal(jQuery.extend(true, {}, defaultServer), "add", addEditServer) // when we add a server, we send a default server object to pre-fill the form.
                 } else {
-                    showModal(jQuery.extend(true, {}, selectedServer), "edit", addEditServer)
-                    // use the current selected server
-                    //fillEditServerModal(jQuery.extend(true, {}, selectedServer), "add", "Add new server"); // create a deep copy and send it
+                    showModal(jQuery.extend(true, {}, selectedServer), "edit", addEditServer) // use the current selected server
                 }
             });
 
+            // handle the delete server button
             $("#deleteServer").click(function () {
-                delete serverList.servers[selectedServer.name];         // delete the selected server
-                serverList.selectedServer="";
+                delete serverList.servers[selectedServer.name]; // delete the selected server
+                serverList.selectedServer = "";
                 updateServerList(serverList);
                 fillServerUIBar(serverList, jQuery.extend(true, {}, defaultServer));
-                if ($.isEmptyObject(serverList.servers)){
+                if ($.isEmptyObject(serverList.servers)) {
 
                 }
             });
 
+            // position and format topic dropdown
+            $("#icoTopicDropdown, #inpSelectedTopic").click(function () {
+                console.log("I was clicked");
+                if (selectedServer.topicHistory.length > 0) {
+                    comboPlacement($("#cmbTopicDropdown"), $("#inpSelectedTopic"))
+                }
+            });
 
-                //$('#newServerModal')
-                //    .modal('show');
-            
+            // process Topic dropdown pick
+            $('#cmbTopicDropdown').dropdown({
+                onChange: function (value, text, $choice) {
+                    console.log("I was dropdowned");
+                    if ($choice.attr("itemType") == "choice") {
+                        $("#inpSelectedTopic").val($choice.text().trim())
+                        selectedServer.subscriptionTopic = $choice.text().trim();
+                    }
+                }
+            });
 
-
+            // process Selected Topic lose focus and add topic to array if unique.
+            $("#inpSelectedTopic").blur(function () {
+                let val = $("#inpSelectedTopic").val().trim();
+                console.log("I am blurred");
+                if (val.length){selectedServer.subscriptionTopic = val;}
+                if ((selectedServer.topicHistory.indexOf(val) == -1) && (!$.isEmptyObject(serverList.servers))) {
+                    selectedServer.topicHistory.unshift(val);
+                    serverList.servers[selectedServer.name] = selectedServer;
+                    updateServerList(serverList);
+                    fillServerUIBar(serverList, selectedServer);
+                }
+            });
 
         });
+
+        // handle the delete topic button
+        function deleteServer(item) {
+            let val = item.trim();                          // get the sellected server name.
+            delete serverList.servers[val];                 // delete it.
+            if (val == $("#inpSelectedServer").val()) {     // if the selected server is the same as the delete server
+                // disconnect here!
+                $("#inpSelectedServer").val(null);          // delete that too
+                selectedServer = defaultServer;             // reset the selected server
+            }
+            updateServerList(serverList);                   // update the master list (write to storage)
+            fillServerUIBar(serverList, jQuery.extend(true, {}, selectedServer));    //update the GUI
+        };
+
+        // handle the delete topic button
+        function deleteTopic(item) {
+            console.log("deleteTopic")
+            let val = item.trim();
+            let i = selectedServer.topicHistory.indexOf(val);
+            if (i > -1) {
+                if (val == $("#inpSelectedTopic").val()) {
+                    $("#inpSelectedTopic").val(null);
+                    selectedServer.subscriptionTopic = "";
+                }
+                selectedServer.topicHistory.splice(i, 1); // remove the element
+                serverList.servers[selectedServer.name] = selectedServer;
+                updateServerList(serverList);
+
+            }
+            fillServerUIBar(serverList, selectedServer)
+            //selectedServer.topicHistory.splice(select)
+        };
+
+        //utility function to position drop down
+        function comboPlacement(combo, parent) {
+            combo.dropdown('toggle');
+            var offset = parent.offset();
+            combo.offset({
+                top: offset.top, // + $("#inpSelectedServer").outerHeight()
+                left: offset.left
+            });
+        };
 
         function myDeny() {
             window.alert('Wait not yet!');
@@ -332,17 +367,19 @@
             console.log(newServer);
         }
 
-        function switchServer(newServer){
+        function switchServer(newServer) {
             // disconnect existing server:
             // ...code needed...
-            // select new server
-            selectedServer = newServer;
-            // write new server to input box
-            $('#inpSelectedServer').val(selectedServer.name);
-            // set Last server
-            serverList.lastServer = selectedServer.name;
-            // write updates to disk
-            updateServerList(serverList);
+            console.log("switch server");
+            selectedServer = newServer;                     // select new server
+            serverList.lastServer = selectedServer.name;    // set Last server
+            updateServerList(serverList);                   // write updates to disk
+            fillServerUIBar(serverList, selectedServer)     // updateGUI
+        }
+
+        function updateServers(newServer){
+            
+
         }
     </script>
 </body>

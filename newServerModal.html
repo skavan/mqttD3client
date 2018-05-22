@@ -44,7 +44,7 @@
                 <div style="width:100%; padding:1em;">
                     <div class="ui compact small grid">
                         <div class="row">
-                            <div class="column sixteen wide">
+                            <div class="column nine wide">
                                 <div class="ui fluid left labeled small input field">
                                     <div class="ui label fixed70">name</div>
                                     <input id="name" type='text' placeholder="unique name" value="unique name">
@@ -52,10 +52,16 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="column sixteen wide">
+                            <div class="column nine wide">
                                 <div class="ui fluid left labeled small input field">
                                     <div class="ui label fixed70">client id</div>
+
                                     <input id="clientId" type='text' placeholder="unique client id" value="AGDGDGSK-2162626262">
+                                    <!-- create drop down icon and force it into the input box-->
+                                    <div class="input-icon">
+                                        <i id="icoClientIdGenerator" class='calendar plus outline icon'></i>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -128,7 +134,7 @@
             </form>
             <!-- Action Footer -->
             <div class="actions compact" style="padding: 0.5em">
-                <div class="ui small button cancel">Cancel</div>
+                <!-- <div class="ui small button cancel">Cancel</div> -->
                 <div class="ui small button ok">OK</div>
             </div>
             <script>
@@ -145,6 +151,11 @@
                     $(this).addClass("primary").removeClass("basic");
                 });
 
+                $("#icoClientIdGenerator").click(function(){
+                    let val = guid(2);
+                    $("#clientId").val(val);
+                })
+
                 // set form validation rules
                 $('.ui.form').form({
                     on: blur,
@@ -154,33 +165,11 @@
                         host: 'empty',
                         port: 'integer'
                     },
-                    onSuccess: function(){
+                    onSuccess: function () {
                         return false;
                     }
                 })
 
-
-    /*             $('#newServerModal')
-                    .modal({
-                        closable: false,
-                        selector: {
-                            close: '.close.icon'
-                        },
-                        onDeny: myDeny,
-                        onApprove: function () {
-                            if ($('.ui.form').form('is valid')) {
-                                // form is valid (both email and name)
-                                window.alert('Approved!');
-                                readEditServerModal(selectedServer);
-
-                            } else {
-                                $('.ui.form').form('validate form');
-                                window.alert('nope!');
-                                return false;
-                            }
-
-                        }
-                    }) */
 
                 function showModal(targetServer, mode, callback) {
                     if (mode == "add") {
@@ -194,17 +183,18 @@
                             selector: {
                                 close: '.close.icon'
                             },
-                            onHide: function(){
-                                window.alert("hide:" + this.id);
+                            onHide: function () {
+                                //window.alert("hide:" + this.id);
                             },
                             onDeny: myDeny,
                             onApprove: function () {
                                 if ($('.ui.form').form('is valid')) {
-                                    window.alert('Approved!');
-                                    callback(readEditServerModal(targetServer), $("#newServerModal #formTitle").attr("mode"));
+                                    //window.alert('Approved!');
+                                    callback(readEditServerModal(targetServer), $("#newServerModal #formTitle")
+                                        .attr("mode"));
                                 } else {
                                     $('.ui.form').form('validate form');
-                                    window.alert('nope!');
+                                    window.alert('One or more fields is incomplete.\nPlease complete or exit.');
                                     return false;
                                 }
                             }
@@ -254,8 +244,26 @@
                     //$("#newServerModal #qos1").removeClass("primary").addClass("basic");
                     //$("#newServerModal #qos2").removeClass("primary").addClass("basic");
                     $("#newServerModal #qos" + targetServer.qos.toString()).addClass("primary").removeClass("basic");
+
                 }
 
+                function guid(numPairs) {
+                    function s4() {
+                        return Math.floor((1 + Math.random()) * 0x10000)
+                            .toString(16)
+                            .substring(1);
+                    }
+                    let val = "";
+                    if (numPairs){
+                        for (let index = 0; index < numPairs; index++) {
+                            val += s4() + s4() + '-'    
+                        }
+                        val = val.slice(0, -1);
+                        return val;
+                    } else {
+                        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+                    }
+                }
 
 
                 //# sourceURL=newServerModal.html

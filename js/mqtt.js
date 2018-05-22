@@ -32,9 +32,11 @@ var defaultServer = {
     "cleanSession": true,
     "useSSL": false,
     "reconnect": true,
-    "topics": [],
-    "lastTopic": 0,
+    "subscriptionTopic": "",
+    "subscribed" : false,
+    "topicHistory": [],
     "connected" : false
+    
 };
 var serverList = {
     "lastServer": "",
