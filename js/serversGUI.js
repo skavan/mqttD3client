@@ -4,7 +4,7 @@ function fillServerUIBar(serverList, displayServer) {
     $("#inpSelectedServer").val(displayServer.name || null);
     // fill the selected topic input box
     $("#inpSelectedTopic").val(displayServer.subscriptionTopic || null);
-    $("#inpPublishTopic").val(displayServer.subscriptionTopic || null);
+    $("#inpPublishTopic").val(displayServer.publishTopic || null);
 
     // delete existing server list
     $("#mnuServerPicker > div").each(function () {
@@ -14,7 +14,7 @@ function fillServerUIBar(serverList, displayServer) {
     });
 
     // delete the existing topic list
-    $("#mnuTopicPicker > div, #publishTopicPicker > div").each(function () {
+    $("#mnuTopicPicker > div, #mnuPublishTopicPicker > div").each(function () {
         if ($(this).attr('itemType') == "choice") {
             $(this).remove();
         }

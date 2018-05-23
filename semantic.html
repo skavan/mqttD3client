@@ -264,6 +264,7 @@
                 }
             });
 
+            // position and format publish topic dropup
             $("#icoPubTopicDropdown, #inpPublishTopic").click(function () {
                 if (selectedServer.topicHistory.length > 0) {
                     comboPlacement($("#cmbPublishTopicDropdown"), $("#inpPublishTopic"))
@@ -276,8 +277,17 @@
                     if ($choice.attr("itemType") == "choice") {
                         $("#inpSelectedTopic").val($choice.text().trim()) // set the inputbox to selection
                         selectedServer.subscriptionTopic = $choice.text().trim(); // no need to update the whole GUI bar
-                        //serverList.servers[selectedServer.name] = selectedServer;           // update the serverList record
-                        //updateServerList(serverList);                                       // write to storage
+                        updateServersAndGui(selectedServer, true);
+                    }
+                }
+            });
+
+            // process select Topic from dropdown
+            $('#cmbPublishTopicDropdown').dropdown({
+                onChange: function (value, text, $choice) {
+                    if ($choice.attr("itemType") == "choice") {
+                        $("#inpPublishTopic").val($choice.text().trim()) // set the inputbox to selection
+                        selectedServer.publishTopic = $choice.text().trim(); // no need to update the whole GUI bar
                         updateServersAndGui(selectedServer, true);
                     }
                 }
@@ -291,14 +301,23 @@
                 } // if the val is not "" then set it as subscriptionTopic
                 // if the topic doesn't exist in the history array and the serverlist.servers has an entry in it then push it to the history array
                 if ((selectedServer.topicHistory.indexOf(val) == -1) && (!$.isEmptyObject(serverList.servers))) {
-                    selectedServer.topicHistory.unshift(val); // add it to the top of the array
-                    //serverList.servers[selectedServer.name] = selectedServer;               // update the server 
+                    selectedServer.topicHistory.unshift(val); // add it to the top of the array                    
                     updateServersAndGui(selectedServer, false)
-                    //updateServerList(serverList);
-                    //fillServerUIBar(serverList, selectedServer);
                 }
             });
 
+            // process Selected Topic lose focus and add topic to array if unique.
+            $("#inpPublishTopic").blur(function () {
+                let val = $("#inpPublishTopic").val().trim(); // get the inputbox value
+                if (val.length) {
+                    selectedServer.publishTopic = val;
+                } // if the val is not "" then set it as subscriptionTopic
+                // if the topic doesn't exist in the history array and the serverlist.servers has an entry in it then push it to the history array
+                if ((selectedServer.topicHistory.indexOf(val) == -1) && (!$.isEmptyObject(serverList.servers))) {
+                    selectedServer.topicHistory.unshift(val); // add it to the top of the array                    
+                    updateServersAndGui(selectedServer, false)
+                }
+            });
         });
 
         // handle the delete topic button
