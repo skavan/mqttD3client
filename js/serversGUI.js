@@ -4,6 +4,7 @@ function fillServerUIBar(serverList, displayServer) {
     $("#inpSelectedServer").val(displayServer.name || null);
     // fill the selected topic input box
     $("#inpSelectedTopic").val(displayServer.subscriptionTopic || null);
+    $("#inpPublishTopic").val(displayServer.subscriptionTopic || null);
 
     // delete existing server list
     $("#mnuServerPicker > div").each(function () {
@@ -13,7 +14,7 @@ function fillServerUIBar(serverList, displayServer) {
     });
 
     // delete the existing topic list
-    $("#mnuTopicPicker > div").each(function () {
+    $("#mnuTopicPicker > div, #publishTopicPicker > div").each(function () {
         if ($(this).attr('itemType') == "choice") {
             $(this).remove();
         }
@@ -42,6 +43,7 @@ function fillServerUIBar(serverList, displayServer) {
                                 ${item}
                         </div>`;
         $("#mnuTopicPicker").prepend(template);
+        $("#mnuPublishTopicPicker").prepend(template);
     }
     // if no items, then hide edit server buttons, else show them
     if (!$.isEmptyObject(serverList.servers)) {$("#editServer").show();} else {$("#editServer").hide();}

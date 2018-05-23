@@ -1,23 +1,3 @@
-var defaultServer2 = {
-    "name": "rpi @80",
-    "clientId": "ABCDEFG123456",
-    "host": "192.168.1.80",
-    "port": 1884,
-    "userId": "donald@duck.com",
-    "password": "admin",
-    "protocol": "tcp",
-    "qos": 0,
-    "timeout": 30,
-    "keepAliveInternal": 60,
-    "cleanSession": true,
-    "useSSL": false,
-    "reconnect": true,
-    "subscriptions": [
-        "/dragonfly/#",
-        "/dragonfly/Basement/Receiver/Status"
-    ],
-    "lastSubscription": 1
-};
 var defaultServer = {
     "name": "",
     "clientId": "",
@@ -35,6 +15,9 @@ var defaultServer = {
     "subscriptionTopic": "",
     "subscribed" : false,
     "topicHistory": [],
+    "publishTopic":"",
+    "publishPayload":"",
+    "payloadHistory":[],
     "connected" : false
     
 };

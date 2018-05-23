@@ -23,19 +23,9 @@
                                 <!-- drop down server picker menu -->
                                 <div id="cmbServerDropdown" class="ui dropdown ">
                                     <div id="mnuServerPicker" class="menu">
-                                        <div class="item" itemType="choice" data-server="server 1">
-                                            <i class="red globe icon"></i>
-                                            Server #1
-                                        </div>
-                                        <div class="item" itemType="choice" data-server="server 2">
-                                            <i class="green globe icon"></i>
-                                            Server #2
-                                        </div>
                                         <div class="divider"></div>
                                         <div id="editServer" class="item">
                                             <i class="edit icon"></i> Edit Server</div>
-<!--                                         <div id="deleteServer" class="item">
-                                            <i class="trash icon"></i> Delete Server</div> -->
                                         <div id="addServer" class="item">
                                             <i class="file alternate icon"></i> Add Server</div>
                                     </div>
@@ -61,15 +51,6 @@
                                 <input id="inpSelectedTopic" type='text' placeholder="e.g. /dragonfly/Basement/Receiver/Status" value="/dragonfly/Basement/Receiver/Status">
                                 <div id="cmbTopicDropdown" class="ui dropdown ">
                                     <div id="mnuTopicPicker" class="menu">
-                                        <!-- <div class="item" itemType="choice" data-server="server 1">
-                                            <i class="red globe icon right floated"></i>
-                                            /dragonfly/hello/subscribe topic
-                                        </div>
-                                        <div class="item" itemType="choice" data-server="server 2">
-                                            <i class="green globe icon right floated"></i>
-                                            /dragonfly/goodbye/subscribe topic
-                                        </div> -->
-
                                     </div>
                                 </div>
 
@@ -99,6 +80,7 @@
                                 </button>
                             </div>
                         </td>
+
                         <td class="nopad right" style="width:130px;">
                             <div class="ui icon small compact buttons">
                                 <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
@@ -155,8 +137,14 @@
                                     topic
                                 </div>
 
-                                <input id="iPubTopic" type='text' placeholder="/dragonfly/Basement/Receiver/command" value="/dragonfly/Basement/Receiver/Command">
-
+                                <input id="inpPublishTopic" type='text' placeholder="/dragonfly/Basement/Receiver/command" value="/dragonfly/Basement/Receiver/Command">
+                                <div id="cmbPublishTopicDropdown" class="ui dropdown ">
+                                    <div id="mnuPublishTopicPicker" class="menu">
+                                    </div>
+                                </div>
+                                <div class="input-icon">
+                                    <i id="icoPubTopicDropdown" class='dropdown icon'></i>
+                                </div>
                             </div>
                         </td>
                         <td class="td-divider"></td>
@@ -254,7 +242,8 @@
                 onChange: function (value, text, $choice) {
                     console.log($choice.data('server'));
                     if ($choice.attr("itemType") == "choice") {
-                        switchServer(serverList.servers[$choice.data('server')]);
+                        updateServersAndGui(serverList.servers[$choice.text().trim()], true)
+                        //switchServer(serverList.servers[$choice.data('server')]);
                     }
                 }
             })
@@ -268,46 +257,45 @@
                 }
             });
 
-            // handle the delete server button
-            $("#deleteServer").click(function () {
-                delete serverList.servers[selectedServer.name]; // delete the selected server
-                serverList.selectedServer = "";
-                updateServerList(serverList);
-                fillServerUIBar(serverList, jQuery.extend(true, {}, defaultServer));
-                if ($.isEmptyObject(serverList.servers)) {
-
-                }
-            });
-
             // position and format topic dropdown
             $("#icoTopicDropdown, #inpSelectedTopic").click(function () {
-                console.log("I was clicked");
                 if (selectedServer.topicHistory.length > 0) {
                     comboPlacement($("#cmbTopicDropdown"), $("#inpSelectedTopic"))
                 }
             });
 
-            // process Topic dropdown pick
+            $("#icoPubTopicDropdown, #inpPublishTopic").click(function () {
+                if (selectedServer.topicHistory.length > 0) {
+                    comboPlacement($("#cmbPublishTopicDropdown"), $("#inpPublishTopic"))
+                }
+            });
+
+            // process select Topic from dropdown
             $('#cmbTopicDropdown').dropdown({
                 onChange: function (value, text, $choice) {
-                    console.log("I was dropdowned");
                     if ($choice.attr("itemType") == "choice") {
-                        $("#inpSelectedTopic").val($choice.text().trim())
-                        selectedServer.subscriptionTopic = $choice.text().trim();
+                        $("#inpSelectedTopic").val($choice.text().trim()) // set the inputbox to selection
+                        selectedServer.subscriptionTopic = $choice.text().trim(); // no need to update the whole GUI bar
+                        //serverList.servers[selectedServer.name] = selectedServer;           // update the serverList record
+                        //updateServerList(serverList);                                       // write to storage
+                        updateServersAndGui(selectedServer, true);
                     }
                 }
             });
 
             // process Selected Topic lose focus and add topic to array if unique.
             $("#inpSelectedTopic").blur(function () {
-                let val = $("#inpSelectedTopic").val().trim();
-                console.log("I am blurred");
-                if (val.length){selectedServer.subscriptionTopic = val;}
+                let val = $("#inpSelectedTopic").val().trim(); // get the inputbox value
+                if (val.length) {
+                    selectedServer.subscriptionTopic = val;
+                } // if the val is not "" then set it as subscriptionTopic
+                // if the topic doesn't exist in the history array and the serverlist.servers has an entry in it then push it to the history array
                 if ((selectedServer.topicHistory.indexOf(val) == -1) && (!$.isEmptyObject(serverList.servers))) {
-                    selectedServer.topicHistory.unshift(val);
-                    serverList.servers[selectedServer.name] = selectedServer;
-                    updateServerList(serverList);
-                    fillServerUIBar(serverList, selectedServer);
+                    selectedServer.topicHistory.unshift(val); // add it to the top of the array
+                    //serverList.servers[selectedServer.name] = selectedServer;               // update the server 
+                    updateServersAndGui(selectedServer, false)
+                    //updateServerList(serverList);
+                    //fillServerUIBar(serverList, selectedServer);
                 }
             });
 
@@ -315,15 +303,16 @@
 
         // handle the delete topic button
         function deleteServer(item) {
-            let val = item.trim();                          // get the sellected server name.
-            delete serverList.servers[val];                 // delete it.
-            if (val == $("#inpSelectedServer").val()) {     // if the selected server is the same as the delete server
+            let val = item.trim(); // get the sellected server name.
+            delete serverList.servers[val]; // delete it.
+            if (val == $("#inpSelectedServer").val()) { // if the selected server is the same as the delete server
                 // disconnect here!
-                $("#inpSelectedServer").val(null);          // delete that too
-                selectedServer = defaultServer;             // reset the selected server
+                $("#inpSelectedServer").val(null); // delete that too
+                selectedServer = defaultServer; // reset the selected server
             }
-            updateServerList(serverList);                   // update the master list (write to storage)
-            fillServerUIBar(serverList, jQuery.extend(true, {}, selectedServer));    //update the GUI
+            updateServersAndGui(selectedServer, false);
+            //updateServerList(serverList);                   // update the master list (write to storage)
+            //fillServerUIBar(serverList, jQuery.extend(true, {}, selectedServer));    //update the GUI
         };
 
         // handle the delete topic button
@@ -337,22 +326,31 @@
                     selectedServer.subscriptionTopic = "";
                 }
                 selectedServer.topicHistory.splice(i, 1); // remove the element
-                serverList.servers[selectedServer.name] = selectedServer;
-                updateServerList(serverList);
-
+                //serverList.servers[selectedServer.name] = selectedServer;
+                //updateServerList(serverList);
+                updateServersAndGui(selectedServer, true);
             }
-            fillServerUIBar(serverList, selectedServer)
-            //selectedServer.topicHistory.splice(select)
+
+            //fillServerUIBar(serverList, selectedServer)
+
         };
 
         //utility function to position drop down
         function comboPlacement(combo, parent) {
             combo.dropdown('toggle');
             var offset = parent.offset();
-            combo.offset({
-                top: offset.top, // + $("#inpSelectedServer").outerHeight()
-                left: offset.left
-            });
+            if (parent.attr('id').includes("Publish")) {
+                combo.offset({
+                    top: offset.top - combo.outerHeight() + parent.outerHeight(),
+                    left: offset.left
+                });
+            } else {
+                combo.offset({
+                    top: offset.top, // + $("#inpSelectedServer").outerHeight()
+                    left: offset.left
+                });
+            }
+
         };
 
         function myDeny() {
@@ -362,23 +360,20 @@
 
         function addEditServer(newServer, mode) {
             serverList.servers[newServer.name] = newServer;
-            switchServer(newServer);
-            fillServerUIBar(serverList, newServer);
-            console.log(newServer);
+            updateServersAndGui(newServer, true);
+            //switchServer(newServer);
+
+            //console.log(newServer);
         }
 
-        function switchServer(newServer) {
-            // disconnect existing server:
-            // ...code needed...
-            console.log("switch server");
-            selectedServer = newServer;                     // select new server
-            serverList.lastServer = selectedServer.name;    // set Last server
-            updateServerList(serverList);                   // write updates to disk
-            fillServerUIBar(serverList, selectedServer)     // updateGUI
-        }
-
-        function updateServers(newServer){
-            
+        function updateServersAndGui(server, setAsSelected) {
+            if (setAsSelected) {
+                selectedServer = server; // update the selectedServer
+                serverList.lastServer = server.name; // update the lastServer property
+                serverList.servers[server.name] = server; // update the object in the serverList.servers
+            }
+            updateServerList(serverList); // write updates to storage
+            fillServerUIBar(serverList, server) // updateGUI
 
         }
     </script>
