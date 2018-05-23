@@ -14,7 +14,7 @@ function fillServerUIBar(serverList, displayServer) {
     });
 
     // delete the existing topic list
-    $("#mnuTopicPicker > div, #mnuPublishTopicPicker > div").each(function () {
+    $("#mnuTopicPicker > div, #mnuPublishTopicPicker > div, #mnuPublishPayloadPicker > div").each(function () {
         if ($(this).attr('itemType') == "choice") {
             $(this).remove();
         }
@@ -47,14 +47,25 @@ function fillServerUIBar(serverList, displayServer) {
                         </div>`;
         $("#mnuTopicPicker").prepend(template);
         $("#mnuPublishTopicPicker").prepend(template);
-        $("#publishQos #qos0, #publishQos #qos1, #publishQos #qos2").removeClass("primary").addClass(
-            "basic");
-        $("#publishQos #qos" + displayServer.publishQos.toString()).addClass("primary").removeClass("basic");
-        $("#publishRetain").prop("checked", displayServer.publishRetain);
+        
     }
-    
-    $("#inpPublishTopic").val(displayServer.publishTopic || null);
 
+    // create list of payload history
+    for (let item of displayServer.payloadHistory){
+        let template = `<div class="item" itemType="choice">
+                            <i onclick="deletePayload(this)" class="delete icon right floated"></i>
+                                ${item}
+                        </div>`;
+        $("#mnuPublishPayloadPicker").prepend(template);
+        
+    }
+
+    $("#publishQos #qos0, #publishQos #qos1, #publishQos #qos2").removeClass("primary").addClass(
+        "basic");
+    $("#publishQos #qos" + displayServer.publishQos.toString()).addClass("primary").removeClass("basic");
+    $("#publishRetain").prop("checked", displayServer.publishRetain);
+    $("#inpPublishTopic").val(displayServer.publishTopic || null);
+    $("#inpPublishPayload").val(displayServer.publishPayload || null);
     
 }
 

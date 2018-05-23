@@ -150,10 +150,10 @@
                         <td class="td-divider"></td>
                         <td class="nopad right" style="width: 90px!important;">
                             <div class="ui icon small compact buttons">
-                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
+                                <button data-tooltip="publish as retained message" data-position="top right" class="ui icon button box-shadow">
                                     <div class="ui text small">retain</div>
                                 </button>
-                                <button data-tooltip="tree view" data-position="bottom right" class="ui icon basic button box-shadow">
+                                <button data-tooltip="publish as retained message" data-position="top right" class="ui icon basic button box-shadow">
                                     <input id="publishRetain" type="checkbox">
                                     <label></label>
                                 </button>
@@ -162,16 +162,16 @@
                         </td>
                         <td class="nopad right" style="width: 116px!important;">
                             <div id="publishQos" class="ui icon small compact buttons">
-                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
+                                <button data-tooltip="quality of service (qos)" data-position="top right" class="ui icon button box-shadow">
                                     <div class="ui text small">qos</div>
                                 </button>
-                                <button id="qos0" data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                <button id="qos0" data-tooltip="At Most Once" data-position="top right" class="ui icon primary button box-shadow">
                                     <span class="">0</span>
                                 </button>
-                                <button id="qos1" data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                <button id="qos1" data-tooltip="At Least Once" data-position="top right" class="ui basic icon button box-shadow">
                                     <span class="">1</span>
                                 </button>
-                                <button id="qos2" data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                <button id="qos2" data-tooltip="Exactly Once" data-position="top right" class="ui basic icon button box-shadow">
                                     <span class="">2</span>
                                 </button>
 
@@ -180,14 +180,16 @@
                         <td class="td-divider"></td>
                         <!-- Payload -->
                         <td class="nopad right" style="min-width: 280px!important;">
-                            <div class="ui right action fluid left labeled input">
-                                <div class="ui label" style="width:66px">
+                            <div class="ui action fluid left labeled input">
+                                <div class="ui label">
                                     payload
                                 </div>
 
-                                <input id="inpPublishPayload" class="cursor pointer" type='text' value='{"command":"test command", "value":"234"}' readonly>
-                                <div id="cmbPublishPayloadDropdown" class="ui dropdown ">
-                                    <div id="mnuPublishPayloadPicker" class="menu">
+                                
+                                
+                                <input id="inpPublishPayload" type='text' placeholder='e.g. I am placeholder'>
+                                <div id="cmbPublishPayloadDropdown" class="ui dropdown")>
+                                    <div id="mnuPublishPayloadPicker" class="right menu">
                                     </div>
                                 </div>
                                 <div class="input-icon">
@@ -276,59 +278,65 @@
                     comboPlacement($("#cmbPublishTopicDropdown"), $("#inpPublishTopic"))
                 }
             });
+            
+            // position and format publish payload dropup
+            $("#icoPubPayloadDropdown, #inpPublishPayload").click(function () {
+                if (selectedServer.payloadHistory.length > 0) {
+                    //$("#cmbPublishPayloadDropdown").dropdown('toggle');
+                    comboPlacement($("#cmbPublishPayloadDropdown"), $("#inpPublishPayload"))
+
+                }
+            });
 
             // process select Topic from dropdown
             $('#cmbTopicDropdown').dropdown({
                 onChange: function (value, text, $choice) {
-                    if ($choice.attr("itemType") == "choice") {
+                    processDropdownSelection($choice, "subscriptionTopic", $("#inpSelectedTopic"));
+                    /* if ($choice.attr("itemType") == "choice") {
                         $("#inpSelectedTopic").val($choice.text().trim()) // set the inputbox to selection
                         selectedServer.subscriptionTopic = $choice.text().trim(); // no need to update the whole GUI bar
                         updateServersAndGui(selectedServer, true);
-                    }
+                    } */
                 }
             });
 
             // process select Topic from dropdown
             $('#cmbPublishTopicDropdown').dropdown({
+                direction: 'upward',
+                keepOnScreen: true,
                 onChange: function (value, text, $choice) {
-                    if ($choice.attr("itemType") == "choice") {
-                        $("#inpPublishTopic").val($choice.text().trim()) // set the inputbox to selection
-                        selectedServer.publishTopic = $choice.text().trim(); // no need to update the whole GUI bar
-                        updateServersAndGui(selectedServer, true);
-                    }
+                    processDropdownSelection($choice, "publishTopic", $("#inpPublishTopic"))
+                }
+            });
+
+            $('#cmbPublishPayloadDropdown').dropdown({
+                onChange: function (value, text, $choice) {
+                    processDropdownSelection($choice, "publishPayload", $("#inpPublishPayload"))
                 }
             });
 
             // process Selected Topic lose focus and add topic to array if unique.
             $("#inpSelectedTopic").blur(function () {
                 processInputBlur("subscriptionTopic", "topicHistory", $("#inpSelectedTopic"));
-                /* let val = $("#inpSelectedTopic").val().trim(); // get the inputbox value
-                if (val == "") {return;}
-                selectedServer.subscriptionTopic = val;
-                // if the topic doesn't exist in the history array and the serverlist.servers has an entry in it then push it to the history array
-                if ((selectedServer.topicHistory.indexOf(val) == -1) && (!$.isEmptyObject(serverList.servers))) {
-                    selectedServer.topicHistory.unshift(val); // add it to the top of the array                    
-                    updateServersAndGui(selectedServer, false)
-                } */
             });
 
             // process Publish Topic lose focus and add topic to array if unique.
             $("#inpPublishTopic").blur(function () {
                 processInputBlur("publishTopic", "topicHistory", $("#inpPublishTopic"));
-                /* let val = $("#inpPublishTopic").val().trim(); // get the inputbox value
-                if (val == "") {return;}
-                selectedServer.publishTopic = val;
-                // if the val is not "" then set it as subscriptionTopic
-                // if the topic doesn't exist in the history array and the serverlist.servers has an entry in it then push it to the history array
-                if ((selectedServer.topicHistory.indexOf(val) == -1) && (!$.isEmptyObject(serverList.servers))) {
-                    selectedServer.topicHistory.unshift(val); // add it to the top of the array                    
-                    updateServersAndGui(selectedServer, false)
-                } */
             });
 
-            $("#inpPublishTopic").blur(function () {
+            $("#inpPublishPayload").blur(function () {
                 processInputBlur("publishPayload", "payloadHistory", $("#inpPublishPayload"));
             });
+
+            function processDropdownSelection($choice, selectedProperty, inputElement){
+                console.log("process dropdown selection")
+                if ($choice.attr("itemType") == "choice") {
+                        inputElement.val($choice.text().trim()) // set the inputbox to selection
+                        selectedServer[selectedProperty] = $choice.text().trim(); // no need to update the whole GUI bar
+                        updateServersAndGui(selectedServer, true);
+                    }
+            }
 
             function processInputBlur(selectedProperty, historyArray, el){
                 let val = el.val().trim();
@@ -376,25 +384,42 @@
                     selectedServer.subscriptionTopic = "";
                 }
                 selectedServer.topicHistory.splice(i, 1); // remove the element
-                //serverList.servers[selectedServer.name] = selectedServer;
-                //updateServerList(serverList);
                 updateServersAndGui(selectedServer, true);
             }
+        };
 
-            //fillServerUIBar(serverList, selectedServer)
-
+        // handle the delete topic button
+        function deletePayload(item) {
+            console.log("deletePayload")
+            let val = item.nextSibling.textContent.trim();
+            let i = selectedServer.payloadHistory.indexOf(val);
+            if (i > -1) {
+                if (val == $("#inpPublishPayload").val()) {
+                    selectedServer.publishPayload = "";
+                    $("#inpPublishPayload").val(null);
+                    
+                }
+                selectedServer.payloadHistory.splice(i, 1); // remove the element
+                updateServersAndGui(selectedServer, true);
+            }
         };
 
         //utility function to position drop down
         function comboPlacement(combo, parent) {
             combo.dropdown('toggle');
             var offset = parent.offset();
-            if (parent.attr('id').includes("Publish")) {
+            if (parent.attr('id').includes("PublishTopic")) {
                 combo.offset({
                     top: offset.top - combo.outerHeight() + parent.outerHeight(),
                     left: offset.left
                 });
-            } else {
+            } else if (parent.attr('id').includes("PublishPayload")) {
+                combo.offset({
+                    //top: offset.top - combo.outerHeight() + parent.outerHeight(),
+                    left: offset.left // + $("#mnuPublishPayloadPicker").outerWidth() //+ combo.prop("offsetLeft")
+                });
+            }
+            else {
                 combo.offset({
                     top: offset.top, // + $("#inpSelectedServer").outerHeight()
                     left: offset.left
