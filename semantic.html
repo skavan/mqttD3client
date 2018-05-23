@@ -154,24 +154,24 @@
                                     <div class="ui text small">retain</div>
                                 </button>
                                 <button data-tooltip="tree view" data-position="bottom right" class="ui icon basic button box-shadow">
-                                    <input type="checkbox">
+                                    <input id="publishRetain" type="checkbox">
                                     <label></label>
                                 </button>
 
                             </div>
                         </td>
                         <td class="nopad right" style="width: 116px!important;">
-                            <div class="ui icon small compact buttons">
+                            <div id="publishQos" class="ui icon small compact buttons">
                                 <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
                                     <div class="ui text small">qos</div>
                                 </button>
-                                <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                <button id="qos0" data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
                                     <span class="">0</span>
                                 </button>
-                                <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                <button id="qos1" data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
                                     <span class="">1</span>
                                 </button>
-                                <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                <button id="qos2" data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
                                     <span class="">2</span>
                                 </button>
 
@@ -185,8 +185,14 @@
                                     payload
                                 </div>
 
-                                <input id="iPubPayload" class="cursor pointer" type='text' value='{"command":"test command", "value":"234"}' readonly>
-
+                                <input id="inpPublishPayload" class="cursor pointer" type='text' value='{"command":"test command", "value":"234"}' readonly>
+                                <div id="cmbPublishPayloadDropdown" class="ui dropdown ">
+                                    <div id="mnuPublishPayloadPicker" class="menu">
+                                    </div>
+                                </div>
+                                <div class="input-icon">
+                                    <i id="icoPubPayloadDropdown" class='dropdown icon'></i>
+                                </div>
                                 <button class="ui icon button">
                                     <i class="icon ellipsis horizontal"></i>
                                 </button>
@@ -295,28 +301,53 @@
 
             // process Selected Topic lose focus and add topic to array if unique.
             $("#inpSelectedTopic").blur(function () {
-                let val = $("#inpSelectedTopic").val().trim(); // get the inputbox value
-                if (val.length) {
-                    selectedServer.subscriptionTopic = val;
-                } // if the val is not "" then set it as subscriptionTopic
+                processInputBlur("subscriptionTopic", "topicHistory", $("#inpSelectedTopic"));
+                /* let val = $("#inpSelectedTopic").val().trim(); // get the inputbox value
+                if (val == "") {return;}
+                selectedServer.subscriptionTopic = val;
                 // if the topic doesn't exist in the history array and the serverlist.servers has an entry in it then push it to the history array
                 if ((selectedServer.topicHistory.indexOf(val) == -1) && (!$.isEmptyObject(serverList.servers))) {
                     selectedServer.topicHistory.unshift(val); // add it to the top of the array                    
                     updateServersAndGui(selectedServer, false)
-                }
+                } */
             });
 
-            // process Selected Topic lose focus and add topic to array if unique.
+            // process Publish Topic lose focus and add topic to array if unique.
             $("#inpPublishTopic").blur(function () {
-                let val = $("#inpPublishTopic").val().trim(); // get the inputbox value
-                if (val.length) {
-                    selectedServer.publishTopic = val;
-                } // if the val is not "" then set it as subscriptionTopic
+                processInputBlur("publishTopic", "topicHistory", $("#inpPublishTopic"));
+                /* let val = $("#inpPublishTopic").val().trim(); // get the inputbox value
+                if (val == "") {return;}
+                selectedServer.publishTopic = val;
+                // if the val is not "" then set it as subscriptionTopic
                 // if the topic doesn't exist in the history array and the serverlist.servers has an entry in it then push it to the history array
                 if ((selectedServer.topicHistory.indexOf(val) == -1) && (!$.isEmptyObject(serverList.servers))) {
                     selectedServer.topicHistory.unshift(val); // add it to the top of the array                    
                     updateServersAndGui(selectedServer, false)
+                } */
+            });
+
+            $("#inpPublishTopic").blur(function () {
+                processInputBlur("publishPayload", "payloadHistory", $("#inpPublishPayload"));
+            });
+
+            function processInputBlur(selectedProperty, historyArray, el){
+                let val = el.val().trim();
+                if (val == "") {return;}
+                selectedServer[selectedProperty] = val;
+                if ((selectedServer[historyArray].indexOf(val) == -1) && (!$.isEmptyObject(serverList.servers))) {
+                    selectedServer[historyArray].unshift(val); // add it to the top of the array                    
+                    updateServersAndGui(selectedServer, true)
                 }
+            }
+
+            // handle button clicks
+            $("#publishQos #qos0, #publishQos #qos1, #publishQos #qos2").click(function () {
+                $("#publishQos #qos0, #publishQos #qos1, #publishQos #qos2").removeClass("primary").addClass(
+                    "basic");
+                $("#publishQos #qos" + this.innerText).addClass("primary").removeClass(
+                    "basic");
+                selectedServer.publishQos = parseInt(this.innerText);
+                updateServersAndGui(selectedServer, true);
             });
         });
 

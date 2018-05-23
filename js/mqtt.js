@@ -17,6 +17,8 @@ var defaultServer = {
     "topicHistory": [],
     "publishTopic":"",
     "publishPayload":"",
+    "publishQos":0,
+    "publishRetain": true,
     "payloadHistory":[],
     "connected" : false
     

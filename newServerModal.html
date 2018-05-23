@@ -139,7 +139,7 @@
             </div>
             <script>
                 // handle button clicks
-                $("#qos0,#qos1,#qos2").click(function () {
+                $("#newServerModal #qos0, #newServerModal #qos1, #newServerModal #qos2").click(function () {
                     $("#newServerModal #qos0, #newServerModal #qos1, #newServerModal #qos2").removeClass(
                         "primary").addClass("basic");
                     $("#newServerModal #qos" + this.innerText).addClass("primary").removeClass("basic");
@@ -241,8 +241,6 @@
                     }
                     $("#newServerModal #qos0, #newServerModal #qos1, #newServerModal #qos2").removeClass("primary").addClass(
                         "basic");
-                    //$("#newServerModal #qos1").removeClass("primary").addClass("basic");
-                    //$("#newServerModal #qos2").removeClass("primary").addClass("basic");
                     $("#newServerModal #qos" + targetServer.qos.toString()).addClass("primary").removeClass("basic");
 
                 }

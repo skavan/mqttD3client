@@ -3,8 +3,8 @@ function fillServerUIBar(serverList, displayServer) {
     // fill the selected server input box
     $("#inpSelectedServer").val(displayServer.name || null);
     // fill the selected topic input box
-    $("#inpSelectedTopic").val(displayServer.subscriptionTopic || null);
-    $("#inpPublishTopic").val(displayServer.publishTopic || null);
+    $("#inpSelectedTopic").val(displayServer.subscriptionTopic || null);    
+    
 
     // delete existing server list
     $("#mnuServerPicker > div").each(function () {
@@ -19,6 +19,9 @@ function fillServerUIBar(serverList, displayServer) {
             $(this).remove();
         }
     });
+
+    // if no items, then hide edit server buttons, else show them
+    if (!$.isEmptyObject(serverList.servers)) {$("#editServer").show();} else {$("#editServer").hide();}
 
     //color connect button
     let icoColor="";
@@ -44,9 +47,15 @@ function fillServerUIBar(serverList, displayServer) {
                         </div>`;
         $("#mnuTopicPicker").prepend(template);
         $("#mnuPublishTopicPicker").prepend(template);
+        $("#publishQos #qos0, #publishQos #qos1, #publishQos #qos2").removeClass("primary").addClass(
+            "basic");
+        $("#publishQos #qos" + displayServer.publishQos.toString()).addClass("primary").removeClass("basic");
+        $("#publishRetain").prop("checked", displayServer.publishRetain);
     }
-    // if no items, then hide edit server buttons, else show them
-    if (!$.isEmptyObject(serverList.servers)) {$("#editServer").show();} else {$("#editServer").hide();}
+    
+    $("#inpPublishTopic").val(displayServer.publishTopic || null);
+
+    
 }
 
 
