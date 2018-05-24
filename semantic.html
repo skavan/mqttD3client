@@ -122,7 +122,7 @@
                 </table>
             </div>
 
-            <div class="box report-footer">unused footer area - perhaps remove for addition height? or ditch the table footer and use this area..</div>
+            <div id="status" class="box report-footer">unused footer area - perhaps remove for addition height? or ditch the table footer and use this area..</div>
         </div>
 
         <!--main footer area for publish to mqtt functionality-->
@@ -185,10 +185,10 @@
                                     payload
                                 </div>
 
-                                
-                                
+
+
                                 <input id="inpPublishPayload" type='text' placeholder='e.g. I am placeholder'>
-                                <div id="cmbPublishPayloadDropdown" class="ui dropdown")>
+                                <div id="cmbPublishPayloadDropdown" class="ui dropdown" )>
                                     <div id="mnuPublishPayloadPicker" class="right menu">
                                     </div>
                                 </div>
@@ -220,12 +220,185 @@
     <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
     <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
     <script type="text/javascript" language="javascript" src="js/mqtt.js"></script>
+    <script type="text/javascript" language="javascript" src="mqtt/paho-mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="js/serverManagement.js"></script>
     <script type="text/javascript" charset="utf-8">
         var selectedServer = {};
+        var client = {};
+        var mqData = [];
+        var table;
 
+        // the client can be empty or 'ready-to-connect'.
+        // when 'ready-to-connect', it can be connected or disconnected.
+        // when connected, can be subscribed or not subscribed.
 
+        $("#connect").click(function () {
+            if (selectedServer.connected) {
+                if ($.isEmptyObject(client)) {
+                    selectedServer.connected = false
+                } else {
+                    if (client.isConnected()) {
+                        mqttDisconnect()
 
+                    }
+
+                }
+
+            } else {
+                mqttConnect()
+            }
+        });
+
+        $("#btnSubscribe").click(function () {
+            mqttSubscribe();
+        });
+
+        function mqttDisconnect() {
+            client.disconnect();
+            selectedServer.connected = false;
+            selectedServer.subscribed = false;
+            console.log("Disconnected: (isConnected:" + client.isConnected() + ")");
+            updateServersAndGui(selectedServer, true);
+        }
+
+        function mqttConnect() {
+            if (!checkServerObject(selectedServer)) return
+            if (selectedServer.connected) return
+            if (!$.isEmptyObject(client)) {
+                if (client.connected) {
+                    mqttDisconnect();
+                }
+            }
+
+            client = new Paho.MQTT.Client(selectedServer.host, parseInt(selectedServer.port),
+                selectedServer.clientId);
+
+            client.onMessageArrived = onMessage;
+            client.onConnectionLost = onDisconnect;
+
+            let opts = {
+                keepAliveInterval: parseInt(selectedServer.keepAliveInterval),
+                timeout: selectedServer.timeout,
+                cleanSession: selectedServer.cleanSession,
+                onSuccess: onConnect,
+                onFailure: onFailure
+            };
+
+            if (selectedServer.protocol != "tcp") {
+                opts["userName"] = selectedServer.userName;
+                opts["password"] = selectedServer.password;
+                opts["useSSL"] = true;
+            }
+
+            client.connect(opts);
+        }
+
+        function mqttSubscribe() {
+            if ((selectedServer.subscriptionTopic) && (client.isConnected())) {
+                if (!selectedServer.subscribed) {
+                    table.clear();
+                    client.subscribe(selectedServer.subscriptionTopic, {
+                        qos: selectedServer.qos,
+                        onSuccess: onSubscribeSuccess,
+                        onFailure: onSubscribeFailed,
+                        invocationContext: {
+                            topic: selectedServer.subscriptionTopic
+                        }
+                    })
+                } else {
+                    client.unsubscribe(selectedServer.subscriptionTopic, {
+                        onSuccess: onUnSubscribeSuccess,
+                        onFailure: onUnSubscribeFailed,
+                        invocationContext: {
+                            topic: selectedServer.subscriptionTopic
+                        }
+                    });
+
+                }
+            };
+
+        }
+
+        function mqttUnSubscribe() {
+            if ((selectedServer.subscriptionTopic) && (client.isConnected())) {
+                if (selectedServer.subscribed) {
+                    client.unsubscribe(selectedServer.subscriptionTopic, {
+                        onSuccess: onUnSubscribeSuccess,
+                        onFailure: onUnSubscribeFailed,
+                        invocationContext: {
+                            topic: selectedServer.subscriptionTopic
+                        }
+                    })
+                selectedServer.subscribed = false;
+                }
+            }
+        }
+
+        // connected to MQTT server
+        function onConnect() {
+            document.getElementById('status').innerHTML = "connected.";
+            selectedServer.connected = true;
+            updateServersAndGui(selectedServer, false);
+            console.log("mqtt connected");
+        }
+
+        // failed to connect to MQTT Server
+        function onFailure() {
+            console.log("failure");
+            document.getElementById('status').innerHTML = "failed to connect";
+            reconnect();
+        }
+
+        // disconnected from MQTT Server
+        function onDisconnect(reason) {
+            console.log("disconnected - " + reason.errorMessage);
+            //alert("disconnected - " + reason);
+            document.getElementById('status').innerHTML = "Disconnected:" + reason;
+            selectedServer.connected = false;
+            updateServersAndGui(selectedServer, false);
+            //reconnect();
+        }
+
+        function onSubscribeSuccess(response) {
+            console.log("subscribed to " + response.invocationContext.topic);
+            selectedServer.subscribed = true;
+            updateServersAndGui(selectedServer, true);
+        }
+
+        function onSubscribeFailed(response) {
+            console.log("failed to subscribe" + response.errorMessage);
+        }
+
+        function onUnSubscribeSuccess(response) {
+            console.log("unsubscribed to " + response.invocationContext.topic);
+            selectedServer.subscribed = false;
+            updateServersAndGui(selectedServer, true);
+        }
+
+        function onUnSubscribeFailed(response) {
+            console.log("failed to unsubscribe" + response.errorMessage);
+        }
+
+        function reconnect() {
+            setTimeout(function () {
+                document.getElementById('status').innerHTML = "reconnecting";
+                mqttConnect();
+            }, 3000);
+        }
+
+        function onMessage(message) {
+            let msg = {
+                topic: message.topic,
+                payload: message.payloadString,
+                qos: message.qos,
+                retain: message.retained,
+                date: Date.now()
+            };
+            mqData.push(msg);
+            table.row.add(msg).draw();
+            console.log(message.topic + "- " + message.payloadString);
+            //addNode(message.destinationName, message.payloadString);
+        }
     </script>
 </body>
 

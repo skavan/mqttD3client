@@ -8,7 +8,7 @@ var defaultServer = {
     "protocol": "tls",
     "qos": 1,
     "timeout": 30,
-    "keepAliveInternal": 60,
+    "keepAliveInterval": 60,
     "cleanSession": true,
     "useSSL": false,
     "reconnect": true,
@@ -44,7 +44,14 @@ function getSelectedServer(serverList){
 
 function getConnectionsFromLocalStorage() {
     let result =  localStorage.getItem('connections');
-    if (result){return JSON.parse(result);}
+    if (result){
+        result = JSON.parse(result);
+        if (result.lastServer){
+            result.servers[result.lastServer].connected = false;
+            result.servers[result.lastServer].subscribed = false;
+        }
+        return result;
+    }
     return undefined;
 }
 
@@ -54,4 +61,8 @@ function setConnectionsToLocalStorage(serverList) {
 
 function clearLocalStorage(){
     localStorage.clear();
+}
+
+function checkServerObject(server){
+    if (server.host && server.port && server.clientId) {return true;} else {return false;}
 }

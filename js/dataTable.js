@@ -1,11 +1,11 @@
 $(document).ready(function () {
     var jsonData = [];
-    setupData(); // dummy data.
+    //setupData(); // dummy data.
 
     $(window).resize(processResize) // do resize cleanup
         .trigger('resize');
 
-    var table = setupDataTable();
+    table = setupDataTable();
 
     // add buttons to top of table.
     // actually, I think I should make them tiny icon buttons
@@ -19,15 +19,16 @@ $(document).ready(function () {
     //build the table and its options and columns
     function setupDataTable() {
         return $('#example').DataTable({
-            data: jsonData,
-            columns: [{
-                    data: "date",
-                    "title": "timestamp",
-                    // format the date field.
-                    "render": function (data) {
-                        var d = new Date(data);
-                        return d.toLocaleString();
-                    }
+            //data: mqData,
+            columns: [
+
+                {
+                    data: "topic",
+                    "title": "topic"
+                },
+                {
+                    data: "payload",
+                    "title": "payload"
                 },
                 {
                     data: "qos",
@@ -38,12 +39,13 @@ $(document).ready(function () {
                     "title": "retain"
                 },
                 {
-                    data: "topic",
-                    "title": "topic"
-                },
-                {
-                    data: "payload",
-                    "title": "payload"
+                    data: "date",
+                    "title": "timestamp",
+                    // format the date field.
+                    "render": function (data) {
+                        var d = new Date(data);
+                        return d.toLocaleString();
+                    }
                 }
             ],
             lengthChange: true,
@@ -78,7 +80,7 @@ $(document).ready(function () {
         var hw = $('#example>thead>tr:eq(0)>th').eq(0).width(); // get width of first header element
         var dw = $('#example>tbody>tr:eq(0)>td').eq(0).width();
         if (hw) {
-            console.log(hw, dw);
+            //console.log(hw, dw);
             if (hw != dw) {
                 $('#example>thead>tr:eq(0)>th:eq(0)').width(dw);
             }
