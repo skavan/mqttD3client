@@ -257,7 +257,7 @@ function fillServerUIBar(serverList, displayServer) {
     } else {
         icoColor = "red";
     }
-    $("#connect").removeClass("primary red green").addClass(icoColor);
+    $("#btnConnect").removeClass("primary red green").addClass(icoColor);
     if (displayServer.subscribed) {
         icoColor = "green";
     } else {

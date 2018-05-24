@@ -2,6 +2,7 @@
 
 <head>
     <link rel="import" href="components/css_Js_Links.html">
+    <link rel="stylesheet" href="css/treeChart.css">
 </head>
 
 <body>
@@ -35,7 +36,7 @@
                                     <i id="icoServerDropdown" class='dropdown icon'></i>
                                 </div>
                                 <!-- create "connect to server button" -->
-                                <button id="connect" class="ui primary icon button">
+                                <button id="btnConnect" class="ui primary icon button">
                                     <i class="icon world"></i>
                                 </button>
                             </div>
@@ -83,13 +84,13 @@
 
                         <td class="nopad right" style="width:130px;">
                             <div class="ui icon small compact buttons">
-                                <button data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon button box-shadow">
+                                <button data-tooltip="display mode" data-position="bottom right" class="ui icon button box-shadow">
                                     <div class="ui text small">display</div>
                                 </button>
-                                <button data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
+                                <button id="btnGridView" data-tooltip="tree view" data-position="bottom right" class="ui icon primary button box-shadow">
                                     <i class="icon sitemap"></i>
                                 </button>
-                                <button data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
+                                <button id="btnTreeView" data-tooltip="grid view" data-position="bottom right" class="ui basic icon button box-shadow">
                                     <i class="icon th"></i>
                                 </button>
                             </div>
@@ -120,6 +121,27 @@
                         </tr>
                     </tfoot>
                 </table>
+                <div class="tree-container">
+                    <div class="row">
+                        <div class="eight wide column">
+                            <div class="dt-buttons ui basic buttons small">
+                                <button class="ui button buttons-html5" tabindex="0" id="niceSizeBtn">
+                                    <span>Nice Size</span>
+                                </button>
+                                <button class="ui button buttons-html5" tabindex="0" id="fitParentBtn">
+                                    <span>Fit Parent</span>
+                                </button>
+                                <!-- <button class="ui button buttons-html5" tabindex="0" id="hScrollBtn">
+                                    <span>Horizontal Scroll</span>
+                                </button> 
+                                <button class="ui button buttons-html5" tabindex="0" id="vScrollBtn">
+                                    <span>Vertical Scroll</span>
+                                </button>  -->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="treeChartContainer"></div>
+                </div>
             </div>
 
             <div id="status" class="box report-footer">unused footer area - perhaps remove for addition height? or ditch the table footer and use this area..</div>
@@ -218,7 +240,10 @@
     </div>
 
     <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
+    <script type="text/javascript" language="javascript" src="https://d3js.org/d3.v3.min.js"></script>
     <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
+    <script type="text/javascript" language="javascript" src="js/treeChart.js"></script>
+    <script type="text/javascript" language="javascript" src="js/tooltip.js"></script>
     <script type="text/javascript" language="javascript" src="js/mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="mqtt/paho-mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="js/serverManagement.js"></script>
@@ -228,11 +253,23 @@
         var mqData = [];
         var table;
 
+
+        //init treeChart
+        var treeChart = TreeChart()
+            .container("#treeChartContainer")
+            .marginTop(20)
+            .marginLeft(120)
+            .marginRight(120)
+            .marginBottom(20)
+            .svgHeight($('#mainContentBody').height())
+            .svgWidth($('#mainContentBody').width())
+            .run();
+
         // the client can be empty or 'ready-to-connect'.
         // when 'ready-to-connect', it can be connected or disconnected.
         // when connected, can be subscribed or not subscribed.
 
-        $("#connect").click(function () {
+        $("#btnConnect").click(function () {
             if (selectedServer.connected) {
                 if ($.isEmptyObject(client)) {
                     selectedServer.connected = false
@@ -251,6 +288,42 @@
 
         $("#btnSubscribe").click(function () {
             mqttSubscribe();
+        });
+
+        $("#btnTreeView").click(function () {
+            //hide grid
+            $("#example_wrapper").hide();
+            //show tree
+            $(".tree-container").show();
+        });
+
+        $("#btnGridView").click(function () {
+            //show grid
+            $("#example_wrapper").show();
+            //hide tree
+            $(".tree-container").hide();
+        });
+
+        $("#niceSizeBtn").click(function () {
+            if (treeChart) {
+                $('#treeChartContainer').css("overflow", "scroll");
+                treeChart.niceSize(true)
+                    .run();
+                console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
+
+            }
+        });
+
+        $("#fitParentBtn").click(function () {
+            if (treeChart) {
+                $('#treeChartContainer').css("overflow", "hidden");
+
+                treeChart.svgHeight($('#mainContentBody').height() - 40)
+                    .svgWidth($('#mainContentBody').width())
+                    .niceSize(false)
+                    .run();
+                console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
+            }
         });
 
         function mqttDisconnect() {
@@ -329,7 +402,7 @@
                             topic: selectedServer.subscriptionTopic
                         }
                     })
-                selectedServer.subscribed = false;
+                    selectedServer.subscribed = false;
                 }
             }
         }
@@ -396,6 +469,7 @@
             };
             mqData.push(msg);
             table.row.add(msg).draw();
+            treeChart.addNode(msg.topic, msg.payload);
             console.log(message.topic + "- " + message.payloadString);
             //addNode(message.destinationName, message.payloadString);
         }
