@@ -26,7 +26,7 @@ function TreeChart(params) {
       selection.each(function scope() {
   
         //Calculated properties
-        var calc = {}
+        var calc = {};
         calc.id = "ID" + Math.floor(Math.random() * 1000000);  // id for event handlings
         calc.chartLeftMargin = attrs.marginLeft;
         calc.chartTopMargin = attrs.marginTop;
@@ -192,7 +192,7 @@ function TreeChart(params) {
                     } 
                     return ""; 
                 })
-                .style("fill-opacity", 1)
+                .style("fill-opacity", 1);
             
             // Transition nodes to their new position.
             var nodeUpdate = node.transition()
@@ -200,7 +200,7 @@ function TreeChart(params) {
                 .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
 
             nodeUpdate.select("circle")
-                .attr("r", 4.5)
+                .attr("r", 3)
                 .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
             nodeUpdate.select("text")
@@ -278,7 +278,7 @@ function TreeChart(params) {
                 walk(parts,root,body);
             }
             update(root);
-        }
+        };
         
         function walk(parts, node, body) {
             if (parts.length != 0) {
@@ -342,7 +342,7 @@ function TreeChart(params) {
         // Smoothly handle data updating
         updateData = function () {
   
-        }
+        };
         //#########################################  UTIL FUNCS ##################################
   
         function handleWindowResize() {
@@ -394,13 +394,13 @@ function TreeChart(params) {
         updateData();
       }
       return main;
-    }
+    };
   
     // Run  visual
     main.run = function () {
       d3.selectAll(attrs.container).call(main);
       return main;
-    }
+    };
   
     return main;
   }

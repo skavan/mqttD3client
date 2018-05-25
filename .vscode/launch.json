@@ -40,6 +40,14 @@
             "sourceMaps": true,
             "runtimeArgs": ["--allow-file-access-from-files"], // handles CORS
             "file": "${workspaceFolder}/semantic.html"
+        },
+        {
+            "name": "Launch semantic5",
+            "type": "chrome",
+            "request": "launch",
+            "sourceMaps": true,
+            "runtimeArgs": ["--allow-file-access-from-files"], // handles CORS
+            "file": "${workspaceFolder}/semantic5.html"
         }
     ]
 }

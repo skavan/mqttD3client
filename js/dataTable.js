@@ -11,7 +11,7 @@ $(document).ready(function () {
     // actually, I think I should make them tiny icon buttons
     // and shrink the search button to an icon too.
 
-    table.buttons().container().addClass('small')
+    table.buttons().container().addClass('small');
     table.buttons().container()
         .appendTo($('div.eight.column:eq(0)', table.table().container()));
 

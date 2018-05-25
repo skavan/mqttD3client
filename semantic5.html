@@ -3,6 +3,7 @@
 <head>
     <link rel="import" href="components/css_Js_Links.html">
     <link rel="stylesheet" href="css/treeChart.css">
+    
     <style>
         .ui.loader:after {
             border-color: #068323 transparent transparent;
@@ -256,11 +257,16 @@
     <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
     <script type="text/javascript" language="javascript" src="https://d3js.org/d3.v3.min.js"></script>
     <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
-    <script type="text/javascript" language="javascript" src="js/treeChart.js"></script>
-    <script type="text/javascript" language="javascript" src="js/tooltip.js"></script>
+    
+    
     <script type="text/javascript" language="javascript" src="js/mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="mqtt/paho-mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="js/serverManagement.js"></script>
+
+    <script type="text/javascript" src="d3v5/d3.min.js"></script>
+    <script type="text/javascript" src="js/select2.min.js"></script>
+    <script type="text/javascript" src="js/topic-tree.js"></script>
+
     <script type="text/javascript" charset="utf-8">
         var selectedServer = {};
         var client = {};
@@ -275,7 +281,7 @@
 
 
         //init treeChart
-        var treeChart =  initTree();
+        var treeChart = {};
 
         // the client can be empty or 'ready-to-connect'.
         // when 'ready-to-connect', it can be connected or disconnected.
@@ -411,7 +417,7 @@
                     mqFeed=[];
                     mqStatus={};
                     d3.select('#treeChartContainer').html("")
-                    treeChart = initTree();
+                    //treeChart = initTree();
                     client.subscribe(selectedServer.subscriptionTopic, {
                         qos: selectedServer.qos,
                         onSuccess: onSubscribeSuccess,
@@ -535,7 +541,7 @@
                 }
             }
             redrawTimer = setInterval(redrawTable, 200);
-            treeChart.addNode(msg.topic, msg.payload);
+            //treeChart.addNode(msg.topic, msg.payload);
             console.log(message.topic + "- " + message.payloadString);
             //addNode(message.destinationName, message.payloadString);
         }
@@ -547,17 +553,7 @@
             clearInterval(redrawTimer);
         }
 
-        function initTree(){
-            return TreeChart()
-                .container("#treeChartContainer")
-                .marginTop(20)
-                .marginLeft(120)
-                .marginRight(120)
-                .marginBottom(20)
-                .svgHeight($('#mainContentBody').height())
-                .svgWidth($('#mainContentBody').width())
-                .run();
-        }
+        
     </script>
 </body>
 

@@ -1,0 +1,52 @@
+body {
+    overflow: auto;
+    font-size: 14px;
+    font-family: "Helvetica Neue", Helvetica;
+}
+
+#body {
+    border: 1px solid #ccc;
+    position: relative;
+}
+
+.node circle {
+    cursor: pointer;
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.node.active circle {
+    fill: red;
+}
+
+.node text {
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+}
+
+    .link.active {
+        stroke: red;
+    }
+
+.tooltip {
+    position: absolute;
+    pointer-events: none;
+    border: 1px solid #aaa;
+    -ms-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    background: #ffffff;
+    background: rgba(255, 255, 255, 0.8);
+    color: #f00;
+    font-size: 11px;
+    line-height: 16px;
+    padding: 5px;
+}
