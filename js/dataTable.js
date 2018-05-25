@@ -100,14 +100,23 @@ $(document).ready(function () {
     }
     // swap out the datatable search button with a semantic UI search button
     function cleanupTable() {
-        $('div.dataTables_filter label').replaceWith(
-            `<div id='searchBox1' class="ui labeled input small">
-                        <div class="ui label">
-                            search
-                        </div>
-                        <input type="text" style="margin-left:0" aria-controls="example" placeholder="enter search term...">
-                    </div>`
-        );
+        let label = $('div.dataTables_filter label');
+        label.addClass("ui labeled input small");
+        label.contents().filter(function() {
+            return this.nodeType===3;
+        }).remove();
+        label.prepend('<div class="ui label">Search</div>');
+        $('div.dataTables_filter label input').css('margin-left','0');
+        /*  $('div.dataTables_filter label').replaceWith(
+            `
+	            <label class="ui labeled input small">
+		            <div class="ui label">
+			            search
+		            </div>
+		            <input type="text" class="" placeholder="enter search term..." aria-controls="example" style="margin-left: 0;">
+	            </label>
+            `
+        ); */ 
     }
 
     // create random data
