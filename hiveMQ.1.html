@@ -263,17 +263,7 @@
         <script type="text/javascript" src="js/topic-tree.js"></script>
 
         <script type="text/javascript">
-            var selectedServer = {};
-            var client = {};
-            var mqFeed = []; // the real-time stream.
-            var mqMaxFeedRows = 1000;
-            var mqStatus = {}; // the retained message snapshot
-            var isMqFeed = true;
-            var isChart = false;
-            var table;
-            var messageGap;
-            var redrawTimer;
-/*             var options = {
+            var options = {
                 // host: 'test.mosquitto.org',
                 // port: parseInt(8080),
                 host: '192.168.1.80',
@@ -289,77 +279,14 @@
                     onSuccess: onConnect,
                     onFailure: onFailure
                 }
-            } */
+            }
 
 
             setup("#treeChartContainer", $("#ddlSearch"));
-                    // the client can be empty or 'ready-to-connect'.
-        // when 'ready-to-connect', it can be connected or disconnected.
-        // when connected, can be subscribed or not subscribed.
-        $("#dummy").click(function (){
-            clearLocalStorage();
-        })
 
-        $("#btnConnect").click(function () {
-            if (selectedServer.connected) {
-                if ($.isEmptyObject(client)) {
-                    selectedServer.connected = false
-                } else {
-                    if (client.isConnected()) {
-                        mqttDisconnect()
-                    }
-                }
-
-            } else {
-                mqttConnect()
-            }
-        });
-
-        $("#btnSubscribe").click(function () {
-            mqttSubscribe();
-        });
-
-        $("#btnGridView").click(function () {
-            //hide grid
-            $("#example_wrapper").hide();
-            //show tree
-            $(".tree-container").show();
-        });
-
-        $("#btnTreeView").click(function () {
-            //show grid
-            $("#example_wrapper").show();
-            //hide tree
-            $(".tree-container").hide();
-        });
-
-        $("#btnMqFeed").click(function () {
-            table.clear();
-            $('#dataloader').addClass('active');
-            $("#btnMqFeed").removeClass('basic').addClass('primary');
-            $("#btnMqStatus").removeClass('primary').addClass('basic');
-            for (msg of mqFeed) {
-                table.row.add(msg);
-            };
-            isMqFeed = true;
-            table.columns.adjust();
-            redrawTable();
-        });
-
-        $("#btnMqStatus").click(function () {
-            table.clear();
-            $('#dataloader').addClass('active');
-            $("#btnMqStatus").removeClass('basic').addClass('primary');
-            $("#btnMqFeed").removeClass('primary').addClass('basic');
-            for (msg of Object.keys(mqStatus)) {
-                table.row.add(mqStatus[msg]);
-            };
-            isMqFeed = false;
-            table.columns.adjust();
-            redrawTable();
-        });
-
-            
+            var client = new Paho.MQTT.Client(options.host, options.port, options.clientID);
+            client.onMessageArrived = onMessage;
+            client.onconnectionlost = onDisconnect;
 
             function onConnect() {
                 client.subscribe('dragonfly/#', onMessage);
@@ -372,192 +299,48 @@
                 reconnect();
             }
 
-            //client.connect(options.connectOpts);
+            client.connect(options.connectOpts);
 
-        function mqttDisconnect() {
-            client.disconnect();
-            selectedServer.connected = false;
-            selectedServer.subscribed = false;
-            console.log("Disconnected: (isConnected:" + client.isConnected() + ")");
-            updateServersAndGui(selectedServer, true);
-        }
+            function onMessage(message) {
+                let msg = {
+                    topic: message.topic,
+                    payload: message.payloadString,
+                    level: message.topic.split("/").length,
+                    qos: message.qos,
+                    retain: message.retained,
+                    date: Date.now()
+                };
 
-        function mqttConnect() {
-            if (!checkServerObject(selectedServer)) return
-            if (selectedServer.connected) return
-            if (!$.isEmptyObject(client)) {
-                if (client.connected) {
-                    mqttDisconnect();
-                }
+                //addNode(message.destinationName, message.payloadString);
+                addNode(msg.topic, msg.payload);
             }
 
-            client = new Paho.MQTT.Client(selectedServer.host, parseInt(selectedServer.port),
-                selectedServer.clientId);
-
-            client.onMessageArrived = onMessage;
-            client.onConnectionLost = onDisconnect;
-
-            let opts = {
-                keepAliveInterval: parseInt(selectedServer.keepAliveInterval),
-                timeout: selectedServer.timeout,
-                cleanSession: selectedServer.cleanSession,
-                onSuccess: onConnect,
-                onFailure: onFailure
-            };
-
-            if (selectedServer.protocol != "tcp") {
-                opts["userName"] = selectedServer.userName;
-                opts["password"] = selectedServer.password;
-                opts["useSSL"] = true;
+            function onDisconnect(reason) {
+                console.log("disconnected - " + reason);
+                //alert("disconnected - " + reason);
+                document.getElementById('status').innerHTML = "Disconnected";
+                reconnect();
             }
 
-            client.connect(opts);
-        }
-
-        function mqttSubscribe() {
-            if ((selectedServer.subscriptionTopic) && (client.isConnected())) {
-                if (!selectedServer.subscribed) {
-                    table.clear();
-                    mqFeed=[];
-                    mqStatus={};
-                    d3.select('#treeChartContainer').html("");
-                    setup("#treeChartContainer", $("#ddlSearch"));
-                    client.subscribe(selectedServer.subscriptionTopic, {
-                        qos: selectedServer.qos,
-                        onSuccess: onSubscribeSuccess,
-                        onFailure: onSubscribeFailed,
-                        invocationContext: {
-                            topic: selectedServer.subscriptionTopic
-                        }
-                    })
-                    messageGap = new Date().getTime();
-                } else {
-                    client.unsubscribe(selectedServer.subscriptionTopic, {
-                        onSuccess: onUnSubscribeSuccess,
-                        onFailure: onUnSubscribeFailed,
-                        invocationContext: {
-                            topic: selectedServer.subscriptionTopic
-                        }
-                    });
-
-                }
-            };
-
-        }
-
-        function mqttUnSubscribe() {
-            if ($.isEmptyObject(client)){return;}
-            if ((selectedServer.subscriptionTopic) && (client.isConnected())) {
-                if (selectedServer.subscribed) {
-                    client.unsubscribe(selectedServer.subscriptionTopic, {
-                        onSuccess: onUnSubscribeSuccess,
-                        onFailure: onUnSubscribeFailed,
-                        invocationContext: {
-                            topic: selectedServer.subscriptionTopic
-                        }
-                    })
-                    selectedServer.subscribed = false;
-                }
+            function reconnect() {
+                setTimeout(function () {
+                    document.getElementById('status').innerHTML = "reconnecting";
+                    client.connect(options.connectOpts);
+                }, 3000);
             }
-        }
+            $("#btnGridView").click(function () {
+                //hide grid
+                $("#example_wrapper").hide();
+                //show tree
+                $(".tree-container").show();
+            });
 
-        // connected to MQTT server
-        function onConnect() {
-            document.getElementById('status').innerHTML = "connected.";
-            selectedServer.connected = true;
-            updateServersAndGui(selectedServer, false);
-            console.log("mqtt connected");
-        }
-
-        // failed to connect to MQTT Server
-        function onFailure() {
-            console.log("failure");
-            document.getElementById('status').innerHTML = "failed to connect";
-            reconnect();
-        }
-
-        // disconnected from MQTT Server
-        function onDisconnect(reason) {
-            console.log("disconnected - " + reason.errorMessage);
-            //alert("disconnected - " + reason);
-            document.getElementById('status').innerHTML = "Disconnected:" + reason;
-            selectedServer.connected = false;
-            updateServersAndGui(selectedServer, false);
-            //reconnect();
-        }
-
-        function onSubscribeSuccess(response) {
-            console.log("subscribed to " + response.invocationContext.topic);
-            selectedServer.subscribed = true;
-            updateServersAndGui(selectedServer, true);
-        }
-
-        function onSubscribeFailed(response) {
-            console.log("failed to subscribe" + response.errorMessage);
-        }
-
-        function onUnSubscribeSuccess(response) {
-            console.log("unsubscribed to " + response.invocationContext.topic);
-            selectedServer.subscribed = false;
-            updateServersAndGui(selectedServer, true);
-        }
-
-        function onUnSubscribeFailed(response) {
-            console.log("failed to unsubscribe" + response.errorMessage);
-        }
-
-        function reconnect() {
-            setTimeout(function () {
-                document.getElementById('status').innerHTML = "reconnecting";
-                mqttConnect();
-            }, 3000);
-        }
-
-        function onMessage(message) {
-            messageGap = messageGap - new Date().getTime();
-            if (redrawTimer) {
-                clearInterval(redrawTimer)
-            };
-            $('#dataloader').addClass('active');
-            let msg = {
-                topic: message.topic,
-                payload: message.payloadString,
-                level: message.topic.split("/").length,
-                qos: message.qos,
-                retain: message.retained,
-                date: Date.now()
-            };
-
-            mqFeed.unshift(msg); // always update the feed dataset
-            if (mqFeed.length >= mqMaxFeedRows) {
-                mqFeed.pop()
-            } // chop length if needed
-            if (isMqFeed) {
-                table.row.add(msg);
-                mqStatus[msg.topic] = msg; // update the status dataset
-            } else {
-                if (msg.retain == 2) {
-                    // if the topic exists already, we need to delete the previous from the table, and insert the current
-                    table
-                        .rows(function (idx, data, node) {return data[0] === msg.topic;}).remove()
-                    mqStatus[msg.topic] = msg; // update the status dataset
-                    table.row.add(msg);
-                }
-            }
-            redrawTimer = setInterval(redrawTable, 200);
-            addNode(msg.topic, msg.payload);
-            //treeChart.addNode(msg.topic, msg.payload);
-            console.log(message.topic + "- " + message.payloadString);
-            //addNode(message.destinationName, message.payloadString);
-        }
-
-        function redrawTable() {
-            console.log("redrawing");
-            $('#dataloader').removeClass('active');
-            table.draw();
-            clearInterval(redrawTimer);
-        }
-            
+            $("#btnTreeView").click(function () {
+                //show grid
+                $("#example_wrapper").show();
+                //hide tree
+                $(".tree-container").hide();
+            });
         </script>
 </body>
 

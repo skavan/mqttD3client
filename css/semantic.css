@@ -119,8 +119,8 @@ tr.hidden {
 /* fixed label widths - for left attached labels*/
 .label.fixed70,
 .button.fixed70 {
-  width: 70px !important;
-  max-width: 70px !important;
+  width: 75px !important;
+  max-width: 75px !important;
 }
 
 .label.fixed50,

@@ -48,6 +48,14 @@
             "sourceMaps": true,
             "runtimeArgs": ["--allow-file-access-from-files"], // handles CORS
             "file": "${workspaceFolder}/semantic5.html"
+        },
+        {
+            "name": "Launch hiveMQ",
+            "type": "chrome",
+            "request": "launch",
+            "sourceMaps": true,
+            "runtimeArgs": ["--allow-file-access-from-files"], // handles CORS
+            "file": "${workspaceFolder}/hiveMQ.html"
         }
     ]
 }

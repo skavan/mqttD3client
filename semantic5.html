@@ -2,7 +2,6 @@
 
 <head>
     <link rel="import" href="components/css_Js_Links.html">
-    <link rel="stylesheet" href="css/treeChart.css">
     <link type="text/css" rel="stylesheet" href="css/select2.min.css" />
     <link type="text/css" rel="stylesheet" href="css/topic-tree.css" />
     
@@ -147,7 +146,7 @@
                             <select id="ddlSearch" style="min-width: 400px!important;"></select>
                         </div>
                         
-                    <div id="body" style="width:800px;height:600px;"></div>
+                    <div id="treeChartContainer" style="width: 100%; height: 100%;">
                 </div>
             </div>
 
@@ -236,7 +235,7 @@
                         </td>
                         <td class="td-divider"></td>
 
-                        <td class="nopad left right" style="width:28px; text-align: center">
+                        <td id="dummy" class="nopad left right" style="width:28px; text-align: center">
                             <a class="ui compact">
                                 <i class="caret up large icon compact nomargin"></i>
                             </a>
@@ -249,19 +248,17 @@
     </div>
 
     <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
-    <script type="text/javascript" language="javascript" src="https://d3js.org/d3.v3.min.js"></script>
+    <!-- <script type="text/javascript" language="javascript" src="https://d3js.org/d3.v3.min.js"></script> -->
     <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
-    
-    
     <script type="text/javascript" language="javascript" src="js/mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="mqtt/paho-mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="js/serverManagement.js"></script>
-
-    <script type="text/javascript" src="d3.v5.js"></script>
-    <!-- <script type="text/javascript" src="d3v5/d3.min.js"></script> -->
+    
+    <script type="text/javascript" src="d3v5/d3.min.js"></script>
+    <script type="text/javascript" src="mqtt/paho-mqtt-min.js"></script>
     <script type="text/javascript" src="js/select2.min.js"></script>
     <script type="text/javascript" src="js/topic-tree.js"></script>
-
+    
     <script type="text/javascript" charset="utf-8">
         var selectedServer = {};
         var client = {};
@@ -274,10 +271,13 @@
         var messageGap;
         var redrawTimer;
 
-        setup("#body", $("#ddlSearch"));
+        setup("#treeChartContainer", $("#ddlSearch"));
         // the client can be empty or 'ready-to-connect'.
         // when 'ready-to-connect', it can be connected or disconnected.
         // when connected, can be subscribed or not subscribed.
+        $("#dummy").click(function (){
+            clearLocalStorage();
+        })
 
         $("#btnConnect").click(function () {
             if (selectedServer.connected) {
@@ -286,9 +286,7 @@
                 } else {
                     if (client.isConnected()) {
                         mqttDisconnect()
-
                     }
-
                 }
 
             } else {
@@ -312,28 +310,6 @@
             $("#example_wrapper").show();
             //hide tree
             $(".tree-container").hide();
-        });
-
-        $("#niceSizeBtn").click(function () {
-            if (treeChart) {
-                $('#treeChartContainer').css("overflow", "scroll");
-                treeChart.niceSize(true)
-                    .run();
-                console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
-
-            }
-        });
-
-        $("#fitParentBtn").click(function () {
-            if (treeChart) {
-                $('#treeChartContainer').css("overflow", "hidden");
-
-                treeChart.svgHeight($('#mainContentBody').height() - 40)
-                    .svgWidth($('#mainContentBody').width())
-                    .niceSize(false)
-                    .run();
-                console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
-            }
         });
 
         $("#btnMqFeed").click(function () {
@@ -409,7 +385,7 @@
                     mqFeed=[];
                     mqStatus={};
                     d3.select('#treeChartContainer').html("")
-                    //treeChart = initTree();
+                    setup("#treeChartContainer", $("#ddlSearch"));
                     client.subscribe(selectedServer.subscriptionTopic, {
                         qos: selectedServer.qos,
                         onSuccess: onSubscribeSuccess,
