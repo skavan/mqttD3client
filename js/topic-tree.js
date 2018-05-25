@@ -22,7 +22,7 @@ function setup(tagID, searchBox) {
 
     tree = d3.tree().nodeSize([20, 130]);
 
-    container = d3.select("#" + tagID);
+    container = d3.select(tagID);
     targetSize = container.node().getBoundingClientRect();
 
     svg = container.append("svg:svg")

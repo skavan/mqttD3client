@@ -3,6 +3,8 @@
 <head>
     <link rel="import" href="components/css_Js_Links.html">
     <link rel="stylesheet" href="css/treeChart.css">
+    <link type="text/css" rel="stylesheet" href="css/select2.min.css" />
+    <link type="text/css" rel="stylesheet" href="css/topic-tree.css" />
     
     <style>
         .ui.loader:after {
@@ -135,25 +137,17 @@
                     </tfoot>
                 </table>
                 <div class="tree-container">
-                    <div class="row">
-                        <div class="eight wide column">
-                            <div class="dt-buttons ui basic buttons small">
-                                <button class="ui button buttons-html5" tabindex="0" id="niceSizeBtn">
-                                    <span>Nice Size</span>
-                                </button>
-                                <button class="ui button buttons-html5" tabindex="0" id="fitParentBtn">
-                                    <span>Fit Parent</span>
-                                </button>
-                                <!-- <button class="ui button buttons-html5" tabindex="0" id="hScrollBtn">
-                                    <span>Horizontal Scroll</span>
-                                </button> 
-                                <button class="ui button buttons-html5" tabindex="0" id="vScrollBtn">
-                                    <span>Vertical Scroll</span>
-                                </button>  -->
-                            </div>
+                    
+                        <div>
+                            <button onclick="fit('o')">Original</button>
+                            <button onclick="fit('in')">Fit inside</button>
+                            <button onclick="fit('w')">Fit width</button>
+                            <button onclick="fit('h')">Fit height</button>
+                            &nbsp;-&nbsp;
+                            <select id="ddlSearch" style="min-width: 400px!important;"></select>
                         </div>
-                    </div>
-                    <div id="treeChartContainer"></div>
+                        
+                    <div id="body" style="width:800px;height:600px;"></div>
                 </div>
             </div>
 
@@ -263,7 +257,8 @@
     <script type="text/javascript" language="javascript" src="mqtt/paho-mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="js/serverManagement.js"></script>
 
-    <script type="text/javascript" src="d3v5/d3.min.js"></script>
+    <script type="text/javascript" src="d3.v5.js"></script>
+    <!-- <script type="text/javascript" src="d3v5/d3.min.js"></script> -->
     <script type="text/javascript" src="js/select2.min.js"></script>
     <script type="text/javascript" src="js/topic-tree.js"></script>
 
@@ -279,10 +274,7 @@
         var messageGap;
         var redrawTimer;
 
-
-        //init treeChart
-        var treeChart = {};
-
+        setup("#body", $("#ddlSearch"));
         // the client can be empty or 'ready-to-connect'.
         // when 'ready-to-connect', it can be connected or disconnected.
         // when connected, can be subscribed or not subscribed.
@@ -541,6 +533,7 @@
                 }
             }
             redrawTimer = setInterval(redrawTable, 200);
+            addNode(msg.topic, msg.payload);
             //treeChart.addNode(msg.topic, msg.payload);
             console.log(message.topic + "- " + message.payloadString);
             //addNode(message.destinationName, message.payloadString);
