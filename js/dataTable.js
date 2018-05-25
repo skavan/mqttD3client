@@ -28,7 +28,15 @@ $(document).ready(function () {
                 },
                 {
                     data: "payload",
-                    "title": "payload"
+                    "title": "payload",
+                    "width": "300px",
+                    "render": function (data) {
+                        return '<div style="max-width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + data + '</div>';
+                    }
+                },
+                {
+                    data: "level",
+                    "title": "level"
                 },
                 {
                     data: "qos",
@@ -43,14 +51,18 @@ $(document).ready(function () {
                     "title": "timestamp",
                     // format the date field.
                     "render": function (data) {
-                        var d = new Date(data);
-                        return d.toLocaleString();
+                        let d = new Date(data);
+                        let iso = d3.time.format.utc("%m/%d - %H:%M:%S.%L");
+                        return iso(d);
+                        //return d.toLocaleString();
                     }
                 }
             ],
+            "order": [[ 5, "desc" ]],
             lengthChange: true,
             scrollResize: true,
             scrollCollapse: true,
+            searching: true,
             scrollX: true,
             scrollY: true,
             paging: false,
