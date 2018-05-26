@@ -52,10 +52,13 @@ $(document).ready(function () {
                     // format the date field.
                     "render": function (data) {
                         let d = new Date(data);
-                        var formatMonth = d3.timeFormat("%m/%d - %H:%M:%S.%L");
-                        //let iso = d3.time.format.utc("%m/%d - %H:%M:%S.%L");
-                        //return iso(d);
-                        return formatMonth(d);
+                        
+                        let iso = d3.time.format.utc("%m/%d - %H:%M:%S.%L");
+                        return iso(d);
+
+                        //var formatMonth = d3.timeFormat("%m/%d - %H:%M:%S.%L");
+                        //return formatMonth(d);
+
                         //return d.toLocaleString();
                     }
                 }
