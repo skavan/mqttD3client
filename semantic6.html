@@ -1,0 +1,288 @@
+<html>
+
+<head>
+    <link rel="import" href="components/css_Js_Links.html">
+    <!-- external css -->
+    <link rel="stylesheet" href="../css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.uni-kl.de/js/datatables/latest/media/css/dataTables.semanticui.css">
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.uni-kl.de/js/datatables/latest/extensions/Buttons/css/buttons.semanticui.css">
+    <link type="text/css" rel="stylesheet" href="css/select2.min.css" />
+    <link type="text/css" rel="stylesheet" href="css/topic-tree.css" />
+
+    <!-- external javascript -->
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="../datatables/scrollingResize.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.semanticui.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.uni-kl.de/js/datatables/latest/extensions/Buttons/js/buttons.semanticui.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js"></script>
+    
+
+    <style>
+        .ui.loader:after {
+            border-color: #068323 transparent transparent;
+        }
+
+        .tree-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #treeChartContainer {
+            overflow: scroll;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="box main-header">
+            <table class="ui fixed compact small table nomargin">
+                <tbody>
+                    <!-- Row 1: Connect and Subscribe -->
+                    <tr>
+                        <!-- Server Picker -->
+                        <td class="nopad right" style="width: 280px!important;">
+                            <div class="ui right action fluid left labeled input">
+                                <div class="ui label" style="width:66px">
+                                    server
+                                </div>
+                                <input id="inpSelectedServer" class="cursor pointer" type='text' placeholder="e.g. My MQServer #1" value="dragonfly rpi"
+                                    readonly>
+                                <!-- drop down server picker menu -->
+                                <div id="cmbServerDropdown" class="ui dropdown ">
+                                    <div id="mnuServerPicker" class="menu">
+                                        <div class="divider"></div>
+                                        <div id="editServer" class="item">
+                                            <i class="edit icon"></i> Edit Server</div>
+                                        <div id="addServer" class="item">
+                                            <i class="file alternate icon"></i> Add Server</div>
+                                    </div>
+                                </div>
+                                <!-- create drop down icon and force it into the input box-->
+                                <div class="input-icon">
+                                    <i id="icoServerDropdown" class='dropdown icon'></i>
+                                </div>
+                                <!-- create "connect to server button" -->
+                                <button id="btnConnect" class="ui primary icon button">
+                                    <i class="icon world"></i>
+                                </button>
+                            </div>
+                        </td>
+
+                        <!-- Topic Picker -->
+                        <td class="nopad right" style="min-width: 300px!important;">
+                            <div class="ui right action fluid left labeled input">
+                                <div class="ui label">
+                                    topic
+                                </div>
+
+                                <input id="inpSelectedTopic" type='text' placeholder="e.g. /dragonfly/Basement/Receiver/Status" value="/dragonfly/Basement/Receiver/Status">
+                                <div id="cmbTopicDropdown" class="ui dropdown ">
+                                    <div id="mnuTopicPicker" class="menu">
+                                    </div>
+                                </div>
+
+                                <div class="input-icon">
+                                    <i id="icoTopicDropdown" class='dropdown icon'></i>
+                                </div>
+                                <!-- create "subscribe to topic button" -->
+                                <button id="btnSubscribe" class="ui primary icon small button">
+                                    Subscribe
+                                </button>
+                            </div>
+                        </td>
+
+                        <!-- Divider -->
+                        <td class="td-divider"></td>
+
+                        <td class="nopad right" style="width:130px">
+                            <div class="ui icon small compact buttons">
+                                <button class="ui icon button box-shadow">
+                                    <div class="ui text small">dataset</div>
+                                </button>
+                                <button id="btnMqFeed" data-tooltip="realtime feed (1,000 records)" data-position="bottom right" class="ui icon primary button box-shadow">
+                                    <i class="icon rss"></i>
+                                </button>
+                                <button id="btnMqStatus" data-tooltip="retained message snapshot" data-position="bottom right" class="ui basic icon button box-shadow">
+                                    <i class="icon camera"></i>
+                                </button>
+                            </div>
+                        </td>
+
+                        <td class="nopad right" style="width:130px;">
+                            <div class="ui icon small compact buttons">
+                                <button data-tooltip="display mode" data-position="bottom right" class="ui icon button box-shadow">
+                                    <div class="ui text small">display</div>
+                                </button>
+                                <button id="btnGridView" data-tooltip="tree view" data-position="bottom right" class="ui icon basic button box-shadow">
+                                    <i class="icon sitemap"></i>
+                                </button>
+                                <button id="btnTreeView" data-tooltip="grid view" data-position="bottom right" class="ui primary icon button box-shadow">
+                                    <i class="icon th"></i>
+                                </button>
+                            </div>
+                        </td>
+
+                        <td class="td-divider"></td>
+
+                        <td class="nopad left right" style="width:28px; text-align: center">
+                            <a class="ui compact">
+                                <i class="caret down large icon compact nomargin"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- main content area :: for displaying table or d3 hierarchy chart-->
+        <div id="mainContent" class="box main-content">
+            <div class="box report-title">
+
+            </div>
+            <div class="box report-body">
+
+            </div>
+            <div class="box report-footer">
+
+            </div>
+        </div>
+
+        <!--main footer area for publish to mqtt functionality-->
+        <div class="box main-footer">
+            <table class="ui fixed compact small table nomargin">
+                <tbody>
+                    <tr>
+                        <!-- Topic Picker -->
+                        <td class="nopad right" style="min-width: 300px!important;">
+                            <div class="ui fluid left labeled input">
+                                <div class="ui label">
+                                    topic
+                                </div>
+
+                                <input id="inpPublishTopic" type='text' placeholder="/dragonfly/Basement/Receiver/command" value="/dragonfly/Basement/Receiver/Command">
+                                <div id="cmbPublishTopicDropdown" class="ui dropdown ">
+                                    <div id="mnuPublishTopicPicker" class="menu">
+                                    </div>
+                                </div>
+                                <div class="input-icon">
+                                    <i id="icoPubTopicDropdown" class='dropdown icon'></i>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="td-divider"></td>
+                        <td class="nopad right" style="width: 90px!important;">
+                            <div class="ui icon small compact buttons">
+                                <button data-tooltip="publish as retained message" data-position="top right" class="ui icon button box-shadow">
+                                    <div class="ui text small">retain</div>
+                                </button>
+                                <button data-tooltip="publish as retained message" data-position="top right" class="ui icon basic button box-shadow">
+                                    <input id="publishRetain" type="checkbox">
+                                    <label></label>
+                                </button>
+
+                            </div>
+                        </td>
+                        <td class="nopad right" style="width: 116px!important;">
+                            <div id="publishQos" class="ui icon small compact buttons">
+                                <button data-tooltip="quality of service (qos)" data-position="top right" class="ui icon button box-shadow">
+                                    <div class="ui text small">qos</div>
+                                </button>
+                                <button id="qos0" data-tooltip="At Most Once" data-position="top right" class="ui icon primary button box-shadow">
+                                    <span class="">0</span>
+                                </button>
+                                <button id="qos1" data-tooltip="At Least Once" data-position="top right" class="ui basic icon button box-shadow">
+                                    <span class="">1</span>
+                                </button>
+                                <button id="qos2" data-tooltip="Exactly Once" data-position="top right" class="ui basic icon button box-shadow">
+                                    <span class="">2</span>
+                                </button>
+
+                            </div>
+                        </td>
+                        <td class="td-divider"></td>
+                        <!-- Payload -->
+                        <td class="nopad right" style="min-width: 280px!important;">
+                            <div class="ui action fluid left labeled input">
+                                <div class="ui label">
+                                    payload
+                                </div>
+
+
+
+                                <input id="inpPublishPayload" type='text' placeholder='e.g. I am placeholder'>
+                                <div id="cmbPublishPayloadDropdown" class="ui dropdown" )>
+                                    <div id="mnuPublishPayloadPicker" class="right menu">
+                                    </div>
+                                </div>
+                                <div class="input-icon">
+                                    <i id="icoPubPayloadDropdown" class='dropdown icon'></i>
+                                </div>
+                                <button class="ui icon button">
+                                    <i class="icon ellipsis horizontal"></i>
+                                </button>
+                                <button id="bPublish" class="ui primary icon small button">
+                                    Publish
+                                </button>
+                            </div>
+                        </td>
+                        <td class="td-divider"></td>
+
+                        <td id="dummy" class="nopad left right" style="width:28px; text-align: center">
+                            <a class="ui compact">
+                                <i class="caret up large icon compact nomargin"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+            <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
+        <!-- <script type="text/javascript" language="javascript" src="https://d3js.org/d3.v3.min.js"></script> -->
+        <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mqtt.js"></script>
+        <script type="text/javascript" language="javascript" src="mqtt/paho-mqtt.js"></script>
+        
+        <script type="text/javascript" language="javascript" src="js/serverManagement.js"></script>
+
+        <script type="text/javascript" src="d3v5/d3.min.js"></script>
+        <script type="text/javascript" src="mqtt/paho-mqtt-min.js"></script>
+        <script type="text/javascript" src="js/select2.min.js"></script>
+        <script type="text/javascript" src="js/topic-tree.js"></script>
+
+        <script type="text/javascript" charset="utf-8">
+            var selectedServer = {};
+            var client = {};
+            var mqFeed = []; // the real-time stream.
+            var mqMaxFeedRows = 1000;
+            var mqStatus = {}; // the retained message snapshot
+            var isMqFeed = true;
+            var isChart = false;
+            var table;
+            var messageGap;
+            var redrawTimer;
+
+            setup("#treeChartContainer", $("#ddlSearch"));
+        </script>
+</body>
+
+</html>

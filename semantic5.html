@@ -4,10 +4,23 @@
     <link rel="import" href="components/css_Js_Links.html">
     <link type="text/css" rel="stylesheet" href="css/select2.min.css" />
     <link type="text/css" rel="stylesheet" href="css/topic-tree.css" />
-    
+
     <style>
         .ui.loader:after {
             border-color: #068323 transparent transparent;
+        }
+
+        .tree-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #treeChartContainer {
+            overflow: scroll;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
@@ -123,7 +136,7 @@
             <div id="mainContentBody" class="box report-body ">
 
                 <div id="dataloader" class="ui large text loader green">
-                    <div class="ui segment green inverted">
+                    <div id="dataloaderText" class="ui segment green inverted">
                         receiving messages...
                     </div>
                 </div>
@@ -136,395 +149,435 @@
                     </tfoot>
                 </table>
 
-                <div class="tree-container" style="flex:1">
-                    
-                        <div>
-                            <button onclick="fit('o')">Original</button>
-                            <button onclick="fit('in')">Fit inside</button>
-                            <button onclick="fit('w')">Fit width</button>
-                            <button onclick="fit('h')">Fit height</button>
-                            &nbsp;-&nbsp;
-                            <select id="ddlSearch" style="min-width: 400px!important;"></select>
+                <div class="tree-container">
+
+
+
+
+
+                    <div style="float:left;">
+                        <div class="ui basic buttons small">
+                            <button class="ui small button" onclick="fit('o')">Original</button>
+                            <button class="ui small button" onclick="fit('in')">Fit inside</button>
+                            <button class="ui small button" onclick="fit('w')">Fit width</button>
+                            <button class="ui small button" onclick="fit('h')">Fit height</button>
                         </div>
-                        
-                    <div id="treeChartContainer" style="flex:1">
+                    </div>
+                    <div style="float:right;">
+                        <div id="status" class="middle aligned content">
+                            Content B
+                        </div>
+                        <div id="" class="ui input">
+
+                            <label class="ui labeled input small">
+
+                                <div class="ui label">Search</div>
+
+
+                                <input id="treeSearch" type="search" class="" placeholder="enter search text" style="margin-left: 0px;">
+                            </label>
+                            <!-- <select id="ddlSearch" style="display: none; min-width: 400px!important;"></select> -->
+                        </div>
+                    </div>
+
+
+
+                    <div id="treeChartContainer"></div>
+
                 </div>
+
+
+
+                <!-- <div id="status" style="flex: 1;">unused footer area - perhaps remove for addition height? or ditch the table footer and use this area..</div> -->
             </div>
 
+            <!--main footer area for publish to mqtt functionality-->
+            <div class="box main-footer">
+                <table class="ui fixed compact small table nomargin">
+                    <tbody>
+                        <tr>
+                            <!-- Topic Picker -->
+                            <td class="nopad right" style="min-width: 300px!important;">
+                                <div class="ui fluid left labeled input">
+                                    <div class="ui label">
+                                        topic
+                                    </div>
 
-
-            <div id="status" class="box report-footer">unused footer area - perhaps remove for addition height? or ditch the table footer and use this area..</div>
-        </div>
-
-        <!--main footer area for publish to mqtt functionality-->
-        <div class="box main-footer">
-            <table class="ui fixed compact small table nomargin">
-                <tbody>
-                    <tr>
-                        <!-- Topic Picker -->
-                        <td class="nopad right" style="min-width: 300px!important;">
-                            <div class="ui fluid left labeled input">
-                                <div class="ui label">
-                                    topic
-                                </div>
-
-                                <input id="inpPublishTopic" type='text' placeholder="/dragonfly/Basement/Receiver/command" value="/dragonfly/Basement/Receiver/Command">
-                                <div id="cmbPublishTopicDropdown" class="ui dropdown ">
-                                    <div id="mnuPublishTopicPicker" class="menu">
+                                    <input id="inpPublishTopic" type='text' placeholder="/dragonfly/Basement/Receiver/command" value="/dragonfly/Basement/Receiver/Command">
+                                    <div id="cmbPublishTopicDropdown" class="ui dropdown ">
+                                        <div id="mnuPublishTopicPicker" class="menu">
+                                        </div>
+                                    </div>
+                                    <div class="input-icon">
+                                        <i id="icoPubTopicDropdown" class='dropdown icon'></i>
                                     </div>
                                 </div>
-                                <div class="input-icon">
-                                    <i id="icoPubTopicDropdown" class='dropdown icon'></i>
+                            </td>
+                            <td class="td-divider"></td>
+                            <td class="nopad right" style="width: 90px!important;">
+                                <div class="ui icon small compact buttons">
+                                    <button data-tooltip="publish as retained message" data-position="top right" class="ui icon button box-shadow">
+                                        <div class="ui text small">retain</div>
+                                    </button>
+                                    <button data-tooltip="publish as retained message" data-position="top right" class="ui icon basic button box-shadow">
+                                        <input id="publishRetain" type="checkbox">
+                                        <label></label>
+                                    </button>
+
                                 </div>
-                            </div>
-                        </td>
-                        <td class="td-divider"></td>
-                        <td class="nopad right" style="width: 90px!important;">
-                            <div class="ui icon small compact buttons">
-                                <button data-tooltip="publish as retained message" data-position="top right" class="ui icon button box-shadow">
-                                    <div class="ui text small">retain</div>
-                                </button>
-                                <button data-tooltip="publish as retained message" data-position="top right" class="ui icon basic button box-shadow">
-                                    <input id="publishRetain" type="checkbox">
-                                    <label></label>
-                                </button>
+                            </td>
+                            <td class="nopad right" style="width: 116px!important;">
+                                <div id="publishQos" class="ui icon small compact buttons">
+                                    <button data-tooltip="quality of service (qos)" data-position="top right" class="ui icon button box-shadow">
+                                        <div class="ui text small">qos</div>
+                                    </button>
+                                    <button id="qos0" data-tooltip="At Most Once" data-position="top right" class="ui icon primary button box-shadow">
+                                        <span class="">0</span>
+                                    </button>
+                                    <button id="qos1" data-tooltip="At Least Once" data-position="top right" class="ui basic icon button box-shadow">
+                                        <span class="">1</span>
+                                    </button>
+                                    <button id="qos2" data-tooltip="Exactly Once" data-position="top right" class="ui basic icon button box-shadow">
+                                        <span class="">2</span>
+                                    </button>
 
-                            </div>
-                        </td>
-                        <td class="nopad right" style="width: 116px!important;">
-                            <div id="publishQos" class="ui icon small compact buttons">
-                                <button data-tooltip="quality of service (qos)" data-position="top right" class="ui icon button box-shadow">
-                                    <div class="ui text small">qos</div>
-                                </button>
-                                <button id="qos0" data-tooltip="At Most Once" data-position="top right" class="ui icon primary button box-shadow">
-                                    <span class="">0</span>
-                                </button>
-                                <button id="qos1" data-tooltip="At Least Once" data-position="top right" class="ui basic icon button box-shadow">
-                                    <span class="">1</span>
-                                </button>
-                                <button id="qos2" data-tooltip="Exactly Once" data-position="top right" class="ui basic icon button box-shadow">
-                                    <span class="">2</span>
-                                </button>
-
-                            </div>
-                        </td>
-                        <td class="td-divider"></td>
-                        <!-- Payload -->
-                        <td class="nopad right" style="min-width: 280px!important;">
-                            <div class="ui action fluid left labeled input">
-                                <div class="ui label">
-                                    payload
                                 </div>
-
-
-
-                                <input id="inpPublishPayload" type='text' placeholder='e.g. I am placeholder'>
-                                <div id="cmbPublishPayloadDropdown" class="ui dropdown" )>
-                                    <div id="mnuPublishPayloadPicker" class="right menu">
+                            </td>
+                            <td class="td-divider"></td>
+                            <!-- Payload -->
+                            <td class="nopad right" style="min-width: 280px!important;">
+                                <div class="ui action fluid left labeled input">
+                                    <div class="ui label">
+                                        payload
                                     </div>
-                                </div>
-                                <div class="input-icon">
-                                    <i id="icoPubPayloadDropdown" class='dropdown icon'></i>
-                                </div>
-                                <button class="ui icon button">
-                                    <i class="icon ellipsis horizontal"></i>
-                                </button>
-                                <button id="bPublish" class="ui primary icon small button">
-                                    Publish
-                                </button>
-                            </div>
-                        </td>
-                        <td class="td-divider"></td>
 
-                        <td id="dummy" class="nopad left right" style="width:28px; text-align: center">
-                            <a class="ui compact">
-                                <i class="caret up large icon compact nomargin"></i>
-                            </a>
-                        </td>
 
-                    </tr>
-                </tbody>
-            </table>
+
+                                    <input id="inpPublishPayload" type='text' placeholder='e.g. I am placeholder'>
+                                    <div id="cmbPublishPayloadDropdown" class="ui dropdown" )>
+                                        <div id="mnuPublishPayloadPicker" class="right menu">
+                                        </div>
+                                    </div>
+                                    <div class="input-icon">
+                                        <i id="icoPubPayloadDropdown" class='dropdown icon'></i>
+                                    </div>
+                                    <button class="ui icon button">
+                                        <i class="icon ellipsis horizontal"></i>
+                                    </button>
+                                    <button id="bPublish" class="ui primary icon small button">
+                                        Publish
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="td-divider"></td>
+
+                            <td id="dummy" class="nopad left right" style="width:28px; text-align: center">
+                                <a class="ui compact">
+                                    <i class="caret up large icon compact nomargin"></i>
+                                </a>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
-    <!-- <script type="text/javascript" language="javascript" src="https://d3js.org/d3.v3.min.js"></script> -->
-    <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
-    <script type="text/javascript" language="javascript" src="js/mqtt.js"></script>
-    <script type="text/javascript" language="javascript" src="mqtt/paho-mqtt.js"></script>
-    <script type="text/javascript" language="javascript" src="js/serverManagement.js"></script>
-    
-    <script type="text/javascript" src="d3v5/d3.min.js"></script>
-    <script type="text/javascript" src="mqtt/paho-mqtt-min.js"></script>
-    <script type="text/javascript" src="js/select2.min.js"></script>
-    <script type="text/javascript" src="js/topic-tree.js"></script>
-    
-    <script type="text/javascript" charset="utf-8">
-        var selectedServer = {};
-        var client = {};
-        var mqFeed = []; // the real-time stream.
-        var mqMaxFeedRows = 1000;
-        var mqStatus = {}; // the retained message snapshot
-        var isMqFeed = true;
-        var isChart = false;
-        var table;
-        var messageGap;
-        var redrawTimer;
+        <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
+        <!-- <script type="text/javascript" language="javascript" src="https://d3js.org/d3.v3.min.js"></script> -->
+        <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
+        <script type="text/javascript" language="javascript" src="js/mqtt.js"></script>
+        <script type="text/javascript" language="javascript" src="mqtt/paho-mqtt.js"></script>
+        <script type="text/javascript" language="javascript" src="js/serverManagement.js"></script>
 
-        setup("#treeChartContainer", $("#ddlSearch"));
-        // the client can be empty or 'ready-to-connect'.
-        // when 'ready-to-connect', it can be connected or disconnected.
-        // when connected, can be subscribed or not subscribed.
-        $("#dummy").click(function (){
-            clearLocalStorage();
-        })
+        <script type="text/javascript" src="d3v5/d3.min.js"></script>
+        <script type="text/javascript" src="mqtt/paho-mqtt-min.js"></script>
+        <script type="text/javascript" src="js/select2.min.js"></script>
+        <script type="text/javascript" src="js/topic-tree.js"></script>
 
-        $("#btnConnect").click(function () {
-            if (selectedServer.connected) {
-                if ($.isEmptyObject(client)) {
-                    selectedServer.connected = false
+        <script type="text/javascript" charset="utf-8">
+            var selectedServer = {};
+            var client = {};
+            var mqFeed = []; // the real-time stream.
+            var mqMaxFeedRows = 1000;
+            var mqStatus = {}; // the retained message snapshot
+            var isMqFeed = true;
+            var isChart = false;
+            var table;
+            var messageGap;
+            var redrawTimer;
+
+            setup("#treeChartContainer", $("#ddlSearch"));
+            // the client can be empty or 'ready-to-connect'.
+            // when 'ready-to-connect', it can be connected or disconnected.
+            // when connected, can be subscribed or not subscribed.
+            $("#dummy").click(function () {
+                clearLocalStorage();
+            })
+
+            $("#btnConnect").click(function () {
+                if (selectedServer.connected) {
+                    if ($.isEmptyObject(client)) {
+                        selectedServer.connected = false
+                    } else {
+                        if (client.isConnected()) {
+                            mqttDisconnect()
+                        }
+                    }
+
                 } else {
-                    if (client.isConnected()) {
-                        mqttDisconnect()
+                    mqttConnect()
+                }
+            });
+
+            $("#btnSubscribe").click(function () {
+                mqttSubscribe();
+            });
+
+            $("#btnGridView").click(function () {
+                //hide grid
+                $("#example_wrapper").hide();
+                //show tree
+                $(".tree-container").show();
+            });
+
+            $("#btnTreeView").click(function () {
+                //show grid
+                $("#example_wrapper").show();
+                //hide tree
+                $(".tree-container").hide();
+            });
+
+            $("#btnMqFeed").click(function () {
+                table.clear();
+                loader("show", "loading data")
+                //$('#dataloader').addClass('active');
+                $("#btnMqFeed").removeClass('basic').addClass('primary');
+                $("#btnMqStatus").removeClass('primary').addClass('basic');
+                for (msg of mqFeed) {
+                    table.row.add(msg);
+                };
+                isMqFeed = true;
+                table.columns.adjust();
+                loader("hide")
+                redrawTable();
+            });
+
+            $("#btnMqStatus").click(function () {
+                table.clear();
+                loader("show", "loading data")
+                //$('#dataloader').addClass('active');
+                $("#btnMqStatus").removeClass('basic').addClass('primary');
+                $("#btnMqFeed").removeClass('primary').addClass('basic');
+                for (msg of Object.keys(mqStatus)) {
+                    table.row.add(mqStatus[msg]);
+                };
+                isMqFeed = false;
+                loader("hide")
+                table.columns.adjust();
+                redrawTable();
+            });
+
+            function loader(showHide, text) {
+                if (showHide == "show") {
+                    $('#dataloader').addClass('active');
+                    $('#dataloaderText').text(text);
+
+                } else {
+                    $('#dataloader').removeClass('active');
+                }
+            }
+
+            function mqttDisconnect() {
+                client.disconnect();
+                selectedServer.connected = false;
+                selectedServer.subscribed = false;
+                console.log("Disconnected: (isConnected:" + client.isConnected() + ")");
+                updateServersAndGui(selectedServer, true);
+            }
+
+            function mqttConnect() {
+                if (!checkServerObject(selectedServer)) return
+                if (selectedServer.connected) return
+                if (!$.isEmptyObject(client)) {
+                    if (client.connected) {
+                        mqttDisconnect();
                     }
                 }
 
-            } else {
-                mqttConnect()
+                client = new Paho.MQTT.Client(selectedServer.host, parseInt(selectedServer.port),
+                    selectedServer.clientId);
+
+                client.onMessageArrived = onMessage;
+                client.onConnectionLost = onDisconnect;
+
+                let opts = {
+                    keepAliveInterval: parseInt(selectedServer.keepAliveInterval),
+                    timeout: selectedServer.timeout,
+                    cleanSession: selectedServer.cleanSession,
+                    onSuccess: onConnect,
+                    onFailure: onFailure
+                };
+
+                if (selectedServer.protocol != "tcp") {
+                    opts["userName"] = selectedServer.userName;
+                    opts["password"] = selectedServer.password;
+                    opts["useSSL"] = true;
+                }
+
+                client.connect(opts);
             }
-        });
 
-        $("#btnSubscribe").click(function () {
-            mqttSubscribe();
-        });
+            function mqttSubscribe() {
+                if ((selectedServer.subscriptionTopic) && (client.isConnected())) {
+                    if (!selectedServer.subscribed) {
+                        table.clear();
+                        mqFeed = [];
+                        mqStatus = {};
+                        d3.select('#treeChartContainer').html("")
+                        setup("#treeChartContainer", $("#ddlSearch"));
+                        client.subscribe(selectedServer.subscriptionTopic, {
+                            qos: selectedServer.qos,
+                            onSuccess: onSubscribeSuccess,
+                            onFailure: onSubscribeFailed,
+                            invocationContext: {
+                                topic: selectedServer.subscriptionTopic
+                            }
+                        })
+                        messageGap = new Date().getTime();
+                    } else {
+                        client.unsubscribe(selectedServer.subscriptionTopic, {
+                            onSuccess: onUnSubscribeSuccess,
+                            onFailure: onUnSubscribeFailed,
+                            invocationContext: {
+                                topic: selectedServer.subscriptionTopic
+                            }
+                        });
 
-        $("#btnGridView").click(function () {
-            //hide grid
-            $("#example_wrapper").hide();
-            //show tree
-            $(".tree-container").show();
-        });
+                    }
+                };
 
-        $("#btnTreeView").click(function () {
-            //show grid
-            $("#example_wrapper").show();
-            //hide tree
-            $(".tree-container").hide();
-        });
+            }
 
-        $("#btnMqFeed").click(function () {
-            table.clear();
-            $('#dataloader').addClass('active');
-            $("#btnMqFeed").removeClass('basic').addClass('primary');
-            $("#btnMqStatus").removeClass('primary').addClass('basic');
-            for (msg of mqFeed) {
-                table.row.add(msg);
-            };
-            isMqFeed = true;
-            table.columns.adjust();
-            redrawTable();
-        });
-
-        $("#btnMqStatus").click(function () {
-            table.clear();
-            $('#dataloader').addClass('active');
-            $("#btnMqStatus").removeClass('basic').addClass('primary');
-            $("#btnMqFeed").removeClass('primary').addClass('basic');
-            for (msg of Object.keys(mqStatus)) {
-                table.row.add(mqStatus[msg]);
-            };
-            isMqFeed = false;
-            table.columns.adjust();
-            redrawTable();
-        });
-
-        function mqttDisconnect() {
-            client.disconnect();
-            selectedServer.connected = false;
-            selectedServer.subscribed = false;
-            console.log("Disconnected: (isConnected:" + client.isConnected() + ")");
-            updateServersAndGui(selectedServer, true);
-        }
-
-        function mqttConnect() {
-            if (!checkServerObject(selectedServer)) return
-            if (selectedServer.connected) return
-            if (!$.isEmptyObject(client)) {
-                if (client.connected) {
-                    mqttDisconnect();
+            function mqttUnSubscribe() {
+                if ($.isEmptyObject(client)) {
+                    return;
+                }
+                if ((selectedServer.subscriptionTopic) && (client.isConnected())) {
+                    if (selectedServer.subscribed) {
+                        client.unsubscribe(selectedServer.subscriptionTopic, {
+                            onSuccess: onUnSubscribeSuccess,
+                            onFailure: onUnSubscribeFailed,
+                            invocationContext: {
+                                topic: selectedServer.subscriptionTopic
+                            }
+                        })
+                        selectedServer.subscribed = false;
+                    }
                 }
             }
 
-            client = new Paho.MQTT.Client(selectedServer.host, parseInt(selectedServer.port),
-                selectedServer.clientId);
-
-            client.onMessageArrived = onMessage;
-            client.onConnectionLost = onDisconnect;
-
-            let opts = {
-                keepAliveInterval: parseInt(selectedServer.keepAliveInterval),
-                timeout: selectedServer.timeout,
-                cleanSession: selectedServer.cleanSession,
-                onSuccess: onConnect,
-                onFailure: onFailure
-            };
-
-            if (selectedServer.protocol != "tcp") {
-                opts["userName"] = selectedServer.userName;
-                opts["password"] = selectedServer.password;
-                opts["useSSL"] = true;
+            // connected to MQTT server
+            function onConnect() {
+                document.getElementById('status').innerHTML = "connected.";
+                selectedServer.connected = true;
+                updateServersAndGui(selectedServer, false);
+                console.log("mqtt connected");
             }
 
-            client.connect(opts);
-        }
-
-        function mqttSubscribe() {
-            if ((selectedServer.subscriptionTopic) && (client.isConnected())) {
-                if (!selectedServer.subscribed) {
-                    table.clear();
-                    mqFeed=[];
-                    mqStatus={};
-                    d3.select('#treeChartContainer').html("")
-                    setup("#treeChartContainer", $("#ddlSearch"));
-                    client.subscribe(selectedServer.subscriptionTopic, {
-                        qos: selectedServer.qos,
-                        onSuccess: onSubscribeSuccess,
-                        onFailure: onSubscribeFailed,
-                        invocationContext: {
-                            topic: selectedServer.subscriptionTopic
-                        }
-                    })
-                    messageGap = new Date().getTime();
-                } else {
-                    client.unsubscribe(selectedServer.subscriptionTopic, {
-                        onSuccess: onUnSubscribeSuccess,
-                        onFailure: onUnSubscribeFailed,
-                        invocationContext: {
-                            topic: selectedServer.subscriptionTopic
-                        }
-                    });
-
-                }
-            };
-
-        }
-
-        function mqttUnSubscribe() {
-            if ($.isEmptyObject(client)){return;}
-            if ((selectedServer.subscriptionTopic) && (client.isConnected())) {
-                if (selectedServer.subscribed) {
-                    client.unsubscribe(selectedServer.subscriptionTopic, {
-                        onSuccess: onUnSubscribeSuccess,
-                        onFailure: onUnSubscribeFailed,
-                        invocationContext: {
-                            topic: selectedServer.subscriptionTopic
-                        }
-                    })
-                    selectedServer.subscribed = false;
-                }
+            // failed to connect to MQTT Server
+            function onFailure() {
+                console.log("failure");
+                document.getElementById('status').innerHTML = "failed to connect";
+                reconnect();
             }
-        }
 
-        // connected to MQTT server
-        function onConnect() {
-            document.getElementById('status').innerHTML = "connected.";
-            selectedServer.connected = true;
-            updateServersAndGui(selectedServer, false);
-            console.log("mqtt connected");
-        }
+            // disconnected from MQTT Server
+            function onDisconnect(reason) {
+                console.log("disconnected - " + reason.errorMessage);
+                //alert("disconnected - " + reason);
+                document.getElementById('status').innerHTML = "Disconnected:" + reason;
+                selectedServer.connected = false;
+                updateServersAndGui(selectedServer, false);
+                //reconnect();
+            }
 
-        // failed to connect to MQTT Server
-        function onFailure() {
-            console.log("failure");
-            document.getElementById('status').innerHTML = "failed to connect";
-            reconnect();
-        }
+            function onSubscribeSuccess(response) {
+                console.log("subscribed to " + response.invocationContext.topic);
+                selectedServer.subscribed = true;
+                updateServersAndGui(selectedServer, true);
+            }
 
-        // disconnected from MQTT Server
-        function onDisconnect(reason) {
-            console.log("disconnected - " + reason.errorMessage);
-            //alert("disconnected - " + reason);
-            document.getElementById('status').innerHTML = "Disconnected:" + reason;
-            selectedServer.connected = false;
-            updateServersAndGui(selectedServer, false);
-            //reconnect();
-        }
+            function onSubscribeFailed(response) {
+                console.log("failed to subscribe" + response.errorMessage);
+            }
 
-        function onSubscribeSuccess(response) {
-            console.log("subscribed to " + response.invocationContext.topic);
-            selectedServer.subscribed = true;
-            updateServersAndGui(selectedServer, true);
-        }
+            function onUnSubscribeSuccess(response) {
+                console.log("unsubscribed to " + response.invocationContext.topic);
+                selectedServer.subscribed = false;
+                updateServersAndGui(selectedServer, true);
+            }
 
-        function onSubscribeFailed(response) {
-            console.log("failed to subscribe" + response.errorMessage);
-        }
+            function onUnSubscribeFailed(response) {
+                console.log("failed to unsubscribe" + response.errorMessage);
+            }
 
-        function onUnSubscribeSuccess(response) {
-            console.log("unsubscribed to " + response.invocationContext.topic);
-            selectedServer.subscribed = false;
-            updateServersAndGui(selectedServer, true);
-        }
+            function reconnect() {
+                setTimeout(function () {
+                    document.getElementById('status').innerHTML = "reconnecting";
+                    mqttConnect();
+                }, 3000);
+            }
 
-        function onUnSubscribeFailed(response) {
-            console.log("failed to unsubscribe" + response.errorMessage);
-        }
+            function onMessage(message) {
+                messageGap = messageGap - new Date().getTime();
+                if (redrawTimer) {
+                    clearInterval(redrawTimer)
+                };
+                //$('#dataloader').addClass('active');
+                loader("show", "receiving messages...")
+                let msg = {
+                    topic: message.topic,
+                    payload: message.payloadString,
+                    level: message.topic.split("/").length,
+                    qos: message.qos,
+                    retain: message.retained,
+                    date: Date.now()
+                };
 
-        function reconnect() {
-            setTimeout(function () {
-                document.getElementById('status').innerHTML = "reconnecting";
-                mqttConnect();
-            }, 3000);
-        }
-
-        function onMessage(message) {
-            messageGap = messageGap - new Date().getTime();
-            if (redrawTimer) {
-                clearInterval(redrawTimer)
-            };
-            $('#dataloader').addClass('active');
-            let msg = {
-                topic: message.topic,
-                payload: message.payloadString,
-                level: message.topic.split("/").length,
-                qos: message.qos,
-                retain: message.retained,
-                date: Date.now()
-            };
-
-            mqFeed.unshift(msg); // always update the feed dataset
-            if (mqFeed.length >= mqMaxFeedRows) {
-                mqFeed.pop()
-            } // chop length if needed
-            if (isMqFeed) {
-                table.row.add(msg);
-                mqStatus[msg.topic] = msg; // update the status dataset
-            } else {
-                if (msg.retain == 2) {
-                    // if the topic exists already, we need to delete the previous from the table, and insert the current
-                    table
-                        .rows(function (idx, data, node) {return data[0] === msg.topic;}).remove()
-                    mqStatus[msg.topic] = msg; // update the status dataset
+                mqFeed.unshift(msg); // always update the feed dataset
+                if (mqFeed.length >= mqMaxFeedRows) {
+                    mqFeed.pop()
+                } // chop length if needed
+                if (isMqFeed) {
                     table.row.add(msg);
+                    mqStatus[msg.topic] = msg; // update the status dataset
+                } else {
+                    if (msg.retain == 2) {
+                        // if the topic exists already, we need to delete the previous from the table, and insert the current
+                        table
+                            .rows(function (idx, data, node) {
+                                return data[0] === msg.topic;
+                            }).remove()
+                        mqStatus[msg.topic] = msg; // update the status dataset
+                        table.row.add(msg);
+                    }
                 }
+                redrawTimer = setInterval(redrawTable, 200);
+                addNode(msg.topic, msg.payload);
+                //treeChart.addNode(msg.topic, msg.payload);
+                console.log(message.topic + "- " + message.payloadString);
+                //addNode(message.destinationName, message.payloadString);
             }
-            redrawTimer = setInterval(redrawTable, 200);
-            addNode(msg.topic, msg.payload);
-            //treeChart.addNode(msg.topic, msg.payload);
-            console.log(message.topic + "- " + message.payloadString);
-            //addNode(message.destinationName, message.payloadString);
-        }
 
-        function redrawTable() {
-            console.log("redrawing");
-            $('#dataloader').removeClass('active');
-            table.draw();
-            clearInterval(redrawTimer);
-        }
-
-        
-    </script>
+            function redrawTable() {
+                console.log("redrawing");
+                loader("hide")
+                //$('#dataloader').removeClass('active');
+                table.draw();
+                clearInterval(redrawTimer);
+            }
+        </script>
 </body>
 
 </html>

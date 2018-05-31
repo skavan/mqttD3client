@@ -141,23 +141,19 @@
                                     <span>Nice Size</span>
                                 </button>
                                 <button class="ui button buttons-html5" tabindex="0" id="fitParentBtn">
-                                    <span>Fit to Parent</span>
+                                    <span>Fit Parent</span>
                                 </button>
-                                <button class="ui button buttons-html5" tabindex="0" id="fitToWidth">
-                                    <span>fit to Width</span>
+                                <!-- <button class="ui button buttons-html5" tabindex="0" id="hScrollBtn">
+                                    <span>Horizontal Scroll</span>
                                 </button> 
-                                <button class="ui button buttons-html5" tabindex="0" id="fitToHeight">
-                                    <span>fit to Height</span>
-                                </button> 
+                                <button class="ui button buttons-html5" tabindex="0" id="vScrollBtn">
+                                    <span>Vertical Scroll</span>
+                                </button>  -->
                             </div>
                         </div>
                     </div>
                     <div id="treeChartContainer"></div>
                 </div>
-                <div class="ui custom popup top left transition hidden" style="z-index:10">
-                    I'm not on the same level as the button, but i can still be found.
-                  </div>
-                  
             </div>
 
 
@@ -322,29 +318,23 @@
 
         $("#niceSizeBtn").click(function () {
             if (treeChart) {
-                treeChart.niceSize(); // returns to initial state
-                //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
+                $('#treeChartContainer').css("overflow", "scroll");
+                treeChart.niceSize(true)
+                    .run();
+                console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
+
             }
         });
 
         $("#fitParentBtn").click(function () {
             if (treeChart) {
-                treeChart.fitToParent(); // scale in to fit parent size
-                //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
-            }
-        });
+                $('#treeChartContainer').css("overflow", "hidden");
 
-        $("#fitToWidth").click(function () {
-            if (treeChart) {
-                treeChart.fitToWidth(); // scale in to fit parent size
-                //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
-            }
-        });
-
-        $("#fitToHeight").click(function () {
-            if (treeChart) {
-                treeChart.fitToHeight(); // scale in to fit parent size
-                //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
+                treeChart.svgHeight($('#mainContentBody').height() - 40)
+                    .svgWidth($('#mainContentBody').width())
+                    .niceSize(false)
+                    .run();
+                console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
             }
         });
 
@@ -420,9 +410,7 @@
                     table.clear();
                     mqFeed=[];
                     mqStatus={};
-                    if (treeChart) {
-                        treeChart.clear();
-                    }
+                    d3.select('#treeChartContainer').html("")
                     treeChart = initTree();
                     client.subscribe(selectedServer.subscriptionTopic, {
                         qos: selectedServer.qos,
@@ -547,9 +535,7 @@
                 }
             }
             redrawTimer = setInterval(redrawTable, 200);
-            if (treeChart) {
             treeChart.addNode(msg.topic, msg.payload);
-            }
             console.log(message.topic + "- " + message.payloadString);
             //addNode(message.destinationName, message.payloadString);
         }
@@ -564,11 +550,11 @@
         function initTree(){
             return TreeChart()
                 .container("#treeChartContainer")
-                .marginLeft(15)
-                .scalePadding(10)
-                // button control row's height + margin ~ 52px
-                .svgHeight($('#mainContentBody').height() - 52)
-                // 10 scrollbar width
+                .marginTop(20)
+                .marginLeft(120)
+                .marginRight(120)
+                .marginBottom(20)
+                .svgHeight($('#mainContentBody').height())
                 .svgWidth($('#mainContentBody').width())
                 .run();
         }

@@ -50,6 +50,14 @@
             "file": "${workspaceFolder}/semantic5.html"
         },
         {
+            "name": "Launch semantic6",
+            "type": "chrome",
+            "request": "launch",
+            "sourceMaps": true,
+            "runtimeArgs": ["--allow-file-access-from-files"], // handles CORS
+            "file": "${workspaceFolder}/semantic6.html"
+        },
+        {
             "name": "Launch hiveMQ",
             "type": "chrome",
             "request": "launch",

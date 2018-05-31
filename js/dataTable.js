@@ -52,12 +52,16 @@ $(document).ready(function () {
                     // format the date field.
                     "render": function (data) {
                         let d = new Date(data);
+                        if (d3.version.toString().startsWith("3")){
+                            let iso = d3.time.format.utc("%m/%d - %H:%M:%S.%L");
+                            return iso(d);
+                        } else {
+                            let formatMonth = d3.timeFormat("%m/%d - %H:%M:%S.%L");
+                            return formatMonth(d);
+                        }
                         
-                        let iso = d3.time.format.utc("%m/%d - %H:%M:%S.%L");
-                        return iso(d);
 
-                        //var formatMonth = d3.timeFormat("%m/%d - %H:%M:%S.%L");
-                        //return formatMonth(d);
+                        
 
                         //return d.toLocaleString();
                     }

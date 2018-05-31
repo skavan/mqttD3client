@@ -4,6 +4,7 @@
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  background-color: antiquewhite;
 }
 
 .container .box {
@@ -18,7 +19,7 @@
 }
 
 .container .main-content {
-  /* background-color: blue; */
+  background-color: blue;
   flex: 1;
 }
 
@@ -40,7 +41,7 @@
 }
 
 .container .report-footer {
-  background-color: white;
+  background-color: yellowgreen;
   text-align: right;
   padding-left: 1em;
   padding-right: 1em;
@@ -51,6 +52,10 @@
 .segment.hidden,
 tr.hidden {
   display: none;
+}
+
+.hideme {
+  display: none!important;
 }
 
 /* cheat to put drop down or other icon on the right side of input box */

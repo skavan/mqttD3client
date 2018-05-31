@@ -66,3 +66,4 @@ function clearLocalStorage(){
 function checkServerObject(server){
     if (server.host && server.port && server.clientId) {return true;} else {return false;}
 }
+
