@@ -2,10 +2,24 @@
 
 <head>
     <link rel="import" href="components/css_Js_Links.html">
-    <link rel="stylesheet" href="css/treeChart.css">
+    <link type="text/css" rel="stylesheet" href="css/select2.min.css" />
+    <link type="text/css" rel="stylesheet" href="css/topic-tree.css" />
     <style>
         .ui.loader:after {
             border-color: #068323 transparent transparent;
+        }
+
+         .tree-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #treeChartContainer {
+            overflow: scroll;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
@@ -134,24 +148,26 @@
                     </tfoot>
                 </table>
                 <div class="tree-container">
-                    <div class="row">
-                        <div class="eight wide column">
+                    <div class="ui grid">
+                    <div class="two column row">
+                        <div class="left floated column">
                             <div class="dt-buttons ui basic buttons small">
-                                <button class="ui button buttons-html5" tabindex="0" id="niceSizeBtn">
-                                    <span>Nice Size</span>
-                                </button>
-                                <button class="ui button buttons-html5" tabindex="0" id="fitParentBtn">
-                                    <span>Fit to Parent</span>
-                                </button>
-                                <button class="ui button buttons-html5" tabindex="0" id="fitToWidth">
-                                    <span>fit to Width</span>
-                                </button>
-                                <button class="ui button buttons-html5" tabindex="0" id="fitToHeight">
-                                    <span>fit to Height</span>
-                                </button>
+                                <button class="ui small button" onclick="fit('o')">Original</button>
+                                <button class="ui small button" onclick="fit('in')">Fit inside</button>
+                                <button class="ui small button" onclick="fit('w')">Fit width</button>
+                                <button class="ui small button" onclick="fit('h')">Fit height</button>
                             </div>
+                            
                         </div>
+                        <div class="right floated right aligned column">
+                                <label class="ui labeled input small right floated">
+                                        <div class="ui label">Search</div>
+                                        <input id="ddlSearch" type="search" class="" placeholder="enter search text" style="margin-left: 0px;">
+                                </label>
+                        </div>
+                        
                     </div>
+                </div>
                     <div id="treeChartContainer"></div>
                 </div>
                 <div class="ui custom popup top left transition hidden" style="z-index:10">
@@ -258,9 +274,11 @@
     </div>
 
     <!-- needs cleanup and to move functions to their own jscript file (page setup, mqtt, table stuff etc..) for ease of maintenance and legibility -->
-    <script type="text/javascript" language="javascript" src="https://d3js.org/d3.v3.min.js"></script>
+    <!-- <script type="text/javascript" language="javascript" src="https://d3js.org/d3.v3.min.js"></script> -->
+    <script type="text/javascript" src="d3v5/d3.min.js"></script>
     <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
-    <script type="text/javascript" language="javascript" src="js/treeChart.js"></script>
+    <script type="text/javascript" src="js/select2.min.js"></script>
+        <script type="text/javascript" src="js/topic-tree.js"></script>
     <script type="text/javascript" language="javascript" src="js/tooltip.js"></script>
     <script type="text/javascript" language="javascript" src="js/mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="mqtt/paho-mqtt.js"></script>
@@ -279,11 +297,13 @@
         var table;
         var messageGap;
         var redrawTimer;
-        var busyLoaderTimer=false;
+        var busyLoaderTimer = false;
         var myTimer;
-        
+        var treeChart={};
+
         //init treeChart
-        var treeChart = initTree();
+        //var treeChart = initTree();
+        setup("#treeChartContainer", $("#ddlSearch"));
 
         // the client can be empty or 'ready-to-connect'.
         // when 'ready-to-connect', it can be connected or disconnected.
@@ -383,10 +403,12 @@
             table.clear(); // clear the table
             mqFeed = []; // clear the Feed dataset
             mqStatus = {}; // clear the Status dataset
-            if (treeChart) { // clear the d3 chart
-                treeChart.clear();
-            }
-            treeChart = initTree(); // reinit the d3 chart
+            // if (treeChart) { // clear the d3 chart
+            //     treeChart.clear();
+            // }
+            // treeChart = initTree(); // reinit the d3 chart
+            d3.select('#treeChartContainer').html("")
+            setup("#treeChartContainer", $("#ddlSearch"));
         }
 
         function processNewMessage(msg) {
@@ -394,9 +416,13 @@
             if (redrawTimer) {
                 clearInterval(redrawTimer)
             }
-            if (busyLoaderTimer){clearTimeout(busyLoaderTimer);}                    // cancel the kill command autoloader
+            if (busyLoaderTimer) {
+                clearTimeout(busyLoaderTimer);
+            } // cancel the kill command autoloader
             busyLoader(true, "receiving messages...");
-            busyLoaderTimer = setTimeout(function(){busyLoader(false);}, 100)       // autokill after 200ms.
+            busyLoaderTimer = setTimeout(function () {
+                busyLoader(false);
+            }, 100) // autokill after 200ms.
 
             mqFeed.unshift(msg); // always update the feed dataset
             if (mqFeed.length >= mqMaxFeedRows) {
@@ -419,9 +445,10 @@
             redrawTimer = setInterval(redrawTable, 200); // this is to batch up the table updates.
             // it's cancelled when we enter this function
             // so if no new messages are received in 200ms, we update
-            if (treeChart) {
+            addNode(msg.topic, msg.payload);
+            /* if (treeChart) {
                 treeChart.addNode(msg.topic, msg.payload);
-            }
+            } */
             return;
         }
 
