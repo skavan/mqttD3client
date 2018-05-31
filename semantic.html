@@ -121,7 +121,7 @@
             <div id="mainContentBody" class="box report-body ">
 
                 <div id="dataloader" class="ui large text loader green">
-                    <div class="ui segment green inverted">
+                    <div id="dataloaderMessage" class="ui segment green inverted">
                         receiving messages...
                     </div>
                 </div>
@@ -145,10 +145,10 @@
                                 </button>
                                 <button class="ui button buttons-html5" tabindex="0" id="fitToWidth">
                                     <span>fit to Width</span>
-                                </button> 
+                                </button>
                                 <button class="ui button buttons-html5" tabindex="0" id="fitToHeight">
                                     <span>fit to Height</span>
-                                </button> 
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -156,8 +156,8 @@
                 </div>
                 <div class="ui custom popup top left transition hidden" style="z-index:10">
                     I'm not on the same level as the button, but i can still be found.
-                  </div>
-                  
+                </div>
+
             </div>
 
 
@@ -268,6 +268,9 @@
     <script type="text/javascript" charset="utf-8">
         var selectedServer = {};
         var client = {};
+        client.isConnected = function () {
+            return false
+        };
         var mqFeed = []; // the real-time stream.
         var mqMaxFeedRows = 1000;
         var mqStatus = {}; // the retained message snapshot
@@ -276,30 +279,17 @@
         var table;
         var messageGap;
         var redrawTimer;
-
-
+        var myTimer;
         //init treeChart
-        var treeChart =  initTree();
+        var treeChart = initTree();
 
         // the client can be empty or 'ready-to-connect'.
         // when 'ready-to-connect', it can be connected or disconnected.
         // when connected, can be subscribed or not subscribed.
 
+
         $("#btnConnect").click(function () {
-            if (selectedServer.connected) {
-                if ($.isEmptyObject(client)) {
-                    selectedServer.connected = false
-                } else {
-                    if (client.isConnected()) {
-                        mqttDisconnect()
-
-                    }
-
-                }
-
-            } else {
-                mqttConnect()
-            }
+            toggleConnect(selectedServer, client);
         });
 
         $("#btnSubscribe").click(function () {
@@ -307,261 +297,139 @@
         });
 
         $("#btnGridView").click(function () {
-            //hide grid
-            $("#example_wrapper").hide();
-            //show tree
-            $(".tree-container").show();
+            toggleButtonMode($("#btnGridView"), $("#btnTreeView"));
+            $("#example_wrapper").hide(); //hide grid
+            $(".tree-container").show(); //show tree
         });
 
         $("#btnTreeView").click(function () {
-            //show grid
-            $("#example_wrapper").show();
-            //hide tree
-            $(".tree-container").hide();
+            toggleButtonMode($("#btnTreeView"), $("#btnGridView"));
+            $("#example_wrapper").show(); //show grid
+            $(".tree-container").hide(); //hide tree
         });
 
         $("#niceSizeBtn").click(function () {
             if (treeChart) {
-                treeChart.niceSize(); // returns to initial state
-                //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
-            }
+                treeChart.niceSize();
+            } // returns to initial state
         });
 
         $("#fitParentBtn").click(function () {
             if (treeChart) {
-                treeChart.fitToParent(); // scale in to fit parent size
-                //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
-            }
+                treeChart.fitToParent();
+            } // scale in to fit parent size
+            //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
         });
 
         $("#fitToWidth").click(function () {
             if (treeChart) {
-                treeChart.fitToWidth(); // scale in to fit parent size
-                //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
-            }
+                treeChart.fitToWidth();
+            } // scale in to fit parent size
+            //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
         });
 
         $("#fitToHeight").click(function () {
             if (treeChart) {
-                treeChart.fitToHeight(); // scale in to fit parent size
-                //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
-            }
+                treeChart.fitToHeight();
+            } // scale in to fit parent size
+            //console.log(`${treeChart.svgWidth()}X${treeChart.svgHeight()}`)
         });
 
         $("#btnMqFeed").click(function () {
-            table.clear();
-            $('#dataloader').addClass('active');
-            $("#btnMqFeed").removeClass('basic').addClass('primary');
-            $("#btnMqStatus").removeClass('primary').addClass('basic');
-            for (msg of mqFeed) {
-                table.row.add(msg);
-            };
             isMqFeed = true;
-            table.columns.adjust();
-            redrawTable();
+            busyLoader(true, "building feed table...");
+            toggleButtonMode($("#btnMqFeed"), $("#btnMqStatus"));
+            fillTable(table, mqFeed)
         });
 
         $("#btnMqStatus").click(function () {
-            table.clear();
-            $('#dataloader').addClass('active');
-            $("#btnMqStatus").removeClass('basic').addClass('primary');
-            $("#btnMqFeed").removeClass('primary').addClass('basic');
-            for (msg of Object.keys(mqStatus)) {
-                table.row.add(mqStatus[msg]);
-            };
             isMqFeed = false;
-            table.columns.adjust();
-            redrawTable();
+            busyLoader(true, "building status table...")
+            toggleButtonMode($("#btnMqStatus"), $("#btnMqFeed"));
+            fillTable(table, Object.values(mqStatus));
         });
 
-        function mqttDisconnect() {
-            client.disconnect();
-            selectedServer.connected = false;
-            selectedServer.subscribed = false;
-            console.log("Disconnected: (isConnected:" + client.isConnected() + ")");
-            updateServersAndGui(selectedServer, true);
+        function toggleButtonMode(activeButton, inactiveButtons) {
+            activeButton.removeClass('basic').addClass('primary');
+            for (let btn of [].concat(inactiveButtons)) {
+                btn.removeClass('primary').addClass('basic');
+            }
         }
 
-        function mqttConnect() {
-            if (!checkServerObject(selectedServer)) return
-            if (selectedServer.connected) return
-            if (!$.isEmptyObject(client)) {
-                if (client.connected) {
-                    mqttDisconnect();
-                }
-            }
-
-            client = new Paho.MQTT.Client(selectedServer.host, parseInt(selectedServer.port),
-                selectedServer.clientId);
-
-            client.onMessageArrived = onMessage;
-            client.onConnectionLost = onDisconnect;
-
-            let opts = {
-                keepAliveInterval: parseInt(selectedServer.keepAliveInterval),
-                timeout: selectedServer.timeout,
-                cleanSession: selectedServer.cleanSession,
-                onSuccess: onConnect,
-                onFailure: onFailure
+        function fillTable(table, dataSet) {
+            table.clear();
+            for (msg of dataSet) {
+                table.row.add(msg);
             };
+            table.columns.adjust();
+            redrawTable();
+        }
 
-            if (selectedServer.protocol != "tcp") {
-                opts["userName"] = selectedServer.userName;
-                opts["password"] = selectedServer.password;
-                opts["useSSL"] = true;
+
+        function updateServersAndGui(server, setAsSelected) {
+
+            if (setAsSelected) {
+                selectedServer = server; // update the selectedServer
+                serverList.lastServer = server.name; // update the lastServer property
+                serverList.servers[server.name] = server; // update the object in the serverList.servers
             }
-
-            client.connect(opts);
+            updateServerList(serverList); // write updates to storage
+            fillServerUIBar(serverList, server); // updateGUI
         }
 
-        function mqttSubscribe() {
-            if ((selectedServer.subscriptionTopic) && (client.isConnected())) {
-                if (!selectedServer.subscribed) {
-                    table.clear();
-                    mqFeed=[];
-                    mqStatus={};
-                    if (treeChart) {
-                        treeChart.clear();
-                    }
-                    treeChart = initTree();
-                    client.subscribe(selectedServer.subscriptionTopic, {
-                        qos: selectedServer.qos,
-                        onSuccess: onSubscribeSuccess,
-                        onFailure: onSubscribeFailed,
-                        invocationContext: {
-                            topic: selectedServer.subscriptionTopic
-                        }
-                    })
-                    messageGap = new Date().getTime();
-                } else {
-                    client.unsubscribe(selectedServer.subscriptionTopic, {
-                        onSuccess: onUnSubscribeSuccess,
-                        onFailure: onUnSubscribeFailed,
-                        invocationContext: {
-                            topic: selectedServer.subscriptionTopic
-                        }
-                    });
-
-                }
-            };
-
-        }
-
-        function mqttUnSubscribe() {
-            if ($.isEmptyObject(client)){return;}
-            if ((selectedServer.subscriptionTopic) && (client.isConnected())) {
-                if (selectedServer.subscribed) {
-                    client.unsubscribe(selectedServer.subscriptionTopic, {
-                        onSuccess: onUnSubscribeSuccess,
-                        onFailure: onUnSubscribeFailed,
-                        invocationContext: {
-                            topic: selectedServer.subscriptionTopic
-                        }
-                    })
-                    selectedServer.subscribed = false;
-                }
+        function resetData() {
+            table.clear(); // clear the table
+            mqFeed = []; // clear the Feed dataset
+            mqStatus = {}; // clear the Status dataset
+            if (treeChart) { // clear the d3 chart
+                treeChart.clear();
             }
+            treeChart = initTree(); // reinit the d3 chart
         }
 
-        // connected to MQTT server
-        function onConnect() {
-            document.getElementById('status').innerHTML = "connected.";
-            selectedServer.connected = true;
-            updateServersAndGui(selectedServer, false);
-            console.log("mqtt connected");
-        }
-
-        // failed to connect to MQTT Server
-        function onFailure() {
-            console.log("failure");
-            document.getElementById('status').innerHTML = "failed to connect";
-            reconnect();
-        }
-
-        // disconnected from MQTT Server
-        function onDisconnect(reason) {
-            console.log("disconnected - " + reason.errorMessage);
-            //alert("disconnected - " + reason);
-            document.getElementById('status').innerHTML = "Disconnected:" + reason;
-            selectedServer.connected = false;
-            updateServersAndGui(selectedServer, false);
-            //reconnect();
-        }
-
-        function onSubscribeSuccess(response) {
-            console.log("subscribed to " + response.invocationContext.topic);
-            selectedServer.subscribed = true;
-            updateServersAndGui(selectedServer, true);
-        }
-
-        function onSubscribeFailed(response) {
-            console.log("failed to subscribe" + response.errorMessage);
-        }
-
-        function onUnSubscribeSuccess(response) {
-            console.log("unsubscribed to " + response.invocationContext.topic);
-            selectedServer.subscribed = false;
-            updateServersAndGui(selectedServer, true);
-        }
-
-        function onUnSubscribeFailed(response) {
-            console.log("failed to unsubscribe" + response.errorMessage);
-        }
-
-        function reconnect() {
-            setTimeout(function () {
-                document.getElementById('status').innerHTML = "reconnecting";
-                mqttConnect();
-            }, 3000);
-        }
-
-        function onMessage(message) {
+        function processNewMessage(msg) {
             messageGap = messageGap - new Date().getTime();
             if (redrawTimer) {
                 clearInterval(redrawTimer)
-            };
-            $('#dataloader').addClass('active');
-            let msg = {
-                topic: message.topic,
-                payload: message.payloadString,
-                level: message.topic.split("/").length,
-                qos: message.qos,
-                retain: message.retained,
-                date: Date.now()
-            };
+            }
+            busyLoader(true, "receiving messages...");
 
             mqFeed.unshift(msg); // always update the feed dataset
             if (mqFeed.length >= mqMaxFeedRows) {
-                mqFeed.pop()
-            } // chop length if needed
+                mqFeed.pop() // chop length if needed
+            }
             if (isMqFeed) {
                 table.row.add(msg);
                 mqStatus[msg.topic] = msg; // update the status dataset
             } else {
-                if (msg.retain == 2) {
+                if (msg.retain == true) {
                     // if the topic exists already, we need to delete the previous from the table, and insert the current
-                    table
-                        .rows(function (idx, data, node) {return data[0] === msg.topic;}).remove()
+                    table.rows(function (idx, data, node) {
+                        return data[0] === msg.topic;
+                    }).remove()
                     mqStatus[msg.topic] = msg; // update the status dataset
                     table.row.add(msg);
                 }
             }
-            redrawTimer = setInterval(redrawTable, 200);
+
+            redrawTimer = setInterval(redrawTable, 200); // this is to batch up the table updates.
+            // it's cancelled when we enter this function
+            // so if no new messages are received in 200ms, we update
             if (treeChart) {
-            treeChart.addNode(msg.topic, msg.payload);
+                treeChart.addNode(msg.topic, msg.payload);
             }
-            console.log(message.topic + "- " + message.payloadString);
-            //addNode(message.destinationName, message.payloadString);
+            return;
         }
 
         function redrawTable() {
             console.log("redrawing");
-            $('#dataloader').removeClass('active');
+            busyLoader(false);
+            //$('#dataloader').removeClass('active');
             table.draw();
             clearInterval(redrawTimer);
         }
 
-        function initTree(){
+        function initTree() {
             return TreeChart()
                 .container("#treeChartContainer")
                 .marginLeft(15)
@@ -571,6 +439,19 @@
                 // 10 scrollbar width
                 .svgWidth($('#mainContentBody').width())
                 .run();
+        }
+
+        function busyLoader(bShow, message) {
+            if (bShow) {
+                $('#dataloader').addClass('active');
+                $('#dataloaderText').text(message);
+            } else {
+                $('#dataloader').removeClass('active');
+            }
+        }
+
+        function reportStatus(message) {
+            $('#status').text(message);
         }
     </script>
 </body>

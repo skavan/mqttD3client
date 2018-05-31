@@ -211,16 +211,7 @@ function addEditServer(newServer, mode) {
     //console.log(newServer);
 }
 
-function updateServersAndGui(server, setAsSelected) {
-    if (setAsSelected) {
-        selectedServer = server; // update the selectedServer
-        serverList.lastServer = server.name; // update the lastServer property
-        serverList.servers[server.name] = server; // update the object in the serverList.servers
-    }
-    updateServerList(serverList); // write updates to storage
-    fillServerUIBar(serverList, server); // updateGUI
 
-}
 
 function fillServerUIBar(serverList, displayServer) {
     // fill the selected server input box

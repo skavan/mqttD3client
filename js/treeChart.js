@@ -15,7 +15,7 @@ function TreeChart(params) {
         container: 'body',
         defaultTextFill: '#2C3E50',
         defaultFont: 'Helvetica',
-        defaultPayloadWidth: 120,
+        defaultPayloadWidth: 300,
         data: null // holds hierarchy data
     };
 
@@ -105,7 +105,9 @@ function TreeChart(params) {
 
             // Define the zoom function for the zoomable tree
             function zoom() {
+                resetScrollable();
                 chart.attr("transform", "translate(" + d3.event.translate + ") scale(" + d3.event.scale + ")");
+                makeScrollable();
             }
 
             niceSize = function () {
