@@ -34,6 +34,8 @@ function TreeChart(params) {
         })
       ;
 
+    var chartRedrawTimer;
+
 /*     $("#treeChartContainer").on('mouseenter', '.data', function () {
         console.log("hello");
     });
@@ -203,6 +205,7 @@ function TreeChart(params) {
             }
 
             function update(source) {
+                
                 var duration = d3.event && d3.event.altKey ? 5000 : 500;
                 // Compute the new tree layout.
                 var nodes = tree.nodes(attrs.data).reverse();
@@ -418,8 +421,11 @@ function TreeChart(params) {
                     d._children = null;
                 }
             }
-
+            
             addNode = function (topic, body) {
+                if (chartRedrawTimer) {
+                    clearInterval(chartRedrawTimer);
+                }
                 var parts = topic.split("/");
                 if (!attrs.data.children) {
                     newnode = {
@@ -427,14 +433,27 @@ function TreeChart(params) {
                         "children": []
                     };
                     attrs.data.children = [newnode];
+                    //setInterval( function() { funca(10,3); }, 500 );
+                    //chartRedrawTimer = setInterval(function() {preWalk(parts, newnode, body);}, 5000);
                     walk(parts, newnode, body);
                 } else {
+                    //chartRedrawTimer = setInterval(function(){preWalk(parts, attrs.data, body);}, 5000);
                     walk(parts, attrs.data, body);
                 }
-                update(attrs.data);
+                chartRedrawTimer = setInterval(function(){preUpdate(attrs.data);}, 200);
+                //update(attrs.data);
             };
 
+            function preUpdate(data){
+                clearInterval(chartRedrawTimer);
+                console.log("doing an update!");
+                update(data);
+                setTimeout(function(){update(data);}, 400);         // need this for final cleanup! means there is always one extra update.
+            }
+
             function walk(parts, node, body) {
+                
+                
                 if (parts.length != 0) {
                     var current = parts.shift();
                     if (node.children && node.children.length != 0) {

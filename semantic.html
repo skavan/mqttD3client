@@ -279,6 +279,7 @@
         var table;
         var messageGap;
         var redrawTimer;
+        var busyLoaderTimer=false;
         var myTimer;
         //init treeChart
         var treeChart = initTree();
@@ -392,7 +393,9 @@
             if (redrawTimer) {
                 clearInterval(redrawTimer)
             }
+            if (busyLoaderTimer){clearTimeout(busyLoaderTimer);}                    // cancel the kill command autoloader
             busyLoader(true, "receiving messages...");
+            busyLoaderTimer = setTimeout(function(){busyLoader(false);}, 100)       // autokill after 200ms.
 
             mqFeed.unshift(msg); // always update the feed dataset
             if (mqFeed.length >= mqMaxFeedRows) {
@@ -423,7 +426,7 @@
 
         function redrawTable() {
             console.log("redrawing");
-            busyLoader(false);
+            //busyLoader(false);
             //$('#dataloader').removeClass('active');
             table.draw();
             clearInterval(redrawTimer);
