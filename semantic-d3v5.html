@@ -9,7 +9,7 @@
             border-color: #068323 transparent transparent;
         }
 
-         .tree-container {
+        .tree-container {
             display: none;
             width: 100%;
             height: 100%;
@@ -20,6 +20,26 @@
             overflow: scroll;
             width: 100%;
             height: 100%;
+        }
+
+        .ui.popup.scrollablePopup {
+            max-height: 250px;
+            overflow: hidden;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+
+        prex {
+            white-space: pre-wrap;
+            /* Since CSS 2.1 */
+            white-space: -moz-pre-wrap;
+            /* Mozilla, since 1999 */
+            white-space: -pre-wrap;
+            /* Opera 4-6 */
+            white-space: -o-pre-wrap;
+            /* Opera 7 */
+            word-wrap: break-word;
+            /* Internet Explorer 5.5+ */
         }
     </style>
 </head>
@@ -149,28 +169,27 @@
                 </table>
                 <div class="tree-container">
                     <div class="ui grid">
-                    <div class="two column row">
-                        <div class="left floated column">
-                            <div class="dt-buttons ui basic buttons small">
-                                <button class="ui small button" onclick="fit('o')">Original</button>
-                                <button class="ui small button" onclick="fit('in')">Fit inside</button>
-                                <button class="ui small button" onclick="fit('w')">Fit width</button>
-                                <button class="ui small button" onclick="fit('h')">Fit height</button>
+                        <div class="two column row">
+                            <div class="left floated column">
+                                <div class="dt-buttons ui basic buttons small">
+                                    <button class="ui small button" onclick="fit('o')">Original</button>
+                                    <button class="ui small button" onclick="fit('in')">Fit inside</button>
+                                    <button class="ui small button" onclick="fit('w')">Fit width</button>
+                                    <button class="ui small button" onclick="fit('h')">Fit height</button>
+                                </div>
                             </div>
-                            
-                        </div>
-                        <div class="right floated right aligned column">
+                            <div class="right floated right aligned column">
                                 <label class="ui labeled input small right floated">
-                                        <div class="ui label">Search</div>
-                                        <input id="ddlSearch" type="search" class="" placeholder="enter search text" style="margin-left: 0px;">
+                                    <div class="ui label">Search</div>
+                                    <input id="ddlSearch" type="search" class="" placeholder="enter search text" style="margin-left: 0px;">
                                 </label>
+                            </div>
+
                         </div>
-                        
                     </div>
-                </div>
                     <div id="treeChartContainer"></div>
                 </div>
-                <div class="ui custom popup top left transition hidden" style="z-index:10">
+                <div id="myPopup" class="ui popup bottom right hidden" style="z-index:10; position: absolute!important;">
                     I'm not on the same level as the button, but i can still be found.
                 </div>
 
@@ -278,8 +297,8 @@
     <script type="text/javascript" src="d3v5/d3.min.js"></script>
     <script type="text/javascript" language="javascript" src="js/dataTable.js"></script>
     <script type="text/javascript" src="js/select2.min.js"></script>
-        <script type="text/javascript" src="js/topic-tree.js"></script>
-    <script type="text/javascript" language="javascript" src="js/tooltip.js"></script>
+    <script type="text/javascript" src="js/topic-tree.js"></script>
+    <!-- <script type="text/javascript" language="javascript" src="js/tooltip.js"></script> -->
     <script type="text/javascript" language="javascript" src="js/mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="mqtt/paho-mqtt.js"></script>
     <script type="text/javascript" language="javascript" src="js/serverManagement.js"></script>
@@ -299,7 +318,7 @@
         var redrawTimer;
         var busyLoaderTimer = false;
         var myTimer;
-        var treeChart={};
+        var treeChart = {};
 
         //init treeChart
         //var treeChart = initTree();
@@ -443,7 +462,7 @@
             }
 
             redrawTimer = setInterval(redrawTable, 200); // this is to batch up the table updates.
-            // it's cancelled when we enter this function
+            // it's cancelled when we enter this function (see above)
             // so if no new messages are received in 200ms, we update
             addNode(msg.topic, msg.payload);
             /* if (treeChart) {
@@ -483,6 +502,72 @@
 
         function reportStatus(message) {
             $('#status').text(message);
+        }
+
+        // if its a json object string, convert to object, prettify and return
+        function prettify(value) {
+            try {
+                let o = JSON.parse(value);
+                return JSON.stringify(o, null, 2);
+            } catch (error) {
+                return value;
+            }
+        }
+
+function copyToClipboard(element) {
+  var $temp = $("<textarea>");
+  $("body").append($temp);
+  $temp.val($(element).text() ).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+        $(document).on('mouseover', '.datalabel', function () {
+            $(this).popup({
+                    title: $(this).attr("id"),
+                    lastResort: true,
+                    hoverable: true,
+                    className: {
+                        popup: "ui popup payloadPopup"
+                    },
+                    preserve: false,
+                    observeChanges: true,
+                    variation: "small",
+                    html: "<pre>" + prettify(d3.select("[id='" + $(this).attr("id") + "']").data()[0].data.data) +
+                        "</pre>",
+                    onCreate: popupManager,
+                    onVisible: popupManager2,
+                    on: 'hover'
+                })
+                .popup('show');
+        });
+
+        function popupManager(myPopup) {
+            let payloadPopup = $(".payloadPopup").last();
+            let h = payloadPopup.height();
+            let vh = $("#mainContentBody").height();
+            payloadPopup.css("max-height", vh + "px");
+            if (h > vh) {
+                payloadPopup.addClass("scrollablePopup");
+            }
+            payloadPopup.contextmenu(function () {
+                copyToClipboard(this);
+                
+                alert("Data copied to clipboard...");
+
+                return false;
+            });
+        };
+
+        function popupManager2(myPopup) {
+            let payloadPopup = $(".payloadPopup").last();
+            let h = payloadPopup.height();
+            let vh = $("#mainContentBody").height();
+            if (payloadPopup.offset().top < 0) {
+                payloadPopup.offset({
+                    top: 0
+                });
+            }
         }
     </script>
 </body>
