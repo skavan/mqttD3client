@@ -14,6 +14,7 @@ var defaultServer = {
     "reconnect": true,
     "subscriptionTopic": "",
     "subscribed" : false,
+    "subscribePending": false,
     "topicHistory": [],
     "publishTopic":"",
     "publishPayload":"",
@@ -90,8 +91,8 @@ function mqttDisconnect() {
 }
 
 function mqttConnect() {
-    if (!checkServerObject(selectedServer)) return
-    if (selectedServer.connected) return
+    if (!checkServerObject(selectedServer)) return;
+    if (selectedServer.connected) return;
     if (!$.isEmptyObject(client)) {
         if (client.connected) {
             mqttDisconnect();
@@ -113,9 +114,9 @@ function mqttConnect() {
     };
 
     if (selectedServer.protocol != "tcp") {
-        opts["userName"] = selectedServer.userName;
-        opts["password"] = selectedServer.password;
-        opts["useSSL"] = true;
+        opts.userName = selectedServer.userName;
+        opts.password = selectedServer.password;
+        opts.useSSL = true;
     }
 
     client.connect(opts);
@@ -134,7 +135,8 @@ function mqttSubscribe() {
                 invocationContext: {
                     topic: selectedServer.subscriptionTopic
                 }
-            })
+            });
+            selectedServer.subscribePending=false;
             messageGap = new Date().getTime();
         } else {
             client.unsubscribe(selectedServer.subscriptionTopic, {
@@ -146,7 +148,12 @@ function mqttSubscribe() {
             });
 
         }
-    };
+    } else {
+        if (selectedServer.subscriptionTopic){
+            selectedServer.subscribePending=true;
+            toggleConnect(selectedServer, client);
+        }
+    }
 
 }
 
@@ -162,7 +169,7 @@ function mqttUnSubscribe() {
                 invocationContext: {
                     topic: selectedServer.subscriptionTopic
                 }
-            })
+            });
             selectedServer.subscribed = false;
         }
     }
@@ -182,6 +189,10 @@ function onConnect() {
     selectedServer.connected = true;
     updateServersAndGui(selectedServer, false);
     console.log("mqtt connected");
+    if (selectedServer.subscribePending){
+        selectedServer.subscribePending = false;
+        mqttSubscribe();
+    }
 }
 
 // failed to connect to MQTT Server

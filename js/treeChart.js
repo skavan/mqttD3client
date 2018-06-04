@@ -116,7 +116,7 @@ function TreeChart(params) {
                 resetScrollable();
                 scaleChart([calc.chartLeftMargin, calc.chartTopMargin], 1);
                 setTimeout(makeScrollable, attrs.scaleDuration);
-            }
+            };
 
             fitToParent = function () {
                 resetScrollable();
@@ -137,7 +137,7 @@ function TreeChart(params) {
                 var translate = [attrs.scalePadding - scale * bounds.x, attrs.scalePadding - scale * bounds.y];
                 scaleChart(translate, scale);
                 setTimeout(makeScrollable, attrs.scaleDuration);
-            }
+            };
 
             fitToWidth = function () {
                 resetScrollable();
@@ -153,7 +153,7 @@ function TreeChart(params) {
                 var translate = [attrs.scalePadding - scale * bounds.x, attrs.scalePadding - scale * bounds.y];
                 scaleChart(translate, scale);
                 setTimeout(makeScrollable, attrs.scaleDuration);
-            }
+            };
 
             fitToHeight = function () {
                 resetScrollable();
@@ -169,7 +169,7 @@ function TreeChart(params) {
                 var translate = [attrs.scalePadding - scale * bounds.x, attrs.scalePadding - scale * bounds.y];
                 scaleChart(translate, scale);
                 setTimeout(makeScrollable, attrs.scaleDuration);
-            }
+            };
 
             function makeScrollable() {
                 var bounds = chart.node().getBoundingClientRect();
@@ -299,7 +299,7 @@ function TreeChart(params) {
                     $('text.data')
                     .popup({
                       inline: true
-                    })
+                    });
 
 
                 let el = nodeEnter.append("svg:text")
@@ -458,7 +458,7 @@ function TreeChart(params) {
                     var current = parts.shift();
                     if (node.children && node.children.length != 0) {
                         //console.log("walking old");
-                        var z = 0;
+                        let z = 0;
                         for (z = 0; z < node.children.length; z++) {
                             //console.log(node.children[z].name + " - " + current);
                             if (node.children[z].name == current) {
@@ -479,7 +479,7 @@ function TreeChart(params) {
                         }
                     } else if (node._children && node._children.length != 0) {
                         //console.log("walking hidden");
-                        var z = 0;
+                        let z = 0;
                         for (z = 0; z < node._children.length; z++) {
                             //console.log(node._children[z].name + " - " + current);
                             if (node._children[z].name == current) {
@@ -491,7 +491,7 @@ function TreeChart(params) {
                         //console.log("done hidden loop - " + z + ", " + node._children.length);
                         if (z == node._children.length) {
                             //console.log("adding new hidden");
-                            var newnode = {
+                            let newnode = {
                                 "name": current,
                                 "_children": []
                             };
@@ -500,7 +500,7 @@ function TreeChart(params) {
                         }
                     } else {
                         //console.log("empty");
-                        newnode = {
+                        let newnode = {
                             "name": current,
                             "children": []
                         };

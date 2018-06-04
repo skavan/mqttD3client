@@ -22,7 +22,7 @@ var diagonal = d3.linkHorizontal().x(function (d) {
     return d.x;
 });
 
-function setup(tagID, searchBox) {
+function setup(tagID) {
     //searchBox.select2();
     //ddlSearch = searchBox;
 
@@ -31,10 +31,11 @@ function setup(tagID, searchBox) {
     container = d3.select(tagID);
     targetSize = container.node().getBoundingClientRect();
 
+    // this is a hack --- needs to be fixed.
     svg = container.append("svg:svg")
         .attr("width", targetSize.width)
         .attr("height", targetSize.height);
-
+    
     vis = svg.append("svg:g");
 
     root = {
@@ -83,6 +84,43 @@ function setup(tagID, searchBox) {
     }, 500);
 }
 
+function highlightNodes(searchTerm){
+    let nodes = d3.hierarchy(root).descendants();
+    let matchingNodes;
+    if (searchTerm.startsWith("payload:")){
+        let spec= searchTerm.slice(8);
+        matchingNodes = nodes.filter(function (d) { 
+            if (d.data.data){
+                return (d.data.data.toLowerCase().indexOf(spec.toLowerCase())>-1);
+            } else {
+                return false;
+            }
+        });
+    } else {
+        matchingNodes = nodes.filter(function (d) { return (d.data.name.toLowerCase().indexOf(searchTerm.toLowerCase())>-1);});
+    }
+    
+    vis.selectAll(".active").classed("active", false);
+    if (matchingNodes.length>0){
+        for (let node of matchingNodes){
+            var ids = node.ancestors().map(function (d) { return d.data.id; });
+            
+            vis.selectAll(".link")
+            .filter(function (d) {
+                return ids.indexOf(d.source.data.id) >= 0 && ids.indexOf(d.target.data.id) >= 0;
+            })
+            .classed("active", true);
+
+        vis.selectAll(".node")
+            .filter(function (d) { return ids.indexOf(d.data.id) >= 0; })
+            .classed("active", true);
+        }
+    }
+}
+
+function clearHighlightNodes(){
+    vis.selectAll(".active").classed("active", false);    
+}
 
 function zoomed() {
     vis.attr("transform", d3.event.transform);
@@ -160,7 +198,7 @@ function update(source) {
         .text(function (d) {
             return d.data.data.length <= textTrunc ? d.data.data : (d.data.data.substr(0, textTrunc) + "...");
         })
-        .style("fill-opacity", 1e-6)
+        .style("fill-opacity", 1e-6);
 
     // sk mouse events:
     /* .on("mouseover", function(d){
@@ -320,7 +358,7 @@ function walk(parts, node, body) {
         var current = parts.shift();
         if (node.children && node.children.length != 0) {
             //console.log("walking old");
-            var z = 0;
+            let z = 0;
             for (z = 0; z < node.children.length; z++) {
                 //console.log(node.children[z].name + " - " + current);
                 if (node.children[z].name == current) {
@@ -341,7 +379,7 @@ function walk(parts, node, body) {
             }
         } else if (node._children && node._children.length != 0) {
             //console.log("walking hidden");
-            var z = 0;
+            let z = 0;
             for (z = 0; z < node._children.length; z++) {
                 //console.log(node._children[z].name + " - " + current);
                 if (node._children[z].name == current) {
@@ -353,7 +391,7 @@ function walk(parts, node, body) {
             //console.log("done hidden loop - " + z + ", " + node._children.length);
             if (z == node._children.length) {
                 //console.log("adding new hidden");
-                var newnode = {
+                let newnode = {
                     "name": current,
                     "_children": []
                 };
@@ -362,7 +400,7 @@ function walk(parts, node, body) {
             }
         } else {
             //console.log("empty");
-            var newnode = {
+            let newnode = {
                 "name": current,
                 "children": []
             };

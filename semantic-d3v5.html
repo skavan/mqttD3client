@@ -179,9 +179,15 @@
                                 </div>
                             </div>
                             <div class="right floated right aligned column">
-                                <label class="ui labeled input small right floated">
+                                <label class="ui right action left labeled input small floated"> <!-- ui labeled input small right floated -->
                                     <div class="ui label">Search</div>
-                                    <input id="ddlSearch" type="search" class="" placeholder="enter search text" style="margin-left: 0px;">
+                                    <input id="inpSearchTree" type="search" class="left right attached" placeholder="enter search text" style="margin-left: 0px;">
+                                    <div class="input-icon ">
+                                        <i id="icoClearSearchTree" class='times icon hideme'></i>
+                                    </div>
+                                    <button id="btnSearchTree" class="ui primary right attached icon button box-shadow">
+                                        <i class="icon search"></i>
+                                    </button>
                                 </label>
                             </div>
 
@@ -322,7 +328,7 @@
 
         //init treeChart
         //var treeChart = initTree();
-        setup("#treeChartContainer", $("#ddlSearch"));
+        setup("#treeChartContainer");
 
         // the client can be empty or 'ready-to-connect'.
         // when 'ready-to-connect', it can be connected or disconnected.
@@ -341,6 +347,7 @@
             toggleButtonMode($("#btnGridView"), $("#btnTreeView"));
             $("#example_wrapper").hide(); //hide grid
             $(".tree-container").show(); //show tree
+            update(root);
         });
 
         $("#btnTreeView").click(function () {
@@ -390,6 +397,23 @@
             fillTable(table, Object.values(mqStatus));
         });
 
+        $("#btnSearchTree").click(function(){
+            let val = $("#inpSearchTree").val();
+            if (val){
+                $("#icoClearSearchTree").removeClass("hideme");
+                highlightNodes(val);
+            } else {
+                clearHighlightNodes();
+                $("#icoClearSearchTree").addClass("hideme");
+            }
+        });
+
+        $("#icoClearSearchTree").click(function(){
+            $("#inpSearchTree").val('');
+            $("#icoClearSearchTree").addClass("hideme");
+            clearHighlightNodes();
+        });
+
         function toggleButtonMode(activeButton, inactiveButtons) {
             activeButton.removeClass('basic').addClass('primary');
             for (let btn of [].concat(inactiveButtons)) {
@@ -427,7 +451,7 @@
             // }
             // treeChart = initTree(); // reinit the d3 chart
             d3.select('#treeChartContainer').html("")
-            setup("#treeChartContainer", $("#ddlSearch"));
+            setup("#treeChartContainer");
         }
 
         function processNewMessage(msg) {
