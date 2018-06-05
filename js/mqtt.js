@@ -17,6 +17,7 @@ var defaultServer = {
     "subscribePending": false,
     "topicHistory": [],
     "publishTopic":"",
+    "publishTopicHistory":[],
     "publishPayload":"",
     "publishQos":0,
     "publishRetain": true,
@@ -155,6 +156,13 @@ function mqttSubscribe() {
         }
     }
 
+}
+
+function mqttPublish() {
+    if ((selectedServer.publishTopic) && (client.isConnected())) {
+        let payload = selectedServer.publishPayload || "";
+        client.publish(selectedServer.publishTopic, selectedServer.publishPayload, selectedServer.publishQos, selectedServer.publishRetain);
+    }
 }
 
 function mqttUnSubscribe() {

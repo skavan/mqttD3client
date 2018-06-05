@@ -59,7 +59,7 @@ $(document).ready(function () {
 
     // position and format publish topic dropup ----------------------------------------------------------------
     $("#icoPubTopicDropdown, #inpPublishTopic").click(function () {
-        if (selectedServer.topicHistory.length > 0) {
+        if (selectedServer.publishTopicHistory.length > 0) {
             comboPlacement($("#cmbPublishTopicDropdown"), $("#inpPublishTopic"));
         }
     });
@@ -75,7 +75,7 @@ $(document).ready(function () {
 
     // process Publish Topic lose focus and add topic to array if unique.
     $("#inpPublishTopic").blur(function () {
-        processInputBlur("publishTopic", "topicHistory", $("#inpPublishTopic"));
+        processInputBlur("publishTopic", "publishTopicHistory", $("#inpPublishTopic"));
     });
 
     // position and format publish payload dropup --------------------------------------------------------------
@@ -111,7 +111,7 @@ $(document).ready(function () {
 function processDropdownSelection($choice, selectedProperty, inputElement) {
     console.log("process dropdown selection");
     if ($choice.attr("itemType") == "choice") {
-        mqttUnSubscribe();
+        if (selectedProperty == "subscriptionTopic"){mqttUnSubscribe();}
         inputElement.val($choice.text().trim()); 
         selectedServer[selectedProperty] = $choice.text().trim(); 
         updateServersAndGui(selectedServer, true);
@@ -120,13 +120,15 @@ function processDropdownSelection($choice, selectedProperty, inputElement) {
 
 function processInputBlur(selectedProperty, historyArray, el) {
     let val = el.val().trim();
-    if (val == "") {
+/*     if (val == "") {
         return;
-    }
+    } */
     selectedServer[selectedProperty] = val;
     if ((selectedServer[historyArray].indexOf(val) == -1) && (!$.isEmptyObject(serverList.servers))) {
-        selectedServer[historyArray].unshift(val); // add it to the top of the array                    
-        updateServersAndGui(selectedServer, true);
+        if (val != ""){
+            selectedServer[historyArray].unshift(val); // add it to the top of the array                    
+            updateServersAndGui(selectedServer, true);
+        }
     }
 }
 
@@ -145,16 +147,22 @@ function deleteServer(item) {
 }
 
 // handle the delete topic button
-function deleteTopic(item) {
+function deleteTopic(item, prop) {
     console.log("deleteTopic");
     let val = item.trim();
-    let i = selectedServer.topicHistory.indexOf(val);
+    let i = selectedServer[prop].indexOf(val);
     if (i > -1) {
-        if (val == $("#inpSelectedTopic").val()) {
-            $("#inpSelectedTopic").val(null);
-            selectedServer.subscriptionTopic = "";
+        let el = $("#inpSelectedTopic");
+        let selectedTopic = "subscriptionTopic";
+        if (prop=="publishTopicHistory"){
+            el = $("#inpPublishTopic");
+            selectedTopic = "publishTopic";
         }
-        selectedServer.topicHistory.splice(i, 1); // remove the element
+        if (val == el.val()) {
+            el.val(null);
+            selectedServer[selectedTopic] = ""; //remove "History"
+        }
+        selectedServer[prop].splice(i, 1); // remove the element
         updateServersAndGui(selectedServer, true);
     }
 }
@@ -268,14 +276,24 @@ function fillServerUIBar(serverList, displayServer) {
     // create list of topic history
     for (let item of displayServer.topicHistory) {
         let template = `<div class="item" itemType="choice">
-                            <i onclick="deleteTopic('${item}')" class="delete icon right floated"></i>
+                            <i onclick="deleteTopic('${item}', 'topicHistory')" class="delete icon right floated"></i>
                                 ${item}
                         </div>`;
         $("#mnuTopicPicker").prepend(template);
+        
+
+    }
+    // create list of topic history
+    //displayServer.publishTopicHistory = displayServer.publishTopicHistory || [];
+    for (let item of displayServer.publishTopicHistory) {
+        let template = `<div class="item" itemType="choice">
+                            <i onclick="deleteTopic('${item}', 'publishTopicHistory')" class="delete icon right floated"></i>
+                                ${item}
+                        </div>`;
+        
         $("#mnuPublishTopicPicker").prepend(template);
 
     }
-
     // create list of payload history
     for (let item of displayServer.payloadHistory) {
         let template = `<div class="item" itemType="choice">

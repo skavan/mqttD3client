@@ -601,10 +601,6 @@ function copyToClipboard(element) {
                 });
             }
         }
-
-        $(window).resize(function() {
-            updateSize({ width: $(".tree-container").width(), height: $(".tree-container").height() - 65 });
-        });
     </script>
 </body>
 

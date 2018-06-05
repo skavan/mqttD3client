@@ -441,15 +441,6 @@ function walk(parts, node, body) {
     }
 }
 
-function updateSize(size) {
-    if (targetSize && size.width > 100 && size.height > 100 && svg) {
-        targetSize.width = size.width;
-        targetSize.height = size.height;
-
-        svg.attr("width", size.width).attr("height", size.height);
-    }
-}
-
 
 function fit(mode) {
     var nodes = d3.hierarchy(root).descendants(),

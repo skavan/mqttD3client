@@ -17,12 +17,9 @@
         }
 
         #treeChartContainer {
-            /*overflow: scroll;
+            overflow: scroll;
             width: 100%;
-            height: 100%;*/
-            margin-top: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            height: 100%;
         }
 
         .ui.popup.scrollablePopup {
@@ -282,7 +279,7 @@
                                 <button class="ui icon button">
                                     <i class="icon ellipsis horizontal"></i>
                                 </button>
-                                <button id="btnPublish" class="ui primary icon small button">
+                                <button id="bPublish" class="ui primary icon small button">
                                     Publish
                                 </button>
                             </div>
@@ -331,7 +328,7 @@
 
         //init treeChart
         //var treeChart = initTree();
-        setup("#treeChartContainer", { width: $(".tree-container").width(), height: $(".tree-container").height() - 65 });
+        setup("#treeChartContainer");
 
         // the client can be empty or 'ready-to-connect'.
         // when 'ready-to-connect', it can be connected or disconnected.
@@ -345,11 +342,6 @@
         $("#btnSubscribe").click(function () {
             mqttSubscribe();
         });
-
-        $("#btnPublish").click(function () {
-            mqttPublish();
-        });
-
 
         $("#btnGridView").click(function () {
             toggleButtonMode($("#btnGridView"), $("#btnTreeView"));
@@ -459,7 +451,7 @@
             // }
             // treeChart = initTree(); // reinit the d3 chart
             d3.select('#treeChartContainer').html("")
-            setup("#treeChartContainer", { width: $(".tree-container").width(), height: $(".tree-container").height() - 65 });
+            setup("#treeChartContainer");
         }
 
         function processNewMessage(msg) {
@@ -601,10 +593,6 @@ function copyToClipboard(element) {
                 });
             }
         }
-
-        $(window).resize(function() {
-            updateSize({ width: $(".tree-container").width(), height: $(".tree-container").height() - 65 });
-        });
     </script>
 </body>
 

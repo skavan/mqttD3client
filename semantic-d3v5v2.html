@@ -282,7 +282,7 @@
                                 <button class="ui icon button">
                                     <i class="icon ellipsis horizontal"></i>
                                 </button>
-                                <button id="btnPublish" class="ui primary icon small button">
+                                <button id="bPublish" class="ui primary icon small button">
                                     Publish
                                 </button>
                             </div>
@@ -345,11 +345,6 @@
         $("#btnSubscribe").click(function () {
             mqttSubscribe();
         });
-
-        $("#btnPublish").click(function () {
-            mqttPublish();
-        });
-
 
         $("#btnGridView").click(function () {
             toggleButtonMode($("#btnGridView"), $("#btnTreeView"));

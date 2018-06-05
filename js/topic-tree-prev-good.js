@@ -22,17 +22,14 @@ var diagonal = d3.linkHorizontal().x(function (d) {
     return d.x;
 });
 
-function setup(tagID, tempSize) {
+function setup(tagID) {
     //searchBox.select2();
     //ddlSearch = searchBox;
 
-    tree = d3.tree().nodeSize([20, 150]);
+    tree = d3.tree().nodeSize([20, 130]);
 
     container = d3.select(tagID);
     targetSize = container.node().getBoundingClientRect();
-
-    if (targetSize.width < 100 && tempSize != null && tempSize.width > 0) targetSize.width = tempSize.width;
-    if (targetSize.height < 100 && tempSize != null && tempSize.height > 0) targetSize.height = tempSize.height;
 
     // this is a hack --- needs to be fixed.
     svg = container.append("svg:svg")
@@ -251,11 +248,6 @@ function update(source) {
     nodeUpdate.selectAll("text")
         .style("fill-opacity", 1);
 
-    nodeUpdate.select(".datalabel")
-        .text(function(d) {
-            return d.data.data.length <= textTrunc ? d.data.data : (d.data.data.substr(0, textTrunc) + "...");
-        });
-
 
     // Transition exiting nodes to the parent's new position.
     var nodeExit = node.exit().transition()
@@ -371,21 +363,12 @@ function walk(parts, node, body) {
                 //console.log(node.children[z].name + " - " + current);
                 if (node.children[z].name == current) {
                     //console.log("found");
-                    if (parts.length == 0) {
-                        node.children[z].data = body;
-                        if ((body == "" || body == null) 
-                            && (node.children[z].children == null || node.children[z].children.length == 0) 
-                            && (node.children[z]._children == null || node.children[z]._children.length == 0)) {
-                            node.children.splice(z, 1);
-                        }
-                    } else {
-                        walk(parts, node.children[z], body);
-                    }
+                    walk(parts, node.children[z], body);
                     break;
                 }
             }
             //console.log("done loop - " + z + ", " + node.children.length);
-            if (z == node.children.length && (parts.length > 0 || (body != "" && body != null))) {
+            if (z == node.children.length) {
                 //console.log("adding new");
                 var newnode = {
                     "name": current,
@@ -401,21 +384,12 @@ function walk(parts, node, body) {
                 //console.log(node._children[z].name + " - " + current);
                 if (node._children[z].name == current) {
                     //console.log("found");
-                    if (parts.length == 0) {
-                        node._children[z].data = body;
-                        if ((body == "" || body == null) 
-                            && (node._children[z].children == null || node._children[z].children.length == 0) 
-                            && (node._children[z]._children == null || node._children[z]._children.length == 0)) {
-                            node._children.splice(z, 1);
-                        }
-                    } else {
-                        walk(parts, node._children[z], body);
-                    }
+                    walk(parts, node._children[z], body);
                     break;
                 }
             }
             //console.log("done hidden loop - " + z + ", " + node._children.length);
-            if (z == node._children.length && (parts.length > 0 || (body != "" && body != null))) {
+            if (z == node._children.length) {
                 //console.log("adding new hidden");
                 let newnode = {
                     "name": current,
@@ -438,15 +412,6 @@ function walk(parts, node, body) {
         node.data = body;
         node.dirty = true;
 
-    }
-}
-
-function updateSize(size) {
-    if (targetSize && size.width > 100 && size.height > 100 && svg) {
-        targetSize.width = size.width;
-        targetSize.height = size.height;
-
-        svg.attr("width", size.width).attr("height", size.height);
     }
 }
 
